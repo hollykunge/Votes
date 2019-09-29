@@ -3,6 +3,7 @@ package com.hollykunge.vote.service.impl;
 import com.hollykunge.vote.entity.VoteItems;
 import com.hollykunge.vote.service.VoteItemsService;
 import com.hollykunge.vote.utils.PageBaseInfo;
+import org.springframework.stereotype.Service;
 
 /**
  * @program: Lark-Server
@@ -10,6 +11,7 @@ import com.hollykunge.vote.utils.PageBaseInfo;
  * @author: Mr.Do
  * @create: 2019-09-27 20:31
  */
+@Service
 public class VoteItemsServiceImpl implements VoteItemsService {
     @Override
     public void add(VoteItems votes) {
