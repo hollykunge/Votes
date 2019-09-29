@@ -58,7 +58,7 @@ public class VoteManageController {
         if (user == null) {
             throw new BaseException(USER_ERROR);
         }
-        return "manage/main";
+        return "manage/voteManageList";
     }
 
     /**
