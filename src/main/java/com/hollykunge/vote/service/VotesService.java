@@ -13,11 +13,30 @@ import org.springframework.data.domain.Page;
  */
 public interface VotesService {
 
+    /**
+     * 添加投票
+     * @param votes
+     */
     void add(Votes votes);
 
+    /**
+     * 更新投票
+     * @param votes
+     */
     void update(Votes votes);
 
+    /**
+     * 删除投票
+     * @param id
+     */
     void delete(String id);
 
+    /**
+     * 条件分页
+     * @param page
+     * @param size
+     * @param voteQuery
+     * @return
+     */
     PageBaseInfo<Votes> findVoteCriteria(Integer page,Integer size,Votes voteQuery);
 }

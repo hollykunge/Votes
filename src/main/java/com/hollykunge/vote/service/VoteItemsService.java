@@ -17,7 +17,27 @@ public interface VoteItemsService {
 
     void delete(String id);
 
+    /**
+     * 条件分页
+     * @param page 当前页码
+     * @param size 当前页数据行数
+     * @param voteQuery
+     * @return
+     */
     PageBaseInfo<VoteItems> findVoteItemsCriteria(Integer page,Integer size,VoteItems voteQuery);
 
+    /**
+     * 无条件分页
+     * @param page 当前页码
+     * @param size 当前页数据行数
+     * @return
+     */
     PageBaseInfo<VoteItems> findVoteItems(Integer page,Integer size);
+
+    /**
+     * 查询邀请码对应投票轮
+     * @param invitationCode 邀请码
+     * @return
+     */
+    VoteItems findVoteItem(String invitationCode);
 }

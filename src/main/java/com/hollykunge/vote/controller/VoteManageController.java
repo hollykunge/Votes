@@ -38,9 +38,9 @@ public class VoteManageController {
     @Resource
     VoteItemsService voteItemsService;
 
-    @GetMapping("/")
-    public String index() {
-        return "redirect:/list";
+    @GetMapping("/login")
+    public String login() {
+        return "login";
     }
 
     /**
@@ -51,7 +51,7 @@ public class VoteManageController {
      * @param password
      * @return
      */
-    @GetMapping("/login")
+    @PostMapping("/login")
     public String login(Model model, @RequestParam(value = "username", required = true, defaultValue = "admin") String username, @RequestParam(value = "password", required = true, defaultValue = "123456") String password) {
         User user = userService.findByUsername(username);
         model.addAttribute("username", "admin111");

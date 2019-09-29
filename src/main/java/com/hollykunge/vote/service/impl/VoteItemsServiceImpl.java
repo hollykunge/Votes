@@ -37,4 +37,10 @@ public class VoteItemsServiceImpl implements VoteItemsService {
     public PageBaseInfo<VoteItems> findVoteItems(Integer page, Integer size) {
         return null;
     }
+
+    @Override
+    public VoteItems findVoteItem(String invitationCode) {
+        return null;
+    }
+
 }

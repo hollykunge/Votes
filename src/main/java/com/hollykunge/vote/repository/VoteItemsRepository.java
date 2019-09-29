@@ -11,4 +11,10 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
  * @create: 2019-09-27 20:26
  */
 public interface VoteItemsRepository extends JpaRepository<VoteItems, String>, JpaSpecificationExecutor<VoteItems> {
+    /**
+     * 根据邀请码获取当前轮的投票
+     * @param invitationCode
+     * @return
+     */
+    VoteItems findByInvitationCode(String invitationCode);
 }
