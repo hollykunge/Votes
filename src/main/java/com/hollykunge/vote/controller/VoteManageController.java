@@ -1,5 +1,6 @@
 package com.hollykunge.vote.controller;
 
+import com.hollykunge.vote.anotation.OpsLog;
 import com.hollykunge.vote.entity.User;
 import com.hollykunge.vote.entity.VoteItems;
 import com.hollykunge.vote.entity.Votes;
@@ -38,11 +39,6 @@ public class VoteManageController {
     @Resource
     VoteItemsService voteItemsService;
 
-    @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
-
     /**
      * 登录
      *
@@ -51,6 +47,7 @@ public class VoteManageController {
      * @param password
      * @return
      */
+    @OpsLog("管理员登录")
     @PostMapping("/login")
     public String login(Model model, @RequestParam(value = "username", required = true, defaultValue = "admin") String username, @RequestParam(value = "password", required = true, defaultValue = "123456") String password) {
         User user = userService.findByUsername(username);
@@ -70,6 +67,7 @@ public class VoteManageController {
      * @param pageSize
      * @return
      */
+    @OpsLog("管理员查看投票列表")
     @GetMapping("/page")
     public String page(Model model, @RequestBody Votes votes, @RequestParam(required = false, defaultValue = "1") int pageNum, @RequestParam(required = false, defaultValue = "20") int pageSize) {
         PageBaseInfo<Votes> pageBaseInfo = votesService.findVoteCriteria(pageNum, pageSize, votes);
@@ -83,6 +81,7 @@ public class VoteManageController {
      * @param model
      * @return
      */
+    @OpsLog("管理员添加一项投票")
     @PostMapping("/")
     public String add(Model model, @RequestBody Votes votes) {
         if (votes == null) {
@@ -100,6 +99,7 @@ public class VoteManageController {
      * @param votes
      * @return
      */
+    @OpsLog("管理员修改一项投票")
     @PutMapping("/")
     public String update(Model model, @RequestBody Votes votes) {
         if (votes == null) {

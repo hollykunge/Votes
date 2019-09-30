@@ -11,7 +11,7 @@ import java.util.Date;
 
 /**
  * @program: Lark-Server
- * @description: 投票项
+ * @description: 投票
  * @author: Mr.Do
  * @create: 2019-09-24 15:13
  */
@@ -22,35 +22,20 @@ public class Votes implements Serializable {
     @GeneratedValue
     private String id;
 
-    @Column(nullable = false)
+    @Column(columnDefinition = "varchar(255) COMMENT '投票标题'", nullable = false)
     private String title;
-    @Column(nullable = false)
+    @Column(columnDefinition = "datetime COMMENT '创建时间'", nullable = false)
     private Date crtTime;
-    @Column(nullable = false)
+    @Column(columnDefinition = "datetime COMMENT '更新时间'", nullable = false)
     private Date updTime;
-    @Column(nullable = false)
+    @Column(columnDefinition = "varchar(11) COMMENT '创建人id'", nullable = false)
     private String crtUser;
-    @Column(nullable = false)
+    @Column(columnDefinition = "varchar(11) COMMENT '更新人id'", nullable = false)
     private String updUser;
-
-    /**
-     * 一共有几轮
-     */
-    @Column(nullable = false)
+    @Column(columnDefinition = "int(6) COMMENT '共有轮数'", nullable = false)
     private Integer turnsSize;
 
-    /**
-     * 规则：AO-否同，RANK-排序
-     */
-    @Column(nullable = false)
-    private String regulation;
-
-    /**
-     * 范围
-     */
-    @Column(nullable = false)
-    private String scope;
-    @Column(nullable = false)
+    @Column(columnDefinition = "varchar(2000) COMMENT '描述'", nullable = true)
     private String description;
 
 

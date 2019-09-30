@@ -5,6 +5,7 @@ import com.hollykunge.vote.service.ClientInfoService;
 import com.hollykunge.vote.service.VoteItemsService;
 import com.hollykunge.vote.vo.ClientInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ import java.util.List;
  * @author: Mr.Do
  * @create: 2019-09-29 16:30
  */
+@Service
 public class ClientInfoServiceImpl implements ClientInfoService {
 
     @Autowired
