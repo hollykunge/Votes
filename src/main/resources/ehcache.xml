@@ -11,7 +11,7 @@
             diskExpiryThreadIntervalSeconds="120" />
 
     <cache
-            name="student"
+            name="client"
             maxEntriesLocalHeap="2000"
             eternal="false"
             timeToIdleSeconds="3600"

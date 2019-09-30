@@ -20,16 +20,16 @@ public class User {
     @Id
     @GeneratedValue
     private String id;
-    @Column(nullable = false)
+    @Column(columnDefinition = "varchar(11) COMMENT '用户名称'", nullable = false)
     private String username;
-    @Column(nullable = false)
+    @Column(columnDefinition = "varchar(11) COMMENT '密码'", nullable = false)
     private String password;
-    @Column(nullable = false)
+    @Column(columnDefinition = "datetime COMMENT '创建时间'", nullable = false)
     private Date crtTime;
-    @Column(nullable = false)
+    @Column(columnDefinition = "datetime COMMENT '更新时间'", nullable = false)
     private Date updTime;
-    @Column(nullable = false)
+    @Column(columnDefinition = "varchar(11) COMMENT '创建人id'", nullable = false)
     private String crtUser;
-    @Column(nullable = false)
+    @Column(columnDefinition = "varchar(11) COMMENT '更新人id'", nullable = false)
     private String updUser;
 }
