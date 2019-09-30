@@ -1,0 +1,24 @@
+.header{
+  background: rgba(0, 21, 41,.5);
+  padding: 0 50px;
+  height: 64px;
+  line-height: 64px;
+}
+.container,
+.content{
+  min-width: 1200px;
+}
+.logo{
+  font-size: 24px;
+}
+.container table{
+  margin: 0 auto;
+
+}
+.container table td,
+.container table th{
+  border: 1px solid #ccc;
+  width: 120px;
+  box-sizing: border-box;
+  padding: 5px;
+}
