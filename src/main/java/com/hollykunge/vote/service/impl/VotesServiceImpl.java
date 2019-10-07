@@ -59,4 +59,9 @@ public class VotesServiceImpl implements VotesService {
         return new PageBaseInfo(pageNum, pageSize, totalSize, totalPage, list);
     }
 
+    @Override
+    public List<Votes> findVotesByUserId() {
+        return votesRepository.findAll();
+    }
+
 }

@@ -14,8 +14,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
+
+import java.util.List;
 
 import static com.hollykunge.vote.constant.Constant.PARAMS_ERROR;
 import static com.hollykunge.vote.constant.Constant.USER_ERROR;
@@ -39,6 +42,11 @@ public class VoteManageController {
     @Resource
     VoteItemsService voteItemsService;
 
+    @GetMapping("/login")
+    public String loginPage() {
+        return "login";
+    }
+
     /**
      * 登录
      *
@@ -48,20 +56,38 @@ public class VoteManageController {
      * @return
      */
     @OpsLog("管理员登录")
-    @PostMapping("/login")
-    public String login(Model model, @RequestParam(value = "username", required = true, defaultValue = "admin") String username, @RequestParam(value = "password", required = true, defaultValue = "123456") String password) {
+    @PostMapping("/list")
+    public String login(Model model,
+                              @RequestParam(value = "username", required = true, defaultValue = "admin") String username,
+                              @RequestParam(value = "password", required = true, defaultValue = "123456") String password) {
         User user = userService.findByUsername(username);
-        model.addAttribute("username", "admin111");
         if (user == null) {
             throw new BaseException(USER_ERROR);
         }
-        return "manage/voteManageList";
+        model.addAttribute("user", user);
+        return "list";
     }
 
     /**
      * 投票列表分页
      *
-     * @param model
+     * @param mv
+     * @param id 用户id
+     * @return
+     */
+    @OpsLog("管理员查看投票列表")
+    @GetMapping("/list")
+    public ModelAndView pageFront(ModelAndView mv) {
+        List<Votes> votes = votesService.findVotesByUserId();
+        mv.setViewName("voteManageList");
+        mv.addObject("res", ResultBody.success(votes));
+        return mv;
+    }
+
+    /**
+     * 投票列表分页
+     *
+     * @param mv
      * @param votes
      * @param pageNum
      * @param pageSize
@@ -69,12 +95,24 @@ public class VoteManageController {
      */
     @OpsLog("管理员查看投票列表")
     @GetMapping("/page")
-    public String page(Model model, @RequestBody Votes votes, @RequestParam(required = false, defaultValue = "1") int pageNum, @RequestParam(required = false, defaultValue = "20") int pageSize) {
+    public ModelAndView page(ModelAndView mv,
+                             @RequestBody Votes votes,
+                             @RequestParam(required = false, defaultValue = "1") int pageNum,
+                             @RequestParam(required = false, defaultValue = "20") int pageSize) {
         PageBaseInfo<Votes> pageBaseInfo = votesService.findVoteCriteria(pageNum, pageSize, votes);
-        model.addAttribute("res", ResultBody.success(pageBaseInfo));
-        return "manage/voteManageList";
+        mv.setViewName("voteManageList");
+        mv.addObject("res", ResultBody.success(pageBaseInfo));
+        return mv;
     }
-
+    /**
+     * 添加页面
+     * @return
+     */
+    @OpsLog("管理员添加一项投票")
+    @GetMapping("/add")
+    public String addPage() {
+        return "add";
+    }
     /**
      * 添加投票项
      *
@@ -89,7 +127,7 @@ public class VoteManageController {
         }
         votesService.add(votes);
         model.addAttribute("res", ResultBody.success());
-        return "manage/voteManageList";
+        return "list";
     }
 
     /**
@@ -107,7 +145,7 @@ public class VoteManageController {
         }
         votesService.add(votes);
         model.addAttribute("res", ResultBody.success());
-        return "manage/voteManageList";
+        return "list";
     }
 
     /**
@@ -117,6 +155,7 @@ public class VoteManageController {
      * @param id
      * @return
      */
+    @OpsLog("管理员删除一项投票")
     @DeleteMapping("/")
     public String delete(Model model, @RequestParam(value = "id", required = true) String id) {
         if (StringUtils.isEmpty(id)) {
@@ -124,7 +163,7 @@ public class VoteManageController {
         }
         votesService.delete(id);
         model.addAttribute("res", ResultBody.success());
-        return "manage/voteManageList";
+        return "list";
     }
 
     /**
@@ -134,6 +173,7 @@ public class VoteManageController {
      * @param id
      * @return
      */
+    @OpsLog("管理员查看一项投票统计情况")
     @GetMapping("/statistics")
     public String statistics(Model model, @RequestParam(value = "id", required = true) String id,
                              @RequestParam(required = false, defaultValue = "1") int pageNum,
@@ -153,10 +193,11 @@ public class VoteManageController {
      * @param id
      * @return
      */
+    @OpsLog("管理员开始一项投票")
     @GetMapping("/start")
     public String start(Model model, @RequestParam(value = "id", required = true) String id) {
         model.addAttribute("id", id);
-        return "manage/voteManageList";
+        return "list";
     }
 
     /**
@@ -166,20 +207,23 @@ public class VoteManageController {
      * @param id
      * @return
      */
+    @OpsLog("管理员结束一项投票")
     @GetMapping("/end")
     public String end(Model model, @RequestParam(value = "id", required = true) String id) {
         model.addAttribute("id", id);
-        return "manage/voteManageList";
+        return "list";
     }
 
     /**
      * 生成邀请码，针对一轮投票
+     *
      * @param model
      * @param id
      * @return
      */
+    @OpsLog("管理员生成一项投票邀请码")
     @GetMapping("/invitation")
-    public String invitation(Model model, @RequestParam(value = "id", required = true) String id){
-        return "manage/voteManageList";
+    public String invitation(Model model, @RequestParam(value = "id", required = true) String id) {
+        return "list";
     }
 }
