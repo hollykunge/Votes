@@ -5,6 +5,8 @@ import com.hollykunge.vote.entity.Votes;
 import com.hollykunge.vote.utils.PageBaseInfo;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 /**
  * @program: Lark-Server
  * @description: 投票
@@ -39,4 +41,11 @@ public interface VotesService {
      * @return
      */
     PageBaseInfo<Votes> findVoteCriteria(Integer page,Integer size,Votes voteQuery);
+
+    /**
+     * 根据用户id查询投票
+     * @param id 用户id
+     * @return
+     */
+    List<Votes> findVotesByUserId();
 }

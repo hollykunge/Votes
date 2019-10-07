@@ -1,13 +1,71 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>二部投票系统</title>
+    <link rel="stylesheet" th:href="@{/css/all.css}" type="text/css"/>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}" type="text/css"/>
+    <link rel="stylesheet" th:href="@{/css/sweetalert2.min.css}" type="text/css"/>
+
+    <style type="text/css">
+        .text-center {
+            text-align: center !important;
+        }
+
+        body {
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-align: center;
+            align-items: center;
+            padding-top: 40px;
+            padding-bottom: 40px;
+            background-color: #f5f5f5;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        .form-signin {
+            width: 100%;
+            max-width: 330px;
+            padding: 15px;
+            margin: auto;
+        }
+
+        .form-signin input[type="username"] {
+            margin-bottom: -1px;
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        .form-signin .form-control {
+            position: relative;
+            box-sizing: border-box;
+            height: auto;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .form-signin input[type="password"] {
+            margin-bottom: 10px;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+    </style>
 </head>
-<body>
-<h1>二部投票系统</h1>
-<h1>二部投票系统</h1>
-<h1>二部投票系统</h1>
-<h1>二部投票系统</h1>
+<body class="text-center">
+<form th:action="@{/manage/list}" method="post" class="form-signin">
+    <h1>二部投票系统</h1>
+    <label for="inputUsername" class="sr-only">用户名</label>
+    <input type="username" name="username" id="inputUsername" class="form-control" placeholder="用户名" autofocus/>
+    <label for="inputPassword" class="sr-only">密码</label>
+    <input type="password" name="password" id="inputPassword" class="form-control" placeholder="密码"/>
+    <button class="btn btn-lg btn-success btn-block" type="submit">进入</button>
+    <p class="mt-5 mb-3 text-muted">© 2019-2020</p>
+</form>
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/sweetalert2.min.js}"></script>
 </body>
 </html>
