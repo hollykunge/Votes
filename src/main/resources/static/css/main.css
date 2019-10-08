@@ -1,0 +1,51 @@
+h1 {
+    color: #0000FF;
+}
+
+footer {
+    margin-top: 60px;
+}
+
+.validation-message {
+    font-style: normal;
+    font-size: 10px;
+    color: #FF1C19;
+}
+
+a {
+    transition: all .2s;
+}
+
+a:hover, a:focus, a:active {
+    color: purple;
+    text-decoration: none;
+}
+
+.pagination {
+    display: block;
+    text-align: center;
+}
+
+.bg-light {
+    background-color: #f8f9fa !important;
+}
+
+.text-center {
+    text-align: center !important;
+}
+
+.fixed-top {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1030;
+}
+
+.d-inline{
+    display: inline;
+}
+
+.text-center {
+    text-align: center!important;
+}

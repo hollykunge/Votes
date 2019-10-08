@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <div th:replace="/fragments/header :: header-css"/>
+</head>
+<body class="bg-light">
+
+<div th:replace="/fragments/header :: header"/>
+
+<div class="container">
+
+<!--    <div class="jumbotron">-->
+<!--        <h1 th:text="${user.username} + '的投票'">Username 投票</h1>-->
+<!--    </div>-->
+
+    <br></br>
+    <br></br>
+
+    <div th:replace="/fragments/votes :: votes"/>
+
+    <div th:replace="/fragments/pagination :: pagination(URLparameter='/vote/' + ${user.username})"/>
+
+</div>
+<div th:replace="/fragments/footer :: footer"/>
+
+</body>
+</html>

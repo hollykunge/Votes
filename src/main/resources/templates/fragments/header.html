@@ -1,0 +1,58 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <div th:fragment="header-css">
+
+        <title>二部投票系统</title>
+
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+              th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}"
+              rel="stylesheet" media="screen"/>
+
+        <link href="https://unpkg.com/bootstrap-table@1.15.4/dist/bootstrap-table.min.css"
+              th:href="@{/webjars/bootstrap-table/1.15.4/dist/bootstrap-table.min.css}"
+              rel="stylesheet" media="screen"/>
+
+        <script src="http://cdn.jsdelivr.net/webjars/jquery/3.4.1/jquery.min.js"
+                th:src="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
+
+        <link rel="stylesheet" th:href="@{/css/main.css}"
+              href="../../css/main.css"/>
+    </div>
+</head>
+<body>
+<div th:fragment="header">
+    <nav class="navbar navbar-expand-lg navbar-light bg-primary">
+        <a class="navbar-brand" th:href="@{/home}">二部投票系统</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <div sec:authorize="!isAuthenticated()">
+                    <a class="nav-item nav-link" th:href="@{/registration}">注册</a>
+                </div>
+                <!-- show login only if user is not yet authenticated -->
+                <div sec:authorize="!isAuthenticated()">
+                    <a class="nav-item nav-link" th:href="@{/login}">登录</a>
+                </div>
+                <!-- show My Blog only if user is authenticated -->
+                <div sec:authorize="hasRole('USER')">
+                    <a class="nav-item nav-link" th:href="@{'/votes/' + ${#authentication.getName()}}">我的投票</a>
+                </div>
+                <!-- show new post only if user is authenticated -->
+                <div sec:authorize="hasRole('USER')">
+                    <a class="nav-item nav-link" th:href="@{/newVote}">新的投票</a>
+                </div>
+                <!-- show sign out only if user is authenticated -->
+                <div sec:authorize="isAuthenticated()">
+                    <a class="nav-item nav-link" th:href="@{/logout}">注销</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>
+
+</body>
+</html>

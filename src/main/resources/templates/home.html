@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!--<title>二部投票系统</title>-->
+
+    <div th:replace="/fragments/header :: header-css"/>
+
+</head>
+<body>
+
+<div th:replace="/fragments/header :: header"/>
+
+<div class="container">
+
+    <div th:replace="/fragments/votes :: votes"/>
+
+    <div th:replace="/fragments/pagination :: pagination(URLparameter='/home')"/>
+
+</div>
+
+<div th:replace="/fragments/footer :: footer"/>
+
+</body>
+</html>
