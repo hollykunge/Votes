@@ -1,0 +1,72 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>二部投票系统</title>
+
+    <div th:replace="/fragments/header :: header-css"/>
+
+</head>
+<body class="bg-light">
+
+<div th:replace="/fragments/header :: header"/>
+
+<div class="container">
+
+    <!--Show this info message only if posted successfully-->
+    <div class="alert alert-info" th:if="${successMessage}" th:utext="${successMessage}"></div>
+
+    <!--New Post Form-->
+    <div class="row" style="margin-top:20px">
+        <div class="col-md-12">
+            <form autocomplete="off" action="#" th:action="@{/newVote}"
+                  th:object="${vote}" method="post" class="form-horizontal"
+                  role="form">
+
+                <h2 class="text-center">创建新的投票</h2>
+
+                <div class="form-group">
+                    <label th:if="${#fields.hasErrors('title')}" th:errors="*{title}"
+                           class="alert alert-danger"></label>
+                    <input type="text" th:field="*{title}" placeholder="名称"
+                           class="form-control input-lg"/>
+                </div>
+
+                <div class="form-group">
+                    <label th:if="${#fields.hasErrors('body')}" th:errors="*{body}"
+                           class="alert alert-danger"></label>
+                    <textarea th:field="*{body}" placeholder="描述"
+                              class="form-control input-lg"/>
+                </div>
+
+                <input type="hidden" th:field="*{user}"/>
+                <input type="hidden" th:field="*{id}"/>
+
+                <div class="form-group">
+                    <input type="submit" class="btn btn-primary btn-block" value="创建"/>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!--Delete Button-->
+    <!--Dont show delete button if the post is brand new-->
+    <div class="row" th:if="${vote.id}">
+        <div class="col-md-6 col-md-offset-3">
+            <form action="#" th:action="@{'/vote/{id}'(id=${vote.id})}" th:method="delete"
+                  class="form-horizontal">
+                <div class="form-group">
+                    <input type="hidden" name="_method" value="delete"/>
+                    <button type="submit" class="btn btn-danger btn-block" th:text="Delete">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- /.container -->
+
+<div th:replace="/fragments/footer :: footer"/>
+
+</body>
+</html>

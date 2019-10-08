@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!--<title>Spring Boot Thymeleaf + Spring Security</title>-->
+
+    <div th:replace="/fragments/header :: header-css"/>
+
+</head>
+<body class="bg-light">
+<div th:replace="/fragments/header :: header"/>
+<div class="container">
+
+    <!--如果注册成功显示这个-->
+    <div class="alert alert-info" th:if="${successMessage}" th:utext="${successMessage}"></div>
+
+    <div class="row" style="margin-top:20px">
+        <div class="col-md-12">
+            <form autocomplete="off" action="#" th:action="@{/registration}"
+                  th:object="${user}" method="post" role="form">
+                <div class="form-group">
+                    <label th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
+                           class="alert alert-danger"></label>
+                    <input type="password" th:field="*{password}" placeholder="Password"
+                           class="form-control input-lg"/>
+                </div>
+
+                <div class="form-group">
+                    <label th:if="${#fields.hasErrors('username')}" th:errors="*{username}"
+                           class="alert alert-danger"></label>
+                    <input type="text" th:field="*{username}" placeholder="Username"
+                           class="form-control input-lg"/>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-3" style="float: none; margin: 0 auto;">
+                        <input type="submit" class="btn btn-primary btn-block" value="注册"/>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<div th:replace="/fragments/footer :: footer"/>
+
+</body>
+</html>

@@ -1,0 +1,19 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<div th:fragment="votes">
+    <ul class="list-group">
+        <li class="list-group-item list-group-item-action" th:each="vote : ${pager.votes}">
+            <a th:text="${vote.title}" th:href="@{'/vote/' + ${vote.id}}">Title</a>
+            <div class="d-inline" th:text="${#dates.format(vote.createDate, 'yyyy-MM-dd')}">
+                Created by
+            </div>
+<!--            <a th:text="${vote.user.username}"-->
+<!--               th:href="@{'/vote/' + ${vote.user.username}}">User</a>-->
+            <div class="panel-body" th:text="${vote.body}">Body</div>
+        </li>
+    </ul>
+</div>
+</body>
+</html>

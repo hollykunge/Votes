@@ -1,0 +1,85 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>二部投票系统</title>
+
+    <div th:replace="/fragments/header :: header-css"/>
+
+</head>
+<body>
+
+<div th:replace="/fragments/header :: header"/>
+<div class="container">
+    <div class="container">
+        <div class="row" style="margin-top:20px">
+            <div class="col-md-12">
+                <form autocomplete="off" action="#" th:action="@{/createTurn}"
+                      th:object="${turn}" method="post" role="form">
+                    <h2 class="text-center">添加新一轮投票</h2>
+                    <hr class="mb-4"/>
+                    <h4 class="mb-3">规则范围</h4>
+                    <div class="row" style="margin-left: 240px;margin-bottom: 16px">
+                        <div class="custom-control custom-radio col-md-3">
+                            <input id="isNot" name="role" type="radio" class="custom-control-input" checked=""
+                                   required=""/>
+                            <label class="custom-control-label" for="isNot">否同</label>
+                        </div>
+                        <div class="custom-control custom-radio col-md-3">
+                            <input id="sort" name="role" type="radio" class="custom-control-input" required=""/>
+                            <label class="custom-control-label" for="sort">排序</label>
+                        </div>
+                        <div class="custom-control custom-radio col-md-3">
+                            <input id="count" name="role" type="radio" class="custom-control-input" required=""/>
+                            <label class="custom-control-label" for="count">打分</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="roleList">规则</label>
+                            <select class="custom-select d-block w-100" id="roleList" required="">
+                                <option value="">选择...</option>
+                                <option>同意</option>
+                                <option>否决</option>
+                            </select>
+                            <div class="invalid-feedback">
+                                选择一项规则
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="max">范围（最大）</label>
+                            <input type="text" class="form-control" id="max" placeholder="" required=""/>
+                            <div class="invalid-feedback">
+                                填写最大数量
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="min">范围（最小）</label>
+                            <input type="text" class="form-control" id="min" placeholder="" required=""/>
+                            <div class="invalid-feedback">
+                                填写最小数量
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label th:if="${#fields.hasErrors('body')}" th:errors="*{body}"
+                                   class="alert alert-danger"></label>
+                            <label for="tips">注意事项</label>
+                            <textarea th:field="*{body}"
+                                      placeholder="Body" class="form-control" id="tips"/>
+                            <input type="hidden" th:field="*{vote}"/>
+                            <input type="hidden" th:field="*{user}"/>
+                        </div>
+                    </div>
+                    <hr class="mb-4"/>
+                    <button type="submit" class="btn btn-primary btn-block">保存</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="/fragments/footer :: footer"/>
+
+</body>
+</html>
