@@ -9,7 +9,7 @@
 <div th:replace="/fragments/header :: header"/>
 
 <div class="container">
-    <div class="card border-primary">
+    <div class="card bg-light">
         <div class="card-header">详情
             <div style="float: right" sec:authorize="isAuthenticated()" th:if="${username}">
                 <a th:href="@{'/editVote/{id}'(id=${vote.id})}" class="col-md-2">
@@ -17,14 +17,14 @@
                 </a>
             </div>
         </div>
-        <div class="card-body text-primary">
+        <div class="card-body">
             <h5 class="card-title" th:text="${vote.title}">Title</h5>
             <p class="card-text" th:text="${vote.body}">body</p>
 
         </div>
     </div>
 
-    <div class="card border-primary">
+    <div class="card bg-light">
         <div class="card-header">投票轮
             <!--添加投票轮按钮-->
             <!--如果有权限-->
@@ -35,22 +35,14 @@
                 </a>
             </div>
         </div>
-        <div class="card-body text-primary">
-            <ul class="list-group">
-                <li class="list-group-item list-group-item-action" th:each="item : ${vote.items}">
-                    <div th:text="${item.body}" class="d-inline">Body</div>
-                    <div class="d-inline"
-                         th:text="${#dates.format(item.createDate, 'yyyy-MM-dd')}">
-                        Created by
-                    </div>
-                    <div class="d-inline"
-                         th:text="'投票率'+${item.memberNum}+'/'+${item.memberSize}">
-                        Created by
-                    </div>
-                    <!--                    <div class="d-inline"><a th:text="${item.user.username}"-->
-                    <!--                                             th:href="@{'/vote/' + ${item.user.username}}">User</a>-->
-                    <!--                    </div>-->
-                    <div style="float: right">
+        <div class="card-body">
+            <table class="do-table" width='100%' border='0' cellspacing='0' cellpadding='0' align='center'>
+                <tr class="do-tr" th:each="item : ${vote.items}">
+                    <td class="do-td"><strong th:text="${item.body}">Title</strong></td>
+                    <td class="do-td" th:text="${#dates.format(item.createDate, 'yyyy-MM-dd')}">--/--/--</td>
+                    <td class="do-td" th:text="${item.memberNum}+'/'+${item.memberSize}">-/-</td>
+
+                    <td class="do-td">
                         <a th:href="@{'/editItem/{id}'(id=${item.id})}">
                             <button type="button" class="btn btn-warning btn-sm d-inline">投票项</button>
                         </a>
@@ -69,9 +61,9 @@
                         <a th:href="@{'/voteVote/{id}'(id=${vote.id})}">
                             <button type="button" class="btn btn-warning btn-sm d-inline">结束</button>
                         </a>
-                    </div>
-                </li>
-            </ul>
+                    </td>
+                </tr>
+            </table>
         </div>
     </div>
 

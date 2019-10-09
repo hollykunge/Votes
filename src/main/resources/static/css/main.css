@@ -1,6 +1,4 @@
-h1 {
-    color: #0000FF;
-}
+
 
 footer {
     margin-top: 60px;
@@ -48,4 +46,37 @@ a:hover, a:focus, a:active {
 
 .do-right{
     margin-left: auto;
+}
+
+/*.do-table tr:first-child {*/
+/*    background: #0066CC !important;*/
+/*    color: #fff !important;*/
+/*    font-weight: bold !important;*/
+/*}*/
+
+.do-table {
+    border-radius: 4px;
+    border: 1pt solid #d7d7d7 !important;
+    margin: 0 auto !important;
+}
+
+.do-td {
+    padding: 5px 10px !important;
+    text-align: center !important;
+    border-right: 0pt solid #d7d7d7 !important;
+    border-bottom: 0pt solid #d7d7d7 !important;
+}
+
+/*.do-tr:nth-of-type(odd) {*/
+/*    background: #d7d7d7 !important;*/
+/*}*/
+
+/* odd 标识奇数行，even标识偶数行 */
+.do-tr:hover {
+    background: #E0F0F0 !important;
+}
+
+.do-tr{
+    border-radius: 4px;
+    border: 1pt solid #d7d7d7 !important;
 }

@@ -3,20 +3,24 @@
 </head>
 <body>
 <div th:fragment="votes">
-    <ul class="list-group">
-        <li class="list-group-item list-group-item-action d-inline" th:each="vote : ${pager.votes}">
-            <h5 style="float: left;" th:text="${vote.title}">Title</h5>
-            <div style="float: left;margin-left: 32px" class="d-inline" th:text="${#dates.format(vote.createDate, 'yyyy-MM-dd')}">
-                Created by
-            </div>
-            <div style="float: left;margin-left: 32px" class="panel-body" th:text="${vote.body}">Body</div>
-            <div style="float: right">
+    <table class="do-table" width='100%' border='0' cellspacing='0' cellpadding='0' align='center' >
+<!--        <tr class="do-tr">-->
+<!--            <td>标题</td>-->
+<!--            <td>时间</td>-->
+<!--            <td>描述</td>-->
+<!--            <td>操作</td>-->
+<!--        </tr>-->
+        <tr class="do-tr" th:each="vote : ${pager.votes}">
+            <td class="do-td"><h5 style="float: left;" th:text="${vote.title}">Title</h5></td>
+            <td class="do-td" th:text="${#dates.format(vote.createDate, 'yyyy-MM-dd')}">--/--/--</td>
+            <td class="do-td" th:text="${vote.body}">-</td>
+            <td class="do-td">
                 <a class="btn btn-primary btn-sm" th:href="@{'/vote/' + ${vote.id}}" role="button">进入</a>
                 <a class="btn btn-primary btn-sm" th:href="@{'/vote/' + ${vote.id}}" role="button">编辑</a>
                 <a class="btn btn-primary btn-sm" th:href="@{'/vote/' + ${vote.id}}" role="button">删除</a>
-            </div>
-        </li>
-    </ul>
+            </td>
+        </tr>
+    </table>
 </div>
 </body>
 </html>
