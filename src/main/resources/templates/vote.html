@@ -44,22 +44,25 @@
 
                     <td class="do-td">
                         <a th:href="@{'/editItem/{id}'(id=${item.id})}">
-                            <button type="button" class="btn btn-warning btn-sm d-inline">投票项</button>
+                            <button type="button" class="btn btn-outline-info btn-sm d-inline">投票项</button>
                         </a>
                         <a th:href="@{'/voteVote/{id}'(id=${vote.id})}">
-                            <button type="button" class="btn btn-warning btn-sm d-inline">编辑</button>
+                            <button type="button" class="btn btn-outline-primary btn-sm d-inline">编辑</button>
                         </a>
-                        <a th:href="@{'/editItem/{id}'(id=${item.id})}">
-                            <button type="button" class="btn btn-warning btn-sm d-inline">统计</button>
-                        </a>
-                        <a th:href="@{'/voteVote/{id}'(id=${vote.id})}">
-                            <button type="button" class="btn btn-warning btn-sm d-inline">删除</button>
+                        <a th:href="@{'/stat/{id}'(id=${item.id})}">
+                            <button type="button" class="btn btn-outline-success btn-sm d-inline">统计</button>
                         </a>
                         <a th:href="@{'/voteVote/{id}'(id=${vote.id})}">
-                            <button type="button" class="btn btn-warning btn-sm d-inline">发起</button>
+                            <button type="button" class="btn btn-outline-danger btn-sm d-inline">删除</button>
                         </a>
                         <a th:href="@{'/voteVote/{id}'(id=${vote.id})}">
-                            <button type="button" class="btn btn-warning btn-sm d-inline">结束</button>
+                            <button type="button" class="btn btn-outline-warning btn-sm d-inline">发起</button>
+                        </a>
+                        <a th:href="@{'/voteVote/{id}'(id=${vote.id})}">
+                            <button type="button" class="btn btn-outline-dark btn-sm d-inline">结束</button>
+                        </a>
+                        <a th:href="@{'/voteVote/{id}'(id=${vote.id})}">
+                            <button type="button" class="btn btn-outline-secondary btn-sm d-inline">邀请码</button>
                         </a>
                     </td>
                 </tr>
