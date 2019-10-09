@@ -4,14 +4,17 @@
 <body>
 <div th:fragment="votes">
     <ul class="list-group">
-        <li class="list-group-item list-group-item-action" th:each="vote : ${pager.votes}">
-            <a th:text="${vote.title}" th:href="@{'/vote/' + ${vote.id}}">Title</a>
-            <div class="d-inline" th:text="${#dates.format(vote.createDate, 'yyyy-MM-dd')}">
+        <li class="list-group-item list-group-item-action d-inline" th:each="vote : ${pager.votes}">
+            <h5 style="float: left;" th:text="${vote.title}">Title</h5>
+            <div style="float: left;margin-left: 32px" class="d-inline" th:text="${#dates.format(vote.createDate, 'yyyy-MM-dd')}">
                 Created by
             </div>
-<!--            <a th:text="${vote.user.username}"-->
-<!--               th:href="@{'/vote/' + ${vote.user.username}}">User</a>-->
-            <div class="panel-body" th:text="${vote.body}">Body</div>
+            <div style="float: left;margin-left: 32px" class="panel-body" th:text="${vote.body}">Body</div>
+            <div style="float: right">
+                <a class="btn btn-primary btn-sm" th:href="@{'/vote/' + ${vote.id}}" role="button">进入</a>
+                <a class="btn btn-primary btn-sm" th:href="@{'/vote/' + ${vote.id}}" role="button">编辑</a>
+                <a class="btn btn-primary btn-sm" th:href="@{'/vote/' + ${vote.id}}" role="button">删除</a>
+            </div>
         </li>
     </ul>
 </div>

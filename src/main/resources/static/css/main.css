@@ -46,6 +46,6 @@ a:hover, a:focus, a:active {
     display: inline;
 }
 
-.text-center {
-    text-align: center!important;
+.do-right{
+    margin-left: auto;
 }
