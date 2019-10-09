@@ -9,7 +9,8 @@
     <div class="card border-primary">
         <div class="card-header">详情
             <div style="float: right">
-                <button type="submit" class="btn btn-secondary btn-sm">导入</button>
+                <a href="/item/export">下载导入模板</a>
+                <button id="file" type="file" th:onclick="'javascript:excelImport()'" class="btn btn-secondary btn-sm">导入</button>
                 <button type="submit" class="btn btn-secondary btn-sm">添加</button>
                 <button type="submit" class="btn btn-primary btn-sm">发布</button>
             </div>
@@ -102,23 +103,34 @@
                 },
                 {
                     field: 'name',
-                    title: '姓名',
+                    title: '名称',
                     sortable: true,
                     footerFormatter: totalNameFormatter,
                     align: 'center'
                 }, {
-                    field: 'price',
-                    title: '年龄',
+                    field: 'arrt1',
+                    title: '预留1',
                     sortable: true,
                     align: 'center',
-                    footerFormatter: totalPriceFormatter
+                    footerFormatter: totalNameFormatter
                 }, {
-                    field: 'operate',
-                    title: '操作',
+                    field: 'arrt2',
+                    title: '预留2',
+                    sortable: true,
                     align: 'center',
-                    clickToSelect: false,
-                    events: window.operateEvents,
-                    formatter: operateFormatter
+                    footerFormatter: totalNameFormatter
+                },{
+                    field: 'arrt3',
+                    title: '预留3',
+                    sortable: true,
+                    align: 'center',
+                    footerFormatter: totalNameFormatter
+                },{
+                    field: 'arrt4',
+                    title: '预留4',
+                    sortable: true,
+                    align: 'center',
+                    footerFormatter: totalNameFormatter
                 }
             ]
         })
@@ -142,6 +154,11 @@
             })
             $remove.prop('disabled', true)
         })
+    }
+    //定义按钮事件
+    function excelImport(){
+        alert("success");
+
     }
 
     $(function () {
