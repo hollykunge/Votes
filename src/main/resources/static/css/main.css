@@ -80,3 +80,21 @@ a:hover, a:focus, a:active {
     border-radius: 4px;
     border: 1pt solid #d7d7d7 !important;
 }
+
+.form-signin {
+    width: 100%;
+    max-width: 420px;
+    padding: 15px;
+    margin: auto;
+}
+
+.form-label-group {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.form-label-group > input, .form-label-group > label {
+    height: 3.125rem;
+    padding: .75rem;
+}
+
