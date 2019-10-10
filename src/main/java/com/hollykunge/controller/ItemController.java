@@ -69,14 +69,6 @@ public class ItemController {
             Long voteId = item.getVote().getId();
             List<Item> items = itemService.findItemsByVote(item.getVote());
 
-//            List<Item> itemsTemp = new ArrayList<>();
-//
-//            for (Item item1 : items) {
-//                if (voteId.equals(item1.getVote().getId())) {
-//                    itemsTemp.add(item1);
-//                }
-//            }
-
             item.setTurnNum(items.size() + 1);
             itemService.save(item);
             return "redirect:/vote/" + voteId;
