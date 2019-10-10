@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface ItemService {
 
     Item save(Item item)throws Exception;
-    Optional<Item> findById(Long id);
+    Item findById(Long id);
     Item setItemStatus(Item item) throws Exception;
-    List<Item> findItemsByVote(Vote vote);
+//    List<Item> findItemsByVote(Vote vote);
 }

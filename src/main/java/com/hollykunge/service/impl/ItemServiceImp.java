@@ -33,12 +33,12 @@ public class ItemServiceImp implements ItemService {
             throw new BaseException("设置投票不能为空...");
         }
         List<Item> itemsTemp = itemRepository.findByVote(item.getVote());
-        item.setTurnNum(String.valueOf(itemsTemp.size()+1));
+        item.setTurnNum(itemsTemp.size()+1);
         return itemRepository.saveAndFlush(item);
     }
 
     @Override
-    public Optional<Item> findById(Long id) {
+    public Item findById(Long id) {
         return itemRepository.findById(id);
     }
     @Override

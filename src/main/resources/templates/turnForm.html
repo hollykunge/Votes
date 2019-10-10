@@ -62,11 +62,10 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <label th:if="${#fields.hasErrors('body')}" th:errors="*{body}"
-                                   class="alert alert-danger"></label>
+                            <!--<label th:if="${#fields.hasErrors('body')}" th:errors="*{body}"-->
+                                   <!--class="alert alert-danger"></label>-->
                             <label for="tips">注意事项</label>
-                            <textarea th:field="*{body}"
-                                      placeholder="Body" class="form-control" id="tips"/>
+                            <textarea th:field="*{body}" class="form-control" id="tips"/>
                             <input type="hidden" th:field="*{vote}"/>
                             <input type="hidden" th:field="*{user}"/>
                         </div>

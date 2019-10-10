@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 
 import javax.sql.DataSource;
 

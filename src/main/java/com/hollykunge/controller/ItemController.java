@@ -3,11 +3,13 @@ package com.hollykunge.controller;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSONObject;
 import com.hollykunge.config.ItemDownloadData;
+import com.hollykunge.config.ItemStatusConfig;
 import com.hollykunge.config.ItemUploadData;
 import com.hollykunge.config.UploadDataListener;
+import com.hollykunge.constants.VoteConstants;
 import com.hollykunge.model.Item;
-import com.hollykunge.model.Vote;
 import com.hollykunge.model.User;
+import com.hollykunge.model.Vote;
 import com.hollykunge.model.VoteItem;
 import com.hollykunge.service.ItemService;
 import com.hollykunge.service.VoteItemService;
@@ -27,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -38,6 +41,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Controller
 public class ItemController {
+    private final String LINK = ":";
 
     private final VoteService voteService;
     private final UserService userService;
@@ -64,13 +68,14 @@ public class ItemController {
                                 BindingResult bindingResult) throws Exception{
 
         if (bindingResult.hasErrors()) {
+            List<ObjectError> allErrors = bindingResult.getAllErrors();
+            allErrors.stream().forEach(error->{
+                log.error(error.getDefaultMessage());
+            });
             return "/turnForm";
 
         } else {
             Long voteId = item.getVote().getId();
-            List<Item> items = itemService.findItemsByVote(item.getVote());
-
-            item.setTurnNum(items.size() + 1);
             itemService.save(item);
             return "redirect:/vote/" + voteId;
         }
@@ -79,22 +84,32 @@ public class ItemController {
     /**
      * 获取投票轮编辑页
      *
-     * @param id
+     * @param voteId 投票id
+     * @param itemId 投票轮id
      * @param principal
      * @param model
      * @return
      */
-    @RequestMapping(value = "/voteVote/{id}", method = RequestMethod.GET)
-    public String voteVoteWithId(@PathVariable Long id,
+    @RequestMapping(value = "/voteVote/{voteId}/{itemId}", method = RequestMethod.GET)
+    public String voteVoteWithId(@PathVariable Long voteId,
+                                 @PathVariable Long itemId,
                                  Principal principal,
-                                 Model model) {
-
-        Optional<Item> itemByIdTemp = itemService.findById(id);
-        if(itemByIdTemp.isPresent()){
-            model.addAttribute("turn", itemByIdTemp.get());
+                                 Model model)throws Exception {
+        try{
+            Item item = itemService.findById(itemId);
+            //为添加
+            if(item == null){
+                item = new Item();
+                Optional<User> user = userService.findByUsername(principal.getName());
+                item.setUser(user.get());
+                Vote vote = new Vote();
+                vote.setId(voteId);
+                item.setVote(vote);
+            }
+            model.addAttribute("item", item);
             return "/turnForm";
-        }else {
-            return "/error";
+        }catch (Exception e){
+            throw e;
         }
 //        Optional<Vote> vote = voteService.findForId(id);
 //        if (vote.isPresent()) {
@@ -122,19 +137,19 @@ public class ItemController {
      */
     @RequestMapping(value = "/editItem/{id}", method = RequestMethod.GET)
     public String editItem(@PathVariable Long id,
-                           Model model) {
-        Optional<Item> item = itemService.findById(id);
-        if (item.isPresent()) {
-            Optional<List<VoteItem>> voteItems = voteItemService.findByVoteId(item.get().getVote());
-            model.addAttribute("item", item.get());
-            model.addAttribute("vote",item.get().getVote());
+                           Model model)throws Exception {
+        try {
+            Item item = itemService.findById(id);
+            Optional<List<VoteItem>> voteItems = voteItemService.findByVoteId(item.getVote());
+            model.addAttribute("item", item);
+            model.addAttribute("vote",item.getVote());
             model.addAttribute("voteItems", null);
             if(voteItems.get().size()>0){
                 model.addAttribute("voteItems", JSONObject.toJSONString(voteItems.get()));
             }
             return "/item";
-        } else {
-            return "/error";
+        }catch (Exception e){
+            throw e;
         }
     }
 
@@ -148,12 +163,12 @@ public class ItemController {
     @RequestMapping(value = "/stat/{id}", method = RequestMethod.GET)
     public String statItem(@PathVariable Long id,
                            Model model) {
-        Optional<Item> item = itemService.findById(id);
-        if (item.isPresent()) {
-            model.addAttribute("item", item.get());
+        try{
+            Item item = itemService.findById(id);
+            model.addAttribute("item", item);
             return "/stat";
-        } else {
-            return "/error";
+        }catch (Exception e){
+            throw e;
         }
     }
 
@@ -231,15 +246,28 @@ public class ItemController {
         itemService.setItemStatus(item);
         return "";
     }
+
+    /**
+     * 进入邀请码页面
+     * @param id
+     * @param model
+     * @param request
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/inviteCode/{id}", method = RequestMethod.GET)
     public String inviteCodeView(@PathVariable Long id,
-                                 Model model) throws Exception {
-        Optional<Item> itemTemp = itemService.findById(id);
-        if(itemTemp.isPresent()){
-            model.addAttribute("item",itemTemp.get());
+                                 Model model,HttpServletRequest request) throws Exception {
+        try{
+            Item itemTemp = itemService.findById(id);
+            model.addAttribute("item",itemTemp);
+            model.addAttribute("itemStatus",ItemStatusConfig.getEnumByValue(itemTemp.getStatus()).getName());
+            InetAddress address= InetAddress.getByName(request.getServerName());
+            String hostAddress = address.getHostAddress()+LINK+request.getServerPort();
+            model.addAttribute("address", VoteConstants.AGREEMENT_LETTER +hostAddress+VoteConstants.INVITECODE_RPC+id);
             return "/inviteCode";
-        }else{
-            return "/error";
+        }catch (Exception e){
+            throw e;
         }
     }
 }
