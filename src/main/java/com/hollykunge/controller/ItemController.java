@@ -13,21 +13,21 @@ import com.hollykunge.service.ItemService;
 import com.hollykunge.service.VoteItemService;
 import com.hollykunge.service.VoteService;
 import com.hollykunge.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 /**
  * @author lark
  */
+@Slf4j
 @Controller
 public class ItemController {
 
@@ -60,7 +61,7 @@ public class ItemController {
      */
     @RequestMapping(value = "/createTurn", method = RequestMethod.POST)
     public String createNewVote(@Valid Item item,
-                                BindingResult bindingResult) {
+                                BindingResult bindingResult) throws Exception{
 
         if (bindingResult.hasErrors()) {
             return "/turnForm";
@@ -87,21 +88,29 @@ public class ItemController {
     public String voteVoteWithId(@PathVariable Long id,
                                  Principal principal,
                                  Model model) {
-        Optional<Vote> vote = voteService.findForId(id);
-        if (vote.isPresent()) {
-            Optional<User> user = userService.findByUsername(principal.getName());
-            if (user.isPresent()) {
-                Item item = new Item();
-                item.setUser(user.get());
-                item.setVote(vote.get());
-                model.addAttribute("item", item);
-                return "/turnForm";
-            } else {
-                return "/error";
-            }
-        } else {
+
+        Optional<Item> itemByIdTemp = itemService.findById(id);
+        if(itemByIdTemp.isPresent()){
+            model.addAttribute("turn", itemByIdTemp.get());
+            return "/turnForm";
+        }else {
             return "/error";
         }
+//        Optional<Vote> vote = voteService.findForId(id);
+//        if (vote.isPresent()) {
+//            Optional<User> user = userService.findByUsername(principal.getName());
+//            if (user.isPresent()) {
+//                Item turn = new Item();
+//                turn.setUser(user.get());
+//                turn.setVote(vote.get());
+//                model.addAttribute("turn", turn);
+//                return "/turnForm";
+//            } else {
+//                return "/error";
+//            }
+//        } else {
+//            return "/error";
+//        }
     }
 
     /**
@@ -118,8 +127,11 @@ public class ItemController {
         if (item.isPresent()) {
             Optional<List<VoteItem>> voteItems = voteItemService.findByVoteId(item.get().getVote());
             model.addAttribute("item", item.get());
-            model.addAttribute("vote", item.get().getVote());
-            model.addAttribute("voteItems", voteItems);
+            model.addAttribute("vote",item.get().getVote());
+            model.addAttribute("voteItems", null);
+            if(voteItems.get().size()>0){
+                model.addAttribute("voteItems", JSONObject.toJSONString(voteItems.get()));
+            }
             return "/item";
         } else {
             return "/error";
@@ -154,8 +166,12 @@ public class ItemController {
      */
     @RequestMapping(value = "/editItem", method = RequestMethod.POST)
     public String editVoteWithId(@Valid Item item,
-                                 BindingResult bindingResult) {
+                                 BindingResult bindingResult) throws Exception{
         if (bindingResult.hasErrors()) {
+            List<ObjectError> allErrors = bindingResult.getAllErrors();
+            allErrors.stream().forEach(error->{
+                log.error(error.getDefaultMessage());
+            });
             return "/turnForm";
 
         } else {
@@ -164,7 +180,13 @@ public class ItemController {
         }
     }
 
-
+    /**
+     * 导入投票轮数据
+     * @param file
+     * @param request
+     * @return
+     * @throws IOException
+     */
     @RequestMapping(value = "/item/import", method = RequestMethod.POST)
     public String excelImport(MultipartFile file, HttpServletRequest request) throws IOException {
         try {
@@ -181,6 +203,12 @@ public class ItemController {
         }
     }
 
+    /**
+     * 导出模板
+     * @param response
+     * @return
+     * @throws IOException
+     */
     @GetMapping(value = "/item/export")
     @ResponseBody
     public String export(HttpServletResponse response) throws IOException {
@@ -192,20 +220,25 @@ public class ItemController {
     }
 
     /**
-     * 获取邀请码
-     *
-     * @param id
-     * @param model
+     * 设置投票轮状态
+     * todo:返回值没有定义，不清楚返回到哪个页面
+     * @param item
      * @return
+     * @throws Exception
      */
-    @RequestMapping(value = "/code", method = RequestMethod.GET)
-    public String editVoteWithId(@PathVariable Long id,
-                                 Model model) {
-        Optional<Item> item = itemService.findById(id);
-        if (item.isPresent()) {
-            model.addAttribute("code", item.get());
-            return "/stat";
-        } else {
+    @RequestMapping(value = "/setItemStatus", method = RequestMethod.PUT)
+    public String setItemStatus(@RequestParam Item item) throws Exception {
+        itemService.setItemStatus(item);
+        return "";
+    }
+    @RequestMapping(value = "/inviteCode/{id}", method = RequestMethod.GET)
+    public String inviteCodeView(@PathVariable Long id,
+                                 Model model) throws Exception {
+        Optional<Item> itemTemp = itemService.findById(id);
+        if(itemTemp.isPresent()){
+            model.addAttribute("item",itemTemp.get());
+            return "/inviteCode";
+        }else{
             return "/error";
         }
     }

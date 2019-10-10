@@ -45,11 +45,42 @@ public class Item {
 
     @Column(columnDefinition = "text COMMENT '投票内容'")
     private String content;
+    /**
+     * 规则范围（1否同2排序3打分）
+     */
+    @Column(name = "rules")
+    private String rules;
+    /**
+     * 1为同意 0为否决
+     */
+    @Column(name = "agreeRule")
+    private String agreeRule;
+    /**
+     * 否同最大范围
+     */
+    @Column(name = "agreeMax")
+    private String agreeMax;
+    /**
+     * 否同最小范围
+     */
+    @Column(name = "agreeMin")
+    private String agreeMin;
+    /**
+     * 说明
+     */
+    @Column(name = "description")
+    private String description;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "create_date", nullable = false, updatable = false)
     @CreationTimestamp
     private Date createDate;
+
+    /**
+     * 投票轮状态0为无效，1为保存，2为发起，3为结束
+     */
+    @Column(name = "status")
+    private String status;
 
     @ManyToOne
     @JoinColumn(name = "vote_id", referencedColumnName = "vote_id", nullable = false)
@@ -136,7 +167,6 @@ public class Item {
     public void setUser(User user) {
         this.user = user;
     }
-
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
     @NotNull

@@ -5,8 +5,8 @@ import lombok.Data;
 @Data
 public class ItemUploadData {
     private String name;
-    private String arrt1;
-    private String arrt2;
-    private String arrt3;
-    private String arrt4;
+    private String attr1;
+    private String attr2;
+    private String attr3;
+    private String attr4;
 }
