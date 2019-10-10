@@ -1,6 +1,7 @@
 package com.hollykunge.controller;
 
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.fastjson.JSONObject;
 import com.hollykunge.config.ItemDownloadData;
 import com.hollykunge.config.ItemUploadData;
 import com.hollykunge.config.UploadDataListener;
@@ -119,7 +120,7 @@ public class ItemController {
             Optional<List<VoteItem>> voteItems = voteItemService.findByVoteId(item.get().getVote());
             model.addAttribute("item", item.get());
             model.addAttribute("vote",item.get().getVote());
-            model.addAttribute("voteItems",voteItems);
+            model.addAttribute("voteItems", JSONObject.toJSONString(voteItems.get()));
             return "/item";
         } else {
             return "/error";
@@ -217,5 +218,15 @@ public class ItemController {
         itemService.setItemStatus(item);
         return "";
     }
-
+    @RequestMapping(value = "/inviteCode/{id}", method = RequestMethod.GET)
+    public String inviteCodeView(@PathVariable Long id,
+                                 Model model) throws Exception {
+        Optional<Item> itemTemp = itemService.findById(id);
+        if(itemTemp.isPresent()){
+            model.addAttribute("item",itemTemp.get());
+            return "/inviteCode";
+        }else{
+            return "/error";
+        }
+    }
 }
