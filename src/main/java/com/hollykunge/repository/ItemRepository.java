@@ -8,6 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
-    Optional<Item> findById(Long id);
+    Item findById(Long id);
     List<Item> findByVote(Vote vote);
 }

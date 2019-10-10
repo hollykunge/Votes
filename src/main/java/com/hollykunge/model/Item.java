@@ -1,12 +1,13 @@
 package com.hollykunge.model;
 
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
-
+@Data
 @Entity
 @Table(name = "item")
 public class Item {
@@ -17,7 +18,6 @@ public class Item {
     private Long id;
 
     @Column(name = "body", columnDefinition = "TEXT")
-    @NotEmpty(message = "请输入注意事项")
     private String body;
 
     public Integer getTurnNum() {

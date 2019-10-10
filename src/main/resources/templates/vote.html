@@ -29,7 +29,7 @@
             <!--添加投票轮按钮-->
             <!--如果有权限-->
             <div sec:authorize="isAuthenticated()" style="float: right">
-                <a th:href="@{'/voteVote/{id}'(id=${vote.id})}" class="col-md-2">
+                <a th:href="@{'/voteVote/{voteId}/{itemId}'(voteId=${vote.id},itemId=0)}" class="col-md-2">
                     <button type="button" class="btn btn-primary btn-sm" th:text="添加">添加
                     </button>
                 </a>
@@ -66,6 +66,9 @@
                         </a>
                         <a th:href="@{'/voteVote/{id}'(id=${vote.id})}">
                             <button type="button" class="btn btn-outline-dark btn-sm d-inline">结束</button>
+                        </a>
+                        <a th:href="@{'/inviteCode/{id}'(id=${vote.id})}">
+                            <button type="button" class="btn btn-outline-secondary btn-sm d-inline">邀请码</button>
                         </a>
 
                         <button type="button" class="btn btn-outline-secondary btn-sm d-inline"
