@@ -37,8 +37,14 @@
         </div>
         <div class="card-body">
             <table class="do-table" width='100%' border='0' cellspacing='0' cellpadding='0' align='center'>
+                <tr class="do-tr">
+                    <td class="do-td">轮数</td>
+                    <td class="do-td">创建时间</td>
+                    <td class="do-td">投票情况</td>
+                    <td class="do-td">操作</td>
+                </tr>
                 <tr class="do-tr" th:each="item : ${vote.items}">
-                    <td class="do-td"><strong th:text="${item.body}">Title</strong></td>
+                    <td class="do-td"><strong th:text="'第'+${item.turnNum}+'轮'">Title</strong></td>
                     <td class="do-td" th:text="${#dates.format(item.createDate, 'yyyy-MM-dd')}">--/--/--</td>
                     <td class="do-td" th:text="${item.memberNum}+'/'+${item.memberSize}">-/-</td>
 
@@ -61,11 +67,36 @@
                         <a th:href="@{'/voteVote/{id}'(id=${vote.id})}">
                             <button type="button" class="btn btn-outline-dark btn-sm d-inline">结束</button>
                         </a>
-                        <a th:href="@{'/voteVote/{id}'(id=${vote.id})}">
-                            <button type="button" class="btn btn-outline-secondary btn-sm d-inline">邀请码</button>
-                        </a>
+
+                        <button type="button" class="btn btn-outline-secondary btn-sm d-inline"
+                                th:onclick="|showModel(${item.id})|">邀请码
+                        </button>
+
                     </td>
+                    <!--邀请码-->
+                    <div class="modal fade" id="code" tabindex="-1" role="dialog" aria-labelledby="codeTitle"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="codeTitle" th:value="'第'+${item.turnNum}+'轮'">第几轮</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <input type="text" class="form-control" id="basic-url" disabled="disabled"
+                                           th:value="${item.code}"/>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                                    <button type="button" class="btn btn-primary">复制</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </tr>
+
             </table>
         </div>
     </div>
@@ -74,5 +105,28 @@
 
 <div th:replace="/fragments/footer :: footer"/>
 
+<script>
+    function showModel() {
+        // $.ajax({
+        //     url:"",
+        //     async:true,
+        //     data:JSON.stringify(allData),
+        //     type:"post",
+        //     dataType:"json",
+        //     contentType:"application/json;charset=utf-8",
+        //     success:function(data){
+        //         var b= JSON.stringify(data)
+        //         console.log(b);
+        //         alert(data);
+        //
+        //     },
+        //     error:function(){
+        //         alert("数据没有成功返回!")
+        //     }
+        // });
+        $('#code').modal('show');
+    }
+
+</script>
 </body>
 </html>
