@@ -130,7 +130,7 @@ public class ItemController {
                            Model model) {
         Optional<Item> item = itemService.findById(id);
         if (item.isPresent()) {
-            model.addAttribute("item", item);
+            model.addAttribute("item", item.get());
             return "/stat";
         } else {
             return "/error";
