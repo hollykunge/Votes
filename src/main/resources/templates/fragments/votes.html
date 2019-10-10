@@ -15,9 +15,8 @@
             <td class="do-td" th:text="${#dates.format(vote.createDate, 'yyyy-MM-dd')}">--/--/--</td>
             <td class="do-td" th:text="${vote.body}">-</td>
             <td class="do-td">
-                <a class="btn btn-primary btn-sm" th:href="@{'/vote/' + ${vote.id}}" role="button">进入</a>
-                <a class="btn btn-primary btn-sm" th:href="@{'/vote/' + ${vote.id}}" role="button">编辑</a>
-                <a class="btn btn-primary btn-sm" th:href="@{'/vote/' + ${vote.id}}" role="button">删除</a>
+                <a class="btn btn-outline-primary btn-sm" th:href="@{'/vote/' + ${vote.id}}" role="button">进入</a>
+                <a class="btn btn-outline-danger btn-sm" th:href="@{'/vote/' + ${vote.id}}" role="button">删除</a>
             </td>
         </tr>
     </table>
