@@ -12,11 +12,13 @@ import com.hollykunge.service.ItemService;
 import com.hollykunge.service.VoteItemService;
 import com.hollykunge.service.VoteService;
 import com.hollykunge.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,6 +33,7 @@ import java.util.Optional;
 /**
  * @author lark
  */
+@Slf4j
 @Controller
 public class ItemController {
 
@@ -144,6 +147,10 @@ public class ItemController {
     public String editVoteWithId(@Valid Item item,
                                  BindingResult bindingResult) throws Exception{
         if (bindingResult.hasErrors()) {
+            List<ObjectError> allErrors = bindingResult.getAllErrors();
+            allErrors.stream().forEach(error->{
+                log.error(error.getDefaultMessage());
+            });
             return "/turnForm";
 
         } else {

@@ -28,11 +28,6 @@ public class ItemServiceImp implements ItemService {
         if(StringUtils.isEmpty(item.getAgreeMax())||StringUtils.isEmpty(item.getAgreeMin())){
             throw new BaseException("规则最大范围最小范围不能为空...");
         }
-        if(Objects.equals(item.getAgreeMax(),item.getAgreeMin())){
-            item.setMemberSize(item.getAgreeMax());
-        }else{
-            item.setMemberSize(String.valueOf((Integer.parseInt(item.getAgreeMax())-Integer.parseInt(item.getAgreeMin()))));
-        }
         if(item.getVote() == null){
             throw new BaseException("设置投票不能为空...");
         }
