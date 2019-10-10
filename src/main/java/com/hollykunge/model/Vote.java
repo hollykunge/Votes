@@ -1,5 +1,6 @@
 package com.hollykunge.model;
 
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -9,6 +10,9 @@ import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Date;
 
+/**
+ * @author dd
+ */
 @Entity
 @Table(name = "vote")
 public class Vote {
@@ -35,9 +39,6 @@ public class Vote {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
     @NotNull
     private User user;
-
-    @OneToMany(mappedBy = "vote", cascade = CascadeType.REMOVE)
-    private Collection<Item> items;
 
     public Long getId() {
         return id;
@@ -67,8 +68,8 @@ public class Vote {
         return createDate;
     }
 
-    public void setCreateDate(Date date) {
-        this.createDate = date;
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 
     public User getUser() {
@@ -86,4 +87,7 @@ public class Vote {
     public void setItems(Collection<Item> items) {
         this.items = items;
     }
+
+    @OneToMany(mappedBy = "vote", cascade = CascadeType.REMOVE)
+    private Collection<Item> items;
 }
