@@ -1,7 +1,6 @@
 package com.hollykunge.controller;
 
 import com.alibaba.excel.EasyExcel;
-import com.alibaba.fastjson.JSONObject;
 import com.hollykunge.config.ItemDownloadData;
 import com.hollykunge.config.ItemUploadData;
 import com.hollykunge.config.UploadDataListener;
@@ -20,14 +19,12 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,7 +49,7 @@ public class ItemController {
 
     @RequestMapping(value = "/createTurn", method = RequestMethod.POST)
     public String createNewVote(@Valid Item item,
-                                BindingResult bindingResult) {
+                                BindingResult bindingResult) throws Exception{
 
         if (bindingResult.hasErrors()) {
             return "/turnForm";
@@ -109,7 +106,7 @@ public class ItemController {
 
     @RequestMapping(value = "/editItem", method = RequestMethod.POST)
     public String editVoteWithId(@Valid Item item,
-                                 BindingResult bindingResult) {
+                                 BindingResult bindingResult) throws Exception{
         if (bindingResult.hasErrors()) {
             return "/turnForm";
 

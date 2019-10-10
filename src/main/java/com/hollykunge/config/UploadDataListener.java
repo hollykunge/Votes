@@ -4,11 +4,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.hollykunge.model.Vote;
 import com.hollykunge.model.VoteItem;
 import com.hollykunge.service.VoteItemService;
+import com.hollykunge.util.ExceptionCommonUtil;
 import lombok.extern.slf4j.Slf4j;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.fastjson.JSON;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ public class UploadDataListener extends AnalysisEventListener<ItemUploadData> {
     /**
      * 每隔5条存储数据库，实际使用中可以3000条，然后清理list ，方便内存回收
      */
-    private static final int BATCH_COUNT = 5;
+    private static final int BATCH_COUNT = 100;
     List<ItemUploadData> list = new ArrayList<ItemUploadData>();
 
     @Override
@@ -65,8 +65,13 @@ public class UploadDataListener extends AnalysisEventListener<ItemUploadData> {
             //所在轮数为第一轮
             voteItem.setTurnNum("1");
             voteItem.setVote(vote);
-            voteItemService.add(voteItem);
+            try {
+                voteItemService.add(voteItem);
+                log.info("存储数据库成功！");
+            } catch (Exception e) {
+                log.error("存储数据库失败！");
+                log.error(ExceptionCommonUtil.getExceptionMessage(e));
+            }
         });
-        log.info("存储数据库成功！");
     }
 }

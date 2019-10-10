@@ -16,7 +16,7 @@ public interface VoteItemService {
      * 新增一个被投票项
      * @param voteItem
      */
-    void add(VoteItem voteItem);
+    void add(VoteItem voteItem) throws Exception;
 
     /**
      * 通过vote查询voteitem

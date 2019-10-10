@@ -9,6 +9,7 @@ import com.hollykunge.util.ExceptionCommonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +21,7 @@ import java.util.Optional;
  */
 @Service
 @Slf4j
+@Transactional(rollbackFor = Exception.class)
 public class VoteItemServiceImp implements VoteItemService {
     private final VoteItemRepository voteItemRepository;
 
@@ -29,7 +31,7 @@ public class VoteItemServiceImp implements VoteItemService {
     }
 
     @Override
-    public void add(VoteItem voteItem) {
+    public void add(VoteItem voteItem)throws Exception {
         try {
             voteItemRepository.saveAndFlush(voteItem);
         } catch (Exception e) {
