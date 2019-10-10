@@ -97,10 +97,10 @@ public class ItemController {
                            Model model) {
         Optional<Item> item = itemService.findById(id);
         if (item.isPresent()) {
-            Optional<VoteItem> voteItems = voteItemService.findByVoteId(item.get().getVote());
+            Optional<List<VoteItem>> voteItems = voteItemService.findByVoteId(item.get().getVote());
             model.addAttribute("item", item.get());
             model.addAttribute("vote",item.get().getVote());
-            model.addAttribute("voteItems",voteItems.get());
+            model.addAttribute("voteItems",voteItems);
             return "/item";
         } else {
             return "/error";

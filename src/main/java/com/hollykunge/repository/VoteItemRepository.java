@@ -5,6 +5,7 @@ import com.hollykunge.model.Vote;
 import com.hollykunge.model.VoteItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -13,5 +14,5 @@ import java.util.Optional;
  * @since: Create in 10:51 2019/10/9
  */
 public interface VoteItemRepository extends JpaRepository<VoteItem, Long> {
-    Optional<VoteItem> findByVote(Vote vote);
+    Optional<List<VoteItem>> findByVote(Vote vote);
 }
