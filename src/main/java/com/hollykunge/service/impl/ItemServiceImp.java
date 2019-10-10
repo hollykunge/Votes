@@ -40,4 +40,27 @@ public class ItemServiceImp implements ItemService {
     public Optional<Item> findById(Long id) {
         return itemRepository.findById(id);
     }
+    @Override
+    public Item setItemStatus(Item item) throws Exception{
+        Item result = null;
+        if(jurageItem(item)){
+            Item exitItem = itemRepository.findOne(item.getId());
+            exitItem.setStatus(item.getStatus());
+            result = itemRepository.saveAndFlush(exitItem);
+        }
+        return result;
+    }
+
+    private boolean jurageItem(Item item){
+        if(item == null){
+            throw new BaseException("参数不能为空...");
+        }
+        if(StringUtils.isEmpty(item.getId())){
+            throw new BaseException("id不能为空...");
+        }
+        if(StringUtils.isEmpty(item.getStatus())){
+            throw new BaseException("状态不能为空...");
+        }
+        return true;
+    }
 }

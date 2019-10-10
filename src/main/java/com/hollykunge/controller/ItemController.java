@@ -81,21 +81,28 @@ public class ItemController {
     public String voteVoteWithId(@PathVariable Long id,
                                  Principal principal,
                                  Model model) {
-        Optional<Vote> vote = voteService.findForId(id);
-        if (vote.isPresent()) {
-            Optional<User> user = userService.findByUsername(principal.getName());
-            if (user.isPresent()) {
-                Item turn = new Item();
-                turn.setUser(user.get());
-                turn.setVote(vote.get());
-                model.addAttribute("turn", turn);
-                return "/turnForm";
-            } else {
-                return "/error";
-            }
-        } else {
+        Optional<Item> itemByIdTemp = itemService.findById(id);
+        if(itemByIdTemp.isPresent()){
+            model.addAttribute("turn", itemByIdTemp.get());
+            return "/turnForm";
+        }else {
             return "/error";
         }
+//        Optional<Vote> vote = voteService.findForId(id);
+//        if (vote.isPresent()) {
+//            Optional<User> user = userService.findByUsername(principal.getName());
+//            if (user.isPresent()) {
+//                Item turn = new Item();
+//                turn.setUser(user.get());
+//                turn.setVote(vote.get());
+//                model.addAttribute("turn", turn);
+//                return "/turnForm";
+//            } else {
+//                return "/error";
+//            }
+//        } else {
+//            return "/error";
+//        }
     }
 
     /**
@@ -159,7 +166,13 @@ public class ItemController {
         }
     }
 
-
+    /**
+     * 导入投票轮数据
+     * @param file
+     * @param request
+     * @return
+     * @throws IOException
+     */
     @RequestMapping(value = "/item/import", method = RequestMethod.POST)
     public String excelImport(MultipartFile file, HttpServletRequest request) throws IOException {
         try {
@@ -176,6 +189,12 @@ public class ItemController {
         }
     }
 
+    /**
+     * 导出模板
+     * @param response
+     * @return
+     * @throws IOException
+     */
     @GetMapping(value = "/item/export")
     @ResponseBody
     public String export(HttpServletResponse response) throws IOException {
@@ -184,6 +203,19 @@ public class ItemController {
         response.setHeader("Content-disposition", "attachment;filename=exportFile.xlsx");
         EasyExcel.write(response.getOutputStream(), ItemDownloadData.class).sheet("模板").doWrite(null);
         return "success";
+    }
+
+    /**
+     * 设置投票轮状态
+     * todo:返回值没有定义，不清楚返回到哪个页面
+     * @param item
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/setItemStatus", method = RequestMethod.PUT)
+    public String setItemStatus(@RequestParam Item item) throws Exception {
+        itemService.setItemStatus(item);
+        return "";
     }
 
 }
