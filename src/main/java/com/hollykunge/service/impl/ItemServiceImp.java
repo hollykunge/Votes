@@ -2,6 +2,7 @@ package com.hollykunge.service.impl;
 
 import com.hollykunge.exception.BaseException;
 import com.hollykunge.model.Item;
+import com.hollykunge.model.Vote;
 import com.hollykunge.repository.ItemRepository;
 import com.hollykunge.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
