@@ -30,6 +30,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author lark
@@ -43,7 +44,7 @@ public class ItemController {
     private final VoteItemService voteItemService;
 
     @Autowired
-    public ItemController(VoteService voteService, UserService userService, ItemService itemService,VoteItemService voteItemService) {
+    public ItemController(VoteService voteService, UserService userService, ItemService itemService, VoteItemService voteItemService) {
         this.voteService = voteService;
         this.userService = userService;
         this.itemService = itemService;
@@ -52,6 +53,7 @@ public class ItemController {
 
     /**
      * 创建投票轮
+     *
      * @param item
      * @param bindingResult
      * @return
@@ -64,8 +66,20 @@ public class ItemController {
             return "/turnForm";
 
         } else {
+            Long voteId = item.getVote().getId();
+            List<Item> items = itemService.findItemsByVote(item.getVote());
+
+//            List<Item> itemsTemp = new ArrayList<>();
+//
+//            for (Item item1 : items) {
+//                if (voteId.equals(item1.getVote().getId())) {
+//                    itemsTemp.add(item1);
+//                }
+//            }
+
+            item.setTurnNum(items.size() + 1);
             itemService.save(item);
-            return "redirect:/vote/" + item.getVote().getId();
+            return "redirect:/vote/" + voteId;
         }
     }
 
@@ -85,10 +99,10 @@ public class ItemController {
         if (vote.isPresent()) {
             Optional<User> user = userService.findByUsername(principal.getName());
             if (user.isPresent()) {
-                Item turn = new Item();
-                turn.setUser(user.get());
-                turn.setVote(vote.get());
-                model.addAttribute("turn", turn);
+                Item item = new Item();
+                item.setUser(user.get());
+                item.setVote(vote.get());
+                model.addAttribute("item", item);
                 return "/turnForm";
             } else {
                 return "/error";
@@ -100,6 +114,7 @@ public class ItemController {
 
     /**
      * 获取投票项页
+     *
      * @param id
      * @param model
      * @return
@@ -111,8 +126,8 @@ public class ItemController {
         if (item.isPresent()) {
             Optional<List<VoteItem>> voteItems = voteItemService.findByVoteId(item.get().getVote());
             model.addAttribute("item", item.get());
-            model.addAttribute("vote",item.get().getVote());
-            model.addAttribute("voteItems",voteItems);
+            model.addAttribute("vote", item.get().getVote());
+            model.addAttribute("voteItems", voteItems);
             return "/item";
         } else {
             return "/error";
@@ -121,6 +136,7 @@ public class ItemController {
 
     /**
      * 投票轮结果统计
+     *
      * @param id
      * @param model
      * @return
@@ -139,6 +155,7 @@ public class ItemController {
 
     /**
      * 投票项编辑保存
+     *
      * @param item
      * @param bindingResult
      * @return
@@ -160,13 +177,13 @@ public class ItemController {
     public String excelImport(MultipartFile file, HttpServletRequest request) throws IOException {
         try {
             String voteIdTemp = request.getHeader("voteId");
-            if(StringUtils.isEmpty(voteIdTemp)){
+            if (StringUtils.isEmpty(voteIdTemp)) {
                 throw new RuntimeException("vote不能为空...");
             }
             Vote vote = new Vote();
             vote.setId(Long.parseLong(voteIdTemp));
-            EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadDataListener(vote,voteItemService)).sheet().doRead();
-            return "redirect:/editItem/"+voteIdTemp;
+            EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadDataListener(vote, voteItemService)).sheet().doRead();
+            return "redirect:/editItem/" + voteIdTemp;
         } catch (Exception e) {
             return "redirect:/error";
         }
@@ -182,4 +199,22 @@ public class ItemController {
         return "success";
     }
 
+    /**
+     * 获取邀请码
+     *
+     * @param id
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/code", method = RequestMethod.GET)
+    public String editVoteWithId(@PathVariable Long id,
+                                 Model model) {
+        Optional<Item> item = itemService.findById(id);
+        if (item.isPresent()) {
+            model.addAttribute("code", item.get());
+            return "/stat";
+        } else {
+            return "/error";
+        }
+    }
 }

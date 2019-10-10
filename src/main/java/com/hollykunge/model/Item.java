@@ -1,6 +1,5 @@
 package com.hollykunge.model;
 
-import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -21,8 +20,16 @@ public class Item {
     @NotEmpty(message = "请输入注意事项")
     private String body;
 
-    @Column(name = "turnNum")
-    private String turnNum;
+    public Integer getTurnNum() {
+        return turnNum;
+    }
+
+    public void setTurnNum(Integer turnNum) {
+        this.turnNum = turnNum;
+    }
+
+    @Column(name = "turnNum", columnDefinition = "int(6) COMMENT '投票第几轮'")
+    private Integer turnNum;
 
     @Column(columnDefinition = "int(6) COMMENT '预计投票人数'")
     private String memberSize;
@@ -65,13 +72,6 @@ public class Item {
         this.body = body;
     }
 
-    public String getTurnNum() {
-        return turnNum;
-    }
-
-    public void setTurnNum(String turnNum) {
-        this.turnNum = turnNum;
-    }
 
     public String getMemberSize() {
         return memberSize;
