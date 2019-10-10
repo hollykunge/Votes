@@ -120,7 +120,10 @@ public class ItemController {
             Optional<List<VoteItem>> voteItems = voteItemService.findByVoteId(item.get().getVote());
             model.addAttribute("item", item.get());
             model.addAttribute("vote",item.get().getVote());
-            model.addAttribute("voteItems", JSONObject.toJSONString(voteItems.get()));
+            model.addAttribute("voteItems", null);
+            if(voteItems.get().size()>0){
+                model.addAttribute("voteItems", JSONObject.toJSONString(voteItems.get()));
+            }
             return "/item";
         } else {
             return "/error";
