@@ -3,11 +3,12 @@ package com.hollykunge.controller;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSONObject;
 import com.hollykunge.config.ItemDownloadData;
+import com.hollykunge.config.ItemStatusConfig;
 import com.hollykunge.config.ItemUploadData;
 import com.hollykunge.config.UploadDataListener;
+import com.hollykunge.constants.VoteConstants;
 import com.hollykunge.model.Item;
 import com.hollykunge.model.Vote;
-import com.hollykunge.model.User;
 import com.hollykunge.model.VoteItem;
 import com.hollykunge.service.ItemService;
 import com.hollykunge.service.VoteItemService;
@@ -27,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +39,7 @@ import java.util.Optional;
 @Slf4j
 @Controller
 public class ItemController {
+    private final String LINK = ":";
 
     private final VoteService voteService;
     private final UserService userService;
@@ -221,12 +224,25 @@ public class ItemController {
         itemService.setItemStatus(item);
         return "";
     }
+
+    /**
+     * 进入邀请码页面
+     * @param id
+     * @param model
+     * @param request
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/inviteCode/{id}", method = RequestMethod.GET)
     public String inviteCodeView(@PathVariable Long id,
-                                 Model model) throws Exception {
+                                 Model model,HttpServletRequest request) throws Exception {
         Optional<Item> itemTemp = itemService.findById(id);
         if(itemTemp.isPresent()){
             model.addAttribute("item",itemTemp.get());
+            model.addAttribute("itemStatus",ItemStatusConfig.getEnumByValue(itemTemp.get().getStatus()).getName());
+            InetAddress address= InetAddress.getByName(request.getServerName());
+            String hostAddress = address.getHostAddress()+LINK+request.getServerPort();
+            model.addAttribute("address", VoteConstants.AGREEMENT_LETTER +hostAddress+VoteConstants.INVITECODE_RPC+id);
             return "/inviteCode";
         }else{
             return "/error";
