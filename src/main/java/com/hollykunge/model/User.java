@@ -1,12 +1,16 @@
 package com.hollykunge.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import java.util.Collection;
 
+/**
+ * @author dd
+ */
 @Entity
 @Table(name = "user")
 public class User {
@@ -33,9 +37,6 @@ public class User {
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Collection<Role> roles;
-
-    @OneToMany(mappedBy = "user")
-    private Collection<Vote> votes;
 
     public Long getId() {
         return id;
@@ -84,4 +85,7 @@ public class User {
     public void setVotes(Collection<Vote> votes) {
         this.votes = votes;
     }
+
+    @OneToMany(mappedBy = "user")
+    private Collection<Vote> votes;
 }

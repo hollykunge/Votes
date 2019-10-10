@@ -50,7 +50,7 @@ public class TurnController {
         }
     }
 
-    @RequestMapping(value = "/newVote", method = RequestMethod.POST)
+    @RequestMapping(value = "/saveVote", method = RequestMethod.POST)
     public String createNewVote(@Valid Vote vote,
                                 BindingResult bindingResult) {
 
@@ -73,7 +73,7 @@ public class TurnController {
             Vote vote = optionalVote.get();
 
             if (isPrincipalOwnerOfVote(principal, vote)) {
-                model.addAttribute("votes", vote);
+                model.addAttribute("vote", vote);
                 return "/voteForm";
             } else {
                 return "/403";

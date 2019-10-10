@@ -47,6 +47,12 @@ public class ItemController {
         this.voteItemService = voteItemService;
     }
 
+    /**
+     * 创建投票轮
+     * @param item
+     * @param bindingResult
+     * @return
+     */
     @RequestMapping(value = "/createTurn", method = RequestMethod.POST)
     public String createNewVote(@Valid Item item,
                                 BindingResult bindingResult) throws Exception{
@@ -61,7 +67,7 @@ public class ItemController {
     }
 
     /**
-     * 投票轮数发布
+     * 获取投票轮编辑页
      *
      * @param id
      * @param principal
@@ -89,6 +95,12 @@ public class ItemController {
         }
     }
 
+    /**
+     * 获取投票项页
+     * @param id
+     * @param model
+     * @return
+     */
     @RequestMapping(value = "/editItem/{id}", method = RequestMethod.GET)
     public String editItem(@PathVariable Long id,
                            Model model) {
@@ -104,6 +116,30 @@ public class ItemController {
         }
     }
 
+    /**
+     * 投票轮结果统计
+     * @param id
+     * @param model
+     * @return
+     */
+    @RequestMapping(value = "/stat/{id}", method = RequestMethod.GET)
+    public String statItem(@PathVariable Long id,
+                           Model model) {
+        Optional<Item> item = itemService.findById(id);
+        if (item.isPresent()) {
+            model.addAttribute("item", item.get());
+            return "/stat";
+        } else {
+            return "/error";
+        }
+    }
+
+    /**
+     * 投票项编辑保存
+     * @param item
+     * @param bindingResult
+     * @return
+     */
     @RequestMapping(value = "/editItem", method = RequestMethod.POST)
     public String editVoteWithId(@Valid Item item,
                                  BindingResult bindingResult) throws Exception{

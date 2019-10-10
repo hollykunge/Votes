@@ -11,60 +11,48 @@
 <div th:replace="/fragments/header :: header"/>
 
 <div class="container">
-
-    <!--Show this info message only if posted successfully-->
     <div class="alert alert-info" th:if="${successMessage}" th:utext="${successMessage}"></div>
-
-    <!--New Post Form-->
-    <div class="row" style="margin-top:20px">
+    <div class="row">
         <div class="col-md-12">
-            <form autocomplete="off" action="#" th:action="@{/newVote}"
-                  th:object="${vote}" method="post" class="form-horizontal"
+            <form class="form-signin" autocomplete="off" action="#" th:action="@{/saveVote}"
+                  th:object="${vote}" method="post"
                   role="form">
+                <h5 class="text-center">编辑投票信息</h5>
 
-                <h2 class="text-center">创建新的投票</h2>
-
-                <div class="form-group">
+                <div class="form-label-group">
                     <label th:if="${#fields.hasErrors('title')}" th:errors="*{title}"
                            class="alert alert-danger"></label>
-                    <input type="text" th:field="*{title}" placeholder="名称"
+                    <input type="text" th:field="*{title}" placeholder="名称" autofocus="autofocus"
+                           th:value="${vote.title}"
                            class="form-control input-lg"/>
                 </div>
 
-                <div class="form-group">
+                <div class="form-label-group">
                     <label th:if="${#fields.hasErrors('body')}" th:errors="*{body}"
                            class="alert alert-danger"></label>
                     <textarea th:field="*{body}" placeholder="描述"
-                              class="form-control input-lg"/>
+                              class="form-control input-lg" th:value="${vote.body}"/>
                 </div>
 
                 <input type="hidden" th:field="*{user}"/>
                 <input type="hidden" th:field="*{id}"/>
 
-                <div class="form-group">
-                    <input type="submit" class="btn btn-primary btn-block" value="创建"/>
-                </div>
-
+                <input type="submit" class="btn btn-primary btn-block" value="保存"/>
             </form>
+            <div class="col-md-5" th:if="${vote.id}" style="marginTop: 8px;width: 100%;max-width: 420px;margin: auto;">
+                <form action="#" th:action="@{'/vote/{id}'(id=${vote.id})}" th:method="delete"
+                      class="form-horizontal">
+                    <div class="form-group">
+                        <input type="hidden" name="_method" value="delete"/>
+                        <button type="submit" class="btn btn-danger btn-block" th:text="删除">删除</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
-    <!--Delete Button-->
-    <!--Dont show delete button if the post is brand new-->
-    <div class="row" th:if="${vote.id}">
-        <div class="col-md-6 col-md-offset-3">
-            <form action="#" th:action="@{'/vote/{id}'(id=${vote.id})}" th:method="delete"
-                  class="form-horizontal">
-                <div class="form-group">
-                    <input type="hidden" name="_method" value="delete"/>
-                    <button type="submit" class="btn btn-danger btn-block" th:text="Delete">Delete</button>
-                </div>
-            </form>
-        </div>
-    </div>
+
 </div>
-
-<!-- /.container -->
 
 <div th:replace="/fragments/footer :: footer"/>
 

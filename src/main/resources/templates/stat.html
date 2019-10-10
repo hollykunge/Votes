@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>投票单轮统计</title>
+    <div th:replace="/fragments/header :: header-css"/>
+</head>
+<body class="bg-light">
+<div th:replace="/fragments/header :: header"/>
+<div class="container">
+    <div class="card bg-light mb-3">
+        <div class="card-header" th:text="'第'+${item.turnNum}+'轮'">第几轮</div>
+        <div class="card-body">
+            <h5 class="card-title">Light card title</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

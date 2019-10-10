@@ -8,7 +8,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
-@Data
 @Entity
 @Table(name = "item")
 public class Item {
@@ -74,6 +73,94 @@ public class Item {
     @JoinColumn(name = "vote_id", referencedColumnName = "vote_id", nullable = false)
     @NotNull
     private Vote vote;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public String getTurnNum() {
+        return turnNum;
+    }
+
+    public void setTurnNum(String turnNum) {
+        this.turnNum = turnNum;
+    }
+
+    public String getMemberSize() {
+        return memberSize;
+    }
+
+    public void setMemberSize(String memberSize) {
+        this.memberSize = memberSize;
+    }
+
+    public String getMemberNum() {
+        return memberNum;
+    }
+
+    public void setMemberNum(String memberNum) {
+        this.memberNum = memberNum;
+    }
+
+    public String getPreviousId() {
+        return previousId;
+    }
+
+    public void setPreviousId(String previousId) {
+        this.previousId = previousId;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    public Vote getVote() {
+        return vote;
+    }
+
+    public void setVote(Vote vote) {
+        this.vote = vote;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)

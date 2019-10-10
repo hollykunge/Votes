@@ -14,7 +14,6 @@ import java.util.Date;
  * @author zhhongyu
  * @since 2019-10-9
  */
-@Data
 @Entity
 @Table(name = "vote_item")
 public class VoteItem {
@@ -44,6 +43,79 @@ public class VoteItem {
     @JoinColumn(name = "vote_id", referencedColumnName = "vote_id", nullable = false)
     @NotNull
     private Vote vote;
+
+    public Long getVoteItemId() {
+        return voteItemId;
+    }
+
+    public void setVoteItemId(Long voteItemId) {
+        this.voteItemId = voteItemId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getTurnNum() {
+        return turnNum;
+    }
+
+    public void setTurnNum(String turnNum) {
+        this.turnNum = turnNum;
+    }
+
+    public String getIsTrunNext() {
+        return isTrunNext;
+    }
+
+    public void setIsTrunNext(String isTrunNext) {
+        this.isTrunNext = isTrunNext;
+    }
+
+    public Vote getVote() {
+        return vote;
+    }
+
+    public void setVote(Vote vote) {
+        this.vote = vote;
+    }
+
+    public String getAttr1() {
+        return attr1;
+    }
+
+    public void setAttr1(String attr1) {
+        this.attr1 = attr1;
+    }
+
+    public String getAttr2() {
+        return attr2;
+    }
+
+    public void setAttr2(String attr2) {
+        this.attr2 = attr2;
+    }
+
+    public String getAttr3() {
+        return attr3;
+    }
+
+    public void setAttr3(String attr3) {
+        this.attr3 = attr3;
+    }
+
+    public String getAttr4() {
+        return attr4;
+    }
+
+    public void setAttr4(String attr4) {
+        this.attr4 = attr4;
+    }
+
     /**
      * 扩展字段1
      */

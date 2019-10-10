@@ -13,33 +13,22 @@
     <!--如果注册成功显示这个-->
     <div class="alert alert-info" th:if="${successMessage}" th:utext="${successMessage}"></div>
 
-    <div class="row" style="margin-top:20px">
-        <div class="col-md-12">
-            <form autocomplete="off" action="#" th:action="@{/registration}"
-                  th:object="${user}" method="post" role="form">
-                <div class="form-group">
-                    <label th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
-                           class="alert alert-danger"></label>
-                    <input type="password" th:field="*{password}" placeholder="Password"
-                           class="form-control input-lg"/>
-                </div>
-
-                <div class="form-group">
-                    <label th:if="${#fields.hasErrors('username')}" th:errors="*{username}"
-                           class="alert alert-danger"></label>
-                    <input type="text" th:field="*{username}" placeholder="Username"
-                           class="form-control input-lg"/>
-                </div>
-
-                <div class="row">
-                    <div class="col-sm-3" style="float: none; margin: 0 auto;">
-                        <input type="submit" class="btn btn-primary btn-block" value="注册"/>
-                    </div>
-                </div>
-
-            </form>
+    <form class="form-signin" autocomplete="off" action="#" th:action="@{/registration}"
+          th:object="${user}" method="post" role="form">
+        <div class="form-label-group">
+            <label th:if="${#fields.hasErrors('username')}" th:errors="*{username}"
+                   class="alert alert-danger"></label>
+            <input type="text" th:field="*{username}" placeholder="用户名"
+                   class="form-control"/>
         </div>
-    </div>
+        <div class="form-label-group">
+            <label th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
+                   class="alert alert-danger"></label>
+            <input type="password" th:field="*{password}" placeholder="密码"
+                   class="form-control"/>
+        </div>
+        <input type="submit" class="btn btn-lg btn-primary btn-block" value="注册"/>
+    </form>
 </div>
 
 <div th:replace="/fragments/footer :: footer"/>
