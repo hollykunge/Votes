@@ -77,6 +77,8 @@ public class ItemController {
             Integer.parseInt(item.getAgreeMin());
             Integer.parseInt(item.getAgreeMax());
             Integer.parseInt(item.getMemberSize());
+            Integer.parseInt(item.getMaxScore());
+            Integer.parseInt(item.getMinScore());
         }catch (NumberFormatException e){
              error(bindingResult,"memberSize","error.memberSize","请输入数值字段");
              return frashItemView(item);
