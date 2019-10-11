@@ -40,7 +40,7 @@ public class Item {
     @Column(columnDefinition = "varchar(11) COMMENT '上一轮id'")
     private String previousId;
 
-    @Column(columnDefinition = "varchar(11) COMMENT '邀请码'")
+    @Column(columnDefinition = "varchar(32) COMMENT '邀请码'")
     private String code;
 
     @Column(columnDefinition = "text COMMENT '投票内容'")

@@ -67,9 +67,6 @@
                         <a th:href="@{'/voteVote/{id}'(id=${vote.id})}">
                             <button type="button" class="btn btn-outline-dark btn-sm d-inline">结束</button>
                         </a>
-                        <a th:href="@{'/inviteCode/{id}'(id=${vote.id})}">
-                            <button type="button" class="btn btn-outline-secondary btn-sm d-inline">邀请码</button>
-                        </a>
 
                         <button type="button" class="btn btn-outline-secondary btn-sm d-inline"
                                 th:onclick="|showModel(${item.id})|">邀请码
@@ -82,14 +79,13 @@
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="codeTitle" th:value="'第'+${item.turnNum}+'轮'">第几轮</h5>
+                                    <h5 class="modal-title" id="codeTitle" th:text="'第'+${item.turnNum}+'轮'"></h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <input type="text" class="form-control" id="basic-url" disabled="disabled"
-                                           th:value="${item.code}"/>
+                                    <span th:text="${address}"></span><span th:text="${item.id}"></span><span>/</span><span th:text="${item.code}"></span>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
