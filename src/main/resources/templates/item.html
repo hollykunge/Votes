@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
+<link rel="stylesheet" th:href="@{/css/main.css}"
+              href="../../css/main.css"/>
     <div th:replace="/fragments/header :: header-css"/>
 </head>
 <body class="bg-light">
@@ -35,7 +37,8 @@
 </div>
 
 <div th:replace="/fragments/footer :: footer"/>
-<script>
+<script th:inline="javascript">
+    let data = JSON.parse([[${voteItems}]])
     let $table = $('#table')
     let $remove = $('#remove')
     let selections = []
@@ -90,10 +93,46 @@
         $table.bootstrapTable('destroy').bootstrapTable({
             height: 550,
             locale: $('#locale').val(),
+            striped: true, // 设置为 true 会有隔行变色效果
+            undefinedText: "暂无数据", //当数据为 undefined 时显示的字符
+            detailView: true, // 显示详细视图表
+            detailViewIcon: true, // 显示详细视图列
+            detailViewByClick: true, // 单击单元格时切换详细视图
+            detailFormatter: function (index, row, element) { // 详细信息视图内容
+                return [
+                  '<div>',
+                  '<h4>详情内容</h4>',
+                    '<div>',
+                    '序号: ' + row.id,
+                    '</div>',
+                    '<div>',
+                    '名称: ' + row.name,
+                    '</div>',
+                    '<div>',
+                    '预留1: ' + row.arrt1,
+                    '</div>',
+                    '<div>',
+                    '预留1: ' + row.arrt2,
+                    '</div>',
+                    '<div>',
+                    '预留1: ' + row.arrt3,
+                    '</div>',
+                    '<div>',
+                    '预留1: ' + row.arrt4,
+                    '</div>',
+                  '</div>',
+                ].join('')
+            },
+            detailFilter: function(index, row){ // 是否启用该行以进行扩展
+                // if(index % 2 === 0) {
+                //   return false
+                // }
+                return true
+            },
+            rowclick:function(){},
             columns: [
                 {
                     field: 'state',
-                    checkbox: true,
                     align: 'center',
                     valign: 'middle'
                 }, {
@@ -101,41 +140,42 @@
                     field: 'id',
                     align: 'center',
                     valign: 'middle',
-                    sortable: true,
                     footerFormatter: totalTextFormatter
                 },
                 {
                     field: 'name',
-                    title: '名称',
-                    sortable: true,
+                    title: '姓名',
                     footerFormatter: totalNameFormatter,
                     align: 'center'
                 }, {
                     field: 'arrt1',
-                    title: '预留1',
-                    sortable: true,
+                    title: '性别',
                     align: 'center',
                     footerFormatter: totalNameFormatter
                 }, {
                     field: 'arrt2',
-                    title: '预留2',
-                    sortable: true,
+                    title: '部门',
                     align: 'center',
                     footerFormatter: totalNameFormatter
                 },{
                     field: 'arrt3',
-                    title: '预留3',
-                    sortable: true,
+                    title: '职称',
+                    
                     align: 'center',
                     footerFormatter: totalNameFormatter
                 },{
                     field: 'arrt4',
-                    title: '预留4',
-                    sortable: true,
+                    title: '年龄',
+                    align: 'center',
+                    footerFormatter: totalNameFormatter
+                },{
+                    field: 'arrt4',
+                    title: '票数',
                     align: 'center',
                     footerFormatter: totalNameFormatter
                 }
-            ]
+            ],
+            data:data
         })
         $table.on('check.bs.table uncheck.bs.table ' +
             'check-all.bs.table uncheck-all.bs.table',
