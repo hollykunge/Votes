@@ -49,11 +49,13 @@ public class Item {
      * 规则范围（1否同2排序3打分）
      */
     @Column(name = "rules")
+    @NotEmpty(message = "必填项不能为空")
     private String rules;
     /**
      * 1为同意 0为否决
      */
     @Column(name = "agreeRule")
+    @NotEmpty(message = "必填项不能为空")
     private String agreeRule;
     /**
      * 否同最大范围
