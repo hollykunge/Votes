@@ -6,18 +6,20 @@
 <body class="bg-light">
 <div th:replace="/fragments/header :: header"/>
 <div class="panel panel-primary"></div>
-<div class="row">
+<div class="row" th:if="${item.status}!=2">
     <div class="col-md-4"></div>
     <div class="col-md-4">
         <div class="jumbotron">
-            <h1 th:text="${item.body}"></h1>
-            <h1 th:if="${item.status}!=2">
+            <h1>
                 <span>该轮次投票状态为：</span><br/>
                 <span th:text="${itemStatus}"></span>
             </h1>
         </div>
     </div>
     <div class="col-md-4"></div>
+</div>
+<div class="row" th:if="${item.status}==2">
+    投票项列表
 </div>
 <div th:replace="/fragments/footer :: footer"/>
 </body>
