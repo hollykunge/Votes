@@ -74,13 +74,24 @@ public class ItemController {
             view+=item.getId();
         }
         try{
-            Integer.parseInt(item.getAgreeMin());
-            Integer.parseInt(item.getAgreeMax());
-            Integer.parseInt(item.getMemberSize());
-            Integer.parseInt(item.getMaxScore());
-            Integer.parseInt(item.getMinScore());
+            if(!StringUtils.isEmpty(item.getAgreeMin())){
+                Integer.parseInt(item.getAgreeMin());
+            }
+            if(!StringUtils.isEmpty(item.getAgreeMax())){
+                Integer.parseInt(item.getAgreeMax());
+            }
+            if(!StringUtils.isEmpty(item.getMemberSize())){
+                Integer.parseInt(item.getMemberSize());
+            }
+            if(!StringUtils.isEmpty(item.getMaxScore())){
+                Integer.parseInt(item.getMaxScore());
+            }
+            if(!StringUtils.isEmpty(item.getMinScore())){
+                Integer.parseInt(item.getMinScore());
+            }
         }catch (NumberFormatException e){
-             error(bindingResult,"memberSize","error.memberSize","请输入数值字段");
+             error(bindingResult,"memberSize","error.memberSize","限制投票人数,范围（最大）, \n" +
+                     "范围（最小）,打分项请输入数值字段");
              return frashItemView(item);
         }
         if (bindingResult.hasErrors()) {
@@ -104,6 +115,7 @@ public class ItemController {
         bindingResult
                 .rejectValue(s, s1, s2);
     }
+
 
     /**
      * 获取投票轮编辑页
