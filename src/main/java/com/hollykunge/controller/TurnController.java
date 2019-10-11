@@ -1,5 +1,6 @@
 package com.hollykunge.controller;
 
+import com.hollykunge.constants.VoteConstants;
 import com.hollykunge.model.Vote;
 import com.hollykunge.model.User;
 import com.hollykunge.service.VoteService;
@@ -12,7 +13,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.security.Principal;
 import java.util.Optional;
 
@@ -21,6 +25,7 @@ import java.util.Optional;
  */
 @Controller
 public class TurnController {
+    private final String LINK = ":";
 
     private final VoteService voteService;
     private final UserService userService;
@@ -87,7 +92,8 @@ public class TurnController {
     @RequestMapping(value = "/vote/{id}", method = RequestMethod.GET)
     public String getVoteWithId(@PathVariable Long id,
                                 Principal principal,
-                                Model model) {
+                                Model model,
+                                HttpServletRequest request) throws UnknownHostException {
 
         Optional<Vote> optionalVote = voteService.findForId(id);
 
@@ -98,7 +104,10 @@ public class TurnController {
             if (isPrincipalOwnerOfVote(principal, vote)) {
                 model.addAttribute("username", principal.getName());
             }
-
+            //进入邀请页面接口地址
+            InetAddress address= InetAddress.getByName(request.getServerName());
+            String hostAddress = address.getHostAddress()+LINK+request.getServerPort();
+            model.addAttribute("address", VoteConstants.AGREEMENT_LETTER +hostAddress+VoteConstants.INVITECODE_RPC);
             return "/vote";
 
         } else {

@@ -11,10 +11,6 @@
     <div class="col-md-4">
         <div class="jumbotron">
             <h1 th:text="${item.body}"></h1>
-            <div th:if="${item.status}==2">
-                <h1>邀请码为:</h1>
-                <a title="点击进入" th:href="${address}" style="color: #0063f7">http://127.0.0.1:8090/editItem/1</a>
-            </div>
             <h1 th:if="${item.status}!=2">
                 <span>该轮次投票状态为：</span><br/>
                 <span th:text="${itemStatus}"></span>

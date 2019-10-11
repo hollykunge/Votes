@@ -5,6 +5,7 @@ import com.hollykunge.model.Item;
 import com.hollykunge.model.Vote;
 import com.hollykunge.repository.ItemRepository;
 import com.hollykunge.service.ItemService;
+import com.hollykunge.util.UUIDUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,8 @@ public class ItemServiceImp implements ItemService {
         }
         List<Item> itemsTemp = itemRepository.findByVote(item.getVote());
         item.setTurnNum(itemsTemp.size()+1);
+        //设置随机码，防止用户窜改地址
+        item.setCode(UUIDUtils.getUUID());
         return itemRepository.saveAndFlush(item);
     }
 
@@ -50,6 +53,11 @@ public class ItemServiceImp implements ItemService {
             result = itemRepository.saveAndFlush(exitItem);
         }
         return result;
+    }
+
+    @Override
+    public Optional<Item> findByIdAndCode(Long id,String code) {
+        return itemRepository.findByIdAndCode(id,code);
     }
 
     private boolean jurageItem(Item item){

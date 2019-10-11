@@ -10,6 +10,7 @@ public interface ItemService {
 
     Item save(Item item)throws Exception;
     Item findById(Long id);
+    Optional<Item> findByIdAndCode(Long id,String code);
     Item setItemStatus(Item item) throws Exception;
 //    List<Item> findItemsByVote(Vote vote);
 }

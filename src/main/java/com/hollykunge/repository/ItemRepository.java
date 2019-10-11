@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface ItemRepository extends JpaRepository<Item, Long> {
     Item findById(Long id);
     List<Item> findByVote(Vote vote);
+    Optional<Item> findByIdAndCode(Long id,String code);
 }

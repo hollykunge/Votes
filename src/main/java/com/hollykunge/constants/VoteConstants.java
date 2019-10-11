@@ -7,5 +7,5 @@ package com.hollykunge.constants;
  */
 public class VoteConstants {
     public static final String AGREEMENT_LETTER = "http://";
-    public static final String INVITECODE_RPC = "/editItem/";
+    public static final String INVITECODE_RPC = "/user/vote/";
 }
