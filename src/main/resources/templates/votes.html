@@ -13,12 +13,9 @@
 <!--        <h1 th:text="${user.username} + '的投票'">Username 投票</h1>-->
 <!--    </div>-->
 
-    <br></br>
-    <br></br>
-
     <div th:replace="/fragments/votes :: votes"/>
 
-    <div th:replace="/fragments/pagination :: pagination(URLparameter='/vote/' + ${user.username})"/>
+    <div th:replace="/fragments/pagination :: pagination(URLparameter='/votes/' + ${user.username})"/>
 
 </div>
 <div th:replace="/fragments/footer :: footer"/>
