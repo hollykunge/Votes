@@ -7,7 +7,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
-@Data
 @Entity
 @Table(name = "item")
 public class Item {
@@ -28,14 +27,14 @@ public class Item {
         this.turnNum = turnNum;
     }
 
-    @Column(name = "turnNum", columnDefinition = "int(6) COMMENT '投票第几轮'")
+    @Column(name = "turn_num", columnDefinition = "int(6) COMMENT '投票第几轮'")
     private Integer turnNum;
 
     @Column(columnDefinition = "int(6) COMMENT '预计投票人数'")
     private String memberSize;
 
     @Column(columnDefinition = "int(6) COMMENT '投票人数'")
-    private String memberNum;
+    private Integer memberNum;
 
     @Column(columnDefinition = "varchar(11) COMMENT '上一轮id'")
     private String previousId;
@@ -54,18 +53,18 @@ public class Item {
     /**
      * 1为同意 0为否决
      */
-    @Column(name = "agreeRule")
+    @Column(name = "agree_rule")
     @NotEmpty(message = "必填项不能为空")
     private String agreeRule;
     /**
      * 否同最大范围
      */
-    @Column(name = "agreeMax")
+    @Column(name = "agree_max")
     private String agreeMax;
     /**
      * 否同最小范围
      */
-    @Column(name = "agreeMin")
+    @Column(name = "agree_min")
     private String agreeMin;
     /**
      * 说明
@@ -103,23 +102,6 @@ public class Item {
 
     public void setBody(String body) {
         this.body = body;
-    }
-
-
-    public String getMemberSize() {
-        return memberSize;
-    }
-
-    public void setMemberSize(String memberSize) {
-        this.memberSize = memberSize;
-    }
-
-    public String getMemberNum() {
-        return memberNum;
-    }
-
-    public void setMemberNum(String memberNum) {
-        this.memberNum = memberNum;
     }
 
     public String getPreviousId() {
@@ -173,4 +155,68 @@ public class Item {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
     @NotNull
     private User user;
+
+    public String getMemberSize() {
+        return memberSize;
+    }
+
+    public void setMemberSize(String memberSize) {
+        this.memberSize = memberSize;
+    }
+
+    public Integer getMemberNum() {
+        return memberNum;
+    }
+
+    public void setMemberNum(Integer memberNum) {
+        this.memberNum = memberNum;
+    }
+
+    public String getRules() {
+        return rules;
+    }
+
+    public void setRules(String rules) {
+        this.rules = rules;
+    }
+
+    public String getAgreeRule() {
+        return agreeRule;
+    }
+
+    public void setAgreeRule(String agreeRule) {
+        this.agreeRule = agreeRule;
+    }
+
+    public String getAgreeMax() {
+        return agreeMax;
+    }
+
+    public void setAgreeMax(String agreeMax) {
+        this.agreeMax = agreeMax;
+    }
+
+    public String getAgreeMin() {
+        return agreeMin;
+    }
+
+    public void setAgreeMin(String agreeMin) {
+        this.agreeMin = agreeMin;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

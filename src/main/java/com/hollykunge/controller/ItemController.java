@@ -66,7 +66,7 @@ public class ItemController {
     @RequestMapping(value = "/createTurn", method = RequestMethod.POST)
     public String createNewVote(@Valid Item item,
                                 BindingResult bindingResult) throws Exception{
-        String view = "/voteVote/"+item.getVote().getId()+"/";
+        String view = "redirect:/voteVote/"+item.getVote().getId()+"/";
         //如果为null为增加页面，使用0
         if(StringUtils.isEmpty(item.getId())){
             view+="0";
@@ -74,12 +74,11 @@ public class ItemController {
             view+=item.getId();
         }
         try{
-            Integer.parseInt(item.getMemberSize());
             Integer.parseInt(item.getAgreeMin());
             Integer.parseInt(item.getAgreeMax());
+            Integer.parseInt(item.getMemberSize());
         }catch (NumberFormatException e){
-            return error(bindingResult,"number", "error.number",
-                    "请输入数字",view);
+            return error(bindingResult,"memberSize","error.memberSize","请输入数值字段",view);
         }
         if (bindingResult.hasErrors()) {
             List<ObjectError> allErrors = bindingResult.getAllErrors();
@@ -87,7 +86,6 @@ public class ItemController {
                 log.error(error.getDefaultMessage());
             });
             return view;
-
         } else {
             Long voteId = item.getVote().getId();
             itemService.save(item);
