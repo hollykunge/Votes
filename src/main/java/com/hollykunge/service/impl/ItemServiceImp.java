@@ -34,7 +34,9 @@ public class ItemServiceImp implements ItemService {
             throw new BaseException("设置投票不能为空...");
         }
         List<Item> itemsTemp = itemRepository.findByVote(item.getVote());
-        item.setTurnNum(itemsTemp.size()+1);
+        if(StringUtils.isEmpty(item.getId())){
+            item.setTurnNum(itemsTemp.size()+1);
+        }
         //设置随机码，防止用户窜改地址
         item.setCode(UUIDUtils.getUUID());
         return itemRepository.saveAndFlush(item);
