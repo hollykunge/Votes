@@ -76,6 +76,16 @@ public class Item {
     @Column(name = "create_date", nullable = false, updatable = false)
     @CreationTimestamp
     private Date createDate;
+    /**
+     * 最大分数
+     */
+    @Column(name = "max_score")
+    private String maxScore;
+    /**
+     * 最小分数
+     */
+    @Column(name = "min_score")
+    private String minScore;
 
     /**
      * 投票轮状态0为无效，1为保存，2为发起，3为结束
@@ -218,5 +228,21 @@ public class Item {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getMaxScore() {
+        return maxScore;
+    }
+
+    public void setMaxScore(String maxScore) {
+        this.maxScore = maxScore;
+    }
+
+    public String getMinScore() {
+        return minScore;
+    }
+
+    public void setMinScore(String minScore) {
+        this.minScore = minScore;
     }
 }
