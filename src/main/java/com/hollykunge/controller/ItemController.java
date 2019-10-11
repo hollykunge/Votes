@@ -73,14 +73,14 @@ public class ItemController {
         }else{
             view+=item.getId();
         }
-        try{
-            Integer.parseInt(item.getMemberSize());
-            Integer.parseInt(item.getAgreeMin());
-            Integer.parseInt(item.getAgreeMax());
-        }catch (NumberFormatException e){
-            return error(bindingResult,"number", "error.number",
-                    "请输入数字",view);
-        }
+//        try{
+//            Integer.parseInt(item.getMemberSize());
+//            Integer.parseInt(item.getAgreeMin());
+//            Integer.parseInt(item.getAgreeMax());
+//        }catch (NumberFormatException e){
+//            return error(bindingResult,"merberSize", "error.merberSize",
+//                    "请输入数字",view);
+//        }
         if (bindingResult.hasErrors()) {
             List<ObjectError> allErrors = bindingResult.getAllErrors();
             allErrors.stream().forEach(error->{

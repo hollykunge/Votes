@@ -32,10 +32,10 @@ public class Item {
     private Integer turnNum;
 
     @Column(columnDefinition = "int(6) COMMENT '预计投票人数'")
-    private String memberSize;
+    private Integer memberSize;
 
     @Column(columnDefinition = "int(6) COMMENT '投票人数'")
-    private String memberNum;
+    private Integer memberNum;
 
     @Column(columnDefinition = "varchar(11) COMMENT '上一轮id'")
     private String previousId;
@@ -61,12 +61,12 @@ public class Item {
      * 否同最大范围
      */
     @Column(name = "agree_max")
-    private String agreeMax;
+    private Integer agreeMax;
     /**
      * 否同最小范围
      */
     @Column(name = "agree_min")
-    private String agreeMin;
+    private Integer agreeMin;
     /**
      * 说明
      */
@@ -103,23 +103,6 @@ public class Item {
 
     public void setBody(String body) {
         this.body = body;
-    }
-
-
-    public String getMemberSize() {
-        return memberSize;
-    }
-
-    public void setMemberSize(String memberSize) {
-        this.memberSize = memberSize;
-    }
-
-    public String getMemberNum() {
-        return memberNum;
-    }
-
-    public void setMemberNum(String memberNum) {
-        this.memberNum = memberNum;
     }
 
     public String getPreviousId() {
