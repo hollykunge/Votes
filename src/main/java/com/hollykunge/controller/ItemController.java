@@ -67,20 +67,12 @@ public class ItemController {
     public String createNewVote(@Valid Item item,
                                 BindingResult bindingResult) throws Exception{
         String view = "/voteVote/"+item.getVote().getId()+"/"+item.getId();
-        if(StringUtils.isEmpty(item.getRules())){
-            return error(bindingResult,"rules", "error.rules",
-                    "必填项不能为空",view);
-        }
-        if(StringUtils.isEmpty(item.getAgreeRule())){
-            return error(bindingResult,"agreeRule", "error.agreeRule",
-                    "必填项不能为空",view);
-        }
         try{
             Integer.parseInt(item.getMemberSize());
-            Integer.parseInt(item.getAgreeMax());
             Integer.parseInt(item.getAgreeMin());
+            Integer.parseInt(item.getAgreeMax());
         }catch (NumberFormatException e){
-            return error(bindingResult,"memberSize", "error.memberSize",
+            return error(bindingResult,"number", "error.number",
                     "请输入数字",view);
         }
         if (bindingResult.hasErrors()) {
@@ -88,7 +80,7 @@ public class ItemController {
             allErrors.stream().forEach(error->{
                 log.error(error.getDefaultMessage());
             });
-            return "/turnForm";
+            return view;
 
         } else {
             Long voteId = item.getVote().getId();
