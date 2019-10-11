@@ -66,7 +66,13 @@ public class ItemController {
     @RequestMapping(value = "/createTurn", method = RequestMethod.POST)
     public String createNewVote(@Valid Item item,
                                 BindingResult bindingResult) throws Exception{
-        String view = "/voteVote/"+item.getVote().getId()+"/"+item.getId();
+        String view = "/voteVote/"+item.getVote().getId()+"/";
+        //如果为null为增加页面，使用0
+        if(StringUtils.isEmpty(item.getId())){
+            view+="0";
+        }else{
+            view+=item.getId();
+        }
         try{
             Integer.parseInt(item.getMemberSize());
             Integer.parseInt(item.getAgreeMin());
