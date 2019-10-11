@@ -7,7 +7,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
-@Data
 @Entity
 @Table(name = "item")
 public class Item {
@@ -35,7 +34,7 @@ public class Item {
     private String memberSize;
 
     @Column(columnDefinition = "int(6) COMMENT '投票人数'")
-    private String memberNum;
+    private Integer memberNum;
 
     @Column(columnDefinition = "varchar(11) COMMENT '上一轮id'")
     private String previousId;
@@ -105,23 +104,6 @@ public class Item {
         this.body = body;
     }
 
-
-    public String getMemberSize() {
-        return memberSize;
-    }
-
-    public void setMemberSize(String memberSize) {
-        this.memberSize = memberSize;
-    }
-
-    public String getMemberNum() {
-        return memberNum;
-    }
-
-    public void setMemberNum(String memberNum) {
-        this.memberNum = memberNum;
-    }
-
     public String getPreviousId() {
         return previousId;
     }
@@ -173,4 +155,68 @@ public class Item {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
     @NotNull
     private User user;
+
+    public String getMemberSize() {
+        return memberSize;
+    }
+
+    public void setMemberSize(String memberSize) {
+        this.memberSize = memberSize;
+    }
+
+    public Integer getMemberNum() {
+        return memberNum;
+    }
+
+    public void setMemberNum(Integer memberNum) {
+        this.memberNum = memberNum;
+    }
+
+    public String getRules() {
+        return rules;
+    }
+
+    public void setRules(String rules) {
+        this.rules = rules;
+    }
+
+    public String getAgreeRule() {
+        return agreeRule;
+    }
+
+    public void setAgreeRule(String agreeRule) {
+        this.agreeRule = agreeRule;
+    }
+
+    public String getAgreeMax() {
+        return agreeMax;
+    }
+
+    public void setAgreeMax(String agreeMax) {
+        this.agreeMax = agreeMax;
+    }
+
+    public String getAgreeMin() {
+        return agreeMin;
+    }
+
+    public void setAgreeMin(String agreeMin) {
+        this.agreeMin = agreeMin;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }
