@@ -12,12 +12,12 @@
             <div class="col-sm-12 text-center">
                 <span sec:authorize="isAuthenticated()">
                 | 当前用户: <span sec:authentication="name"></span> |
-                角色: <span sec:authentication="principal.authorities"></span> |
+                    <!--                角色: <span sec:authentication="principal.authorities"></span> |-->
                 <a th:href="@{/logout}">注销</a>
             </span>
 
                 <div>
-                    <p class="text-center">&copy; 2019 duyukun</p>
+                    <p class="text-center">云雀团队出品 &copy; 2019</p>
                 </div>
 
             </div>

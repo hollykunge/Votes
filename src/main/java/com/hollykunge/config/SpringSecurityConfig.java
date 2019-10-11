@@ -1,5 +1,6 @@
 package com.hollykunge.config;
 
+import com.hollykunge.constants.VoteConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -53,7 +54,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/home", "/registration", "/error", "/vote/**", "/vote/**", "/h2-console/**").permitAll()
+                .antMatchers("/home", "/registration", "/error", "/vote/**", "/vote/**", "/h2-console/**", VoteConstants.INVITECODE_RPC+"**").permitAll()
                 .antMatchers("/newVote/**", "/voteVote/**", "/createTurn/**", "/turnForm/**").hasAnyRole("USER")
                 .anyRequest().authenticated()
                 .and()
