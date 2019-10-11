@@ -123,6 +123,8 @@ public class ItemController {
                 Vote vote = new Vote();
                 vote.setId(voteId);
                 item.setVote(vote);
+                //添加页面时默认选择否同
+                item.setRules("1");
             }
             model.addAttribute("item", item);
             return "/turnForm";
