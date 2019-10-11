@@ -55,8 +55,7 @@ a:hover, a:focus, a:active {
 /*}*/
 
 .do-table {
-    border-radius: 4px;
-    border: 1pt solid #d7d7d7 !important;
+    border: 0pt solid #d7d7d7 !important;
     margin: 0 auto !important;
 }
 
@@ -78,7 +77,7 @@ a:hover, a:focus, a:active {
 
 .do-tr{
     border-radius: 4px;
-    border: 1pt solid #d7d7d7 !important;
+    border-top: 1pt solid #d7d7d7 !important;
 }
 
 .form-signin {
@@ -98,3 +97,6 @@ a:hover, a:focus, a:active {
     padding: .75rem;
 }
 
+.card-nopadding{
+    padding: 0rem !important;
+}

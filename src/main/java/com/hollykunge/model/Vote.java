@@ -23,7 +23,7 @@ public class Vote {
     private Long id;
 
     @Column(name = "title", nullable = false)
-    @Length(min = 5, message = "输入至少5个字符")
+    @Length(min = 2, message = "输入至少5个字符")
     @NotEmpty(message = "请输入标题")
     private String title;
 

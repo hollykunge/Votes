@@ -4,23 +4,22 @@
 <body>
 <div th:fragment="pagination">
 
-    <!-- Pagination -->
     <div class="pagination" th:with="baseUrl=${URLparameter}">
         <span th:if="${pager.indexOutOfBounds()}">
-            页面超出范围，返回<a class="pageLink" th:href="@{${baseUrl}(page=1)}">主页</a>.
+            返回<a class="pageLink" th:href="@{${baseUrl}(page=1)}">主页</a>.
         </span>
 
         <span th:unless="${pager.indexOutOfBounds()}">
 
             <span th:if="${pager.hasPrevious()}">
                 <a class="pageLink"
-                   th:href="@{${baseUrl}(page=1)}">&laquo; first</a>
+                   th:href="@{${baseUrl}(page=1)}">&laquo; 第一页</a>
                 <a class="pageLink"
                    th:href="@{${baseUrl}(page=${pager.getPageIndex() - 1})}"> 上一页</a>
             </span>
 
             <span th:if="${pager.getTotalPages() != 1}"
-                  th:text="'Page ' + ${pager.getPageIndex()} + ' of ' + ${pager.getTotalPages()} + '.'">
+                  th:text="'第' + ${pager.getPageIndex()} + '页，共' + ${pager.getTotalPages()} + '.'">
             </span>
 
             <span th:if="${pager.hasNext()}">
