@@ -1,237 +1,294 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <div th:replace="/fragments/header :: header-css"/>
+    <div th:replace="/fragments/header :: header-css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
 </head>
+
 <body class="bg-light">
-<div th:replace="/fragments/header :: header"/>
-<progress id="progressBar" value="0" max="100" style="width: 300px;"></progress>
-<span id="percentage"></span><span id="time"></span>
-<div class="container">
-    <div class="card border-primary">
-        <div class="card-header">详情
-            <div style="float: right">
-                <a href="/item/export">下载导入模板</a>
-                <input type="file" id="file" name="myfile" />
-                <input class="btn btn-secondary btn-sm" type="button" th:onclick="'javascript:excelImport('+${vote.id}+')'"  value="上传" />
-                <button type="submit" class="btn btn-secondary btn-sm">添加</button>
-                <button type="submit" class="btn btn-primary btn-sm">发布</button>
+    <div th:replace="/fragments/header :: header" />
+    <progress id="progressBar" value="0" max="100" style="width: 300px;"></progress>
+    <span id="percentage"></span><span id="time"></span>
+    <div class="container">
+        <div class="card border-primary">
+            <div class="card-header">详情
+                <div style="float: right">
+                    <a href="/item/export">下载导入模板</a>
+                    <input type="file" id="file" name="myfile" />
+                    <input class="btn btn-secondary btn-sm" type="button"
+                        th:onclick="'javascript:excelImport('+${vote.id}+')'" value="上传" />
+                    <button type="submit" class="btn btn-secondary btn-sm">添加</button>
+                    <button type="submit" class="btn btn-primary btn-sm">发布</button>
+                </div>
+            </div>
+            <div class="card-body text-primary">
+                <table id="table" data-click-to-select="true" data-minimum-count-columns="2" data-id-field="id"
+                    data-side-pagination="server" data-url="" data-response-handler="responseHandler">
+                </table>
             </div>
         </div>
-        <div class="card-body text-primary">
-            <table
-                    id="table"
-                    data-click-to-select="true"
-                    data-minimum-count-columns="2"
-                    data-id-field="id"
-                    data-side-pagination="server"
-                    data-url=""
-                    data-response-handler="responseHandler">
-            </table>
-        </div>
+        <!--    <div th:if="${item}">-->
+        <!--    </div>-->
     </div>
-<!--    <div th:if="${item}">-->
-<!--    </div>-->
-</div>
 
-<div th:replace="/fragments/footer :: footer"/>
-<script>
-    let $table = $('#table')
-    let $remove = $('#remove')
-    let selections = []
+    <div th:replace="/fragments/footer :: footer" />
+    <script th:inline="javascript">
+        let data = JSON.parse([
+            [$ {
+                voteItems
+            }]
+        ] || '[]');
+    </script>
+    <script>
+        let $table = $('#table')
+        let $remove = $('#remove')
+        let selections = []
 
-    function getIdSelections() {
-        return $.map($table.bootstrapTable('getSelections'), function (row) {
-            return row.id
-        })
-    }
-
-    function operateFormatter(value, row, index) {
-        return [
-            '<a class="like" href="javascript:void(0)" title="Like">',
-            '<i class="fa fa-heart"></i>',
-            '</a>  ',
-            '<a class="remove" href="javascript:void(0)" title="Remove">',
-            '<i class="fa fa-trash"></i>',
-            '</a>'
-        ].join('')
-    }
-
-    window.operateEvents = {
-        'click .like': function (e, value, row, index) {
-            alert('You click like action, row: ' + JSON.stringify(row))
-        },
-        'click .remove': function (e, value, row, index) {
-            $table.bootstrapTable('remove', {
-                field: 'id',
-                values: [row.id]
+        function getIdSelections() {
+            return $.map($table.bootstrapTable('getSelections'), function (row) {
+                return row.id
             })
         }
-    }
 
-    function totalTextFormatter(data) {
-        return 'Total'
-    }
+        function operateFormatter(value, row, index) {
+            return [
+                '<a class="like" href="javascript:void(0)" title="Like">',
+                '<i class="fa fa-heart"></i>',
+                '</a>  ',
+                '<a class="remove" href="javascript:void(0)" title="Remove">',
+                '<i class="fa fa-trash"></i>',
+                '</a>'
+            ].join('')
+        }
 
-    function totalNameFormatter(data) {
-        return data.length
-    }
-
-    function totalPriceFormatter(data) {
-        let field = this.field
-        return '$' + data.map(function (row) {
-            return +row[field].substring(1)
-        }).reduce(function (sum, i) {
-            return sum + i
-        }, 0)
-    }
-
-    function initTable() {
-        $table.bootstrapTable('destroy').bootstrapTable({
-            height: 550,
-            locale: $('#locale').val(),
-            columns: [
-                {
-                    field: 'state',
-                    checkbox: true,
-                    align: 'center',
-                    valign: 'middle'
-                }, {
-                    title: '序号',
+        window.operateEvents = {
+            'click .like': function (e, value, row, index) {
+                alert('You click like action, row: ' + JSON.stringify(row))
+            },
+            'click .remove': function (e, value, row, index) {
+                $table.bootstrapTable('remove', {
                     field: 'id',
-                    align: 'center',
-                    valign: 'middle',
-                    sortable: true,
-                    footerFormatter: totalTextFormatter
-                },
-                {
-                    field: 'name',
-                    title: '名称',
-                    sortable: true,
-                    footerFormatter: totalNameFormatter,
-                    align: 'center'
-                }, {
-                    field: 'arrt1',
-                    title: '预留1',
-                    sortable: true,
-                    align: 'center',
-                    footerFormatter: totalNameFormatter
-                }, {
-                    field: 'arrt2',
-                    title: '预留2',
-                    sortable: true,
-                    align: 'center',
-                    footerFormatter: totalNameFormatter
-                },{
-                    field: 'arrt3',
-                    title: '预留3',
-                    sortable: true,
-                    align: 'center',
-                    footerFormatter: totalNameFormatter
-                },{
-                    field: 'arrt4',
-                    title: '预留4',
-                    sortable: true,
-                    align: 'center',
-                    footerFormatter: totalNameFormatter
-                }
-            ]
-        })
-        $table.on('check.bs.table uncheck.bs.table ' +
-            'check-all.bs.table uncheck-all.bs.table',
-            function () {
-                $remove.prop('disabled', !$table.bootstrapTable('getSelections').length)
-
-                // save your data, here just save the current page
-                selections = getIdSelections()
-                // push or splice the selections if you want to save all data selections
-            })
-        $table.on('all.bs.table', function (e, name, args) {
-            console.log(name, args)
-        })
-        $remove.click(function () {
-            let ids = getIdSelections()
-            $table.bootstrapTable('remove', {
-                field: 'id',
-                values: ids
-            })
-            $remove.prop('disabled', true)
-        })
-    }
-    //定义按钮事件
-    function excelImport(voteId){
-        var fileObj = document.getElementById("file").files[0]; // js 获取文件对象
-        var url =  "http://127.0.0.1:8090" + "/item/import"; // 接收上传文件的后台地址
-        var form = new FormData(); // FormData 对象
-        if(form){
-            form.append("file", fileObj); // 文件对象
+                    values: [row.id]
+                })
+            }
         }
-        xhr = new XMLHttpRequest();  // XMLHttpRequest 对象
-        xhr.open("post", url, true); //post方式，url为服务器请求地址，true 该参数规定请求是否异步处理。
-        xhr.onload = uploadComplete; //请求完成
-        xhr.onerror =  uploadFailed; //请求失败
-        xhr.upload.onprogress = progressFunction;//【上传进度调用方法实现】
-        xhr.upload.onloadstart = function(){//上传开始执行方法
-            ot = new Date().getTime();   //设置上传开始时间
-            oloaded = 0;//设置上传开始时，以上传的文件大小为0
-        };
-        xhr.setRequestHeader("voteId",voteId);
-        xhr.send(form); //开始上传，发送form数据
-    }
 
-    //上传成功响应
-    function uploadComplete(evt) {
-        if(evt.target.status) {
-            window.location.reload();
-        }else{
+        function totalTextFormatter(data) {
+            return 'Total'
+        }
+
+        function totalNameFormatter(data) {
+            return data.length
+        }
+
+        function totalPriceFormatter(data) {
+            let field = this.field
+            return '$' + data.map(function (row) {
+                return +row[field].substring(1)
+            }).reduce(function (sum, i) {
+                return sum + i
+            }, 0)
+        }
+        /*
+         *
+         * 初始化表格方法
+         * 
+         */
+        function initTable() {
+
+            $table.bootstrapTable('destroy').bootstrapTable({
+                height: 550,
+                locale: $('#locale').val(),
+                columns: [{
+                        field: 'state',
+                        checkbox: true,
+                        align: 'center',
+                        valign: 'middle'
+                    }, {
+                        title: '序号',
+                        field: 'id',
+                        align: 'center',
+                        valign: 'middle',
+                        sortable: true,
+                        footerFormatter: totalTextFormatter
+                    },
+                    {
+                        field: 'name',
+                        title: '名称',
+                        sortable: true,
+                        footerFormatter: totalNameFormatter,
+                        align: 'center'
+                    }, {
+                        field: 'arrt1',
+                        title: '预留1',
+                        sortable: true,
+                        align: 'center',
+                        footerFormatter: totalNameFormatter
+                    }, {
+                        field: 'arrt2',
+                        title: '预留2',
+                        sortable: true,
+                        align: 'center',
+                        footerFormatter: totalNameFormatter
+                    }, {
+                        field: 'arrt3',
+                        title: '预留3',
+                        sortable: true,
+                        align: 'center',
+                        footerFormatter: totalNameFormatter
+                    }, {
+                        field: 'arrt4',
+                        title: '预留4',
+                        sortable: true,
+                        align: 'center',
+                        footerFormatter: totalNameFormatter
+                    }
+                ],
+                data: data,
+                // 详情 api
+                detailView: true, // 显示详细视图表
+                detailViewIcon: true, // 显示详细视图列
+                detailViewByClick: true, // 单击单元格时切换详细视图
+                detailFormatter: function (index, row, element) { // 详细信息视图内容
+                    return [
+                        '<div>',
+                        '<h4>详情内容</h4>',
+                        '<div>',
+                        '序号: ' + row.id,
+                        '</div>',
+                        '<div>',
+                        '名称: ' + row.name,
+                        '</div>',
+                        '<div>',
+                        '预留1: ' + row.arrt1,
+                        '</div>',
+                        '<div>',
+                        '预留2: ' + row.arrt2,
+                        '</div>',
+                        '<div>',
+                        '预留3: ' + row.arrt3,
+                        '</div>',
+                        '<div>',
+                        '预留4: ' + row.arrt4,
+                        '</div>',
+                        '</div>',
+                    ].join('')
+                },
+                detailFilter: function (index, row) { // 是否启用该行以进行扩展
+                    if (index % 2 === 0) {
+                        return false
+                    }
+                    return true
+                },
+            })
+            $table.on('check.bs.table uncheck.bs.table ' +
+                'check-all.bs.table uncheck-all.bs.table',
+                function () {
+                    $remove.prop('disabled', !$table.bootstrapTable('getSelections').length)
+
+                    // save your data, here just save the current page
+                    selections = getIdSelections()
+                    // push or splice the selections if you want to save all data selections
+                })
+            // table 事件回调
+            $table.on('all.bs.table', function (e, name, args) {
+                console.log(name)
+                switch (name) {
+                    case 'click-cell.bs.table':
+                        console.log('行点击')
+                        break;
+
+                    default:
+                        console.log(' click')
+                        break;
+                }
+                // console.log(name, args)
+            })
+            $remove.click(function () {
+                let ids = getIdSelections()
+                $table.bootstrapTable('remove', {
+                    field: 'id',
+                    values: ids
+                })
+                $remove.prop('disabled', true)
+            })
+        }
+        //定义按钮事件
+        function excelImport(voteId) {
+            var fileObj = document.getElementById("file").files[0]; // js 获取文件对象
+            var url = "http://127.0.0.1:8090" + "/item/import"; // 接收上传文件的后台地址
+            var form = new FormData(); // FormData 对象
+            if (form) {
+                form.append("file", fileObj); // 文件对象
+            }
+            xhr = new XMLHttpRequest(); // XMLHttpRequest 对象
+            xhr.open("post", url, true); //post方式，url为服务器请求地址，true 该参数规定请求是否异步处理。
+            xhr.onload = uploadComplete; //请求完成
+            xhr.onerror = uploadFailed; //请求失败
+            xhr.upload.onprogress = progressFunction; //【上传进度调用方法实现】
+            xhr.upload.onloadstart = function () { //上传开始执行方法
+                ot = new Date().getTime(); //设置上传开始时间
+                oloaded = 0; //设置上传开始时，以上传的文件大小为0
+            };
+            xhr.setRequestHeader("voteId", voteId);
+            xhr.send(form); //开始上传，发送form数据
+        }
+
+        //上传成功响应
+        function uploadComplete(evt) {
+            if (evt.target.status) {
+                window.location.reload();
+            } else {
+                alert("上传失败！");
+            }
+
+        }
+        //上传失败
+        function uploadFailed(evt) {
             alert("上传失败！");
         }
 
-    }
-    //上传失败
-    function uploadFailed(evt) {
-        alert("上传失败！");
-    }
+        //上传进度实现方法，上传过程中会频繁调用该方法
+        function progressFunction(evt) {
+            var progressBar = document.getElementById("progressBar");
+            var percentageDiv = document.getElementById("percentage");
+            // event.total是需要传输的总字节，event.loaded是已经传输的字节。如果event.lengthComputable不为真，则event.total等于0
+            if (evt.lengthComputable) { //
+                progressBar.max = evt.total;
+                progressBar.value = evt.loaded;
+                percentageDiv.innerHTML = Math.round(evt.loaded / evt.total * 100) + "%";
+            }
+            var time = document.getElementById("time");
+            var nt = new Date().getTime(); //获取当前时间
+            var pertime = (nt - ot) / 1000; //计算出上次调用该方法时到现在的时间差，单位为s
+            ot = new Date().getTime(); //重新赋值时间，用于下次计算
+            var perload = evt.loaded - oloaded; //计算该分段上传的文件大小，单位b
+            oloaded = evt.loaded; //重新赋值已上传文件大小，用以下次计算
+            //上传速度计算
+            var speed = perload / pertime; //单位b/s
+            var bspeed = speed;
+            var units = 'b/s'; //单位名称
+            if (speed / 1024 > 1) {
+                speed = speed / 1024;
+                units = 'k/s';
+            }
+            if (speed / 1024 > 1) {
+                speed = speed / 1024;
+                units = 'M/s';
+            }
+            speed = speed.toFixed(1);
+            //剩余时间
+            var resttime = ((evt.total - evt.loaded) / bspeed).toFixed(1);
+            time.innerHTML = '，速度：' + speed + units + '，剩余时间：' + resttime + 's';
+            if (bspeed == 0) time.innerHTML = '上传已取消';
+        }
 
-    //上传进度实现方法，上传过程中会频繁调用该方法
-    function progressFunction(evt) {
-        var progressBar = document.getElementById("progressBar");
-        var percentageDiv = document.getElementById("percentage");
-        // event.total是需要传输的总字节，event.loaded是已经传输的字节。如果event.lengthComputable不为真，则event.total等于0
-        if (evt.lengthComputable) {//
-            progressBar.max = evt.total;
-            progressBar.value = evt.loaded;
-            percentageDiv.innerHTML = Math.round(evt.loaded / evt.total * 100) + "%";
-        }
-        var time = document.getElementById("time");
-        var nt = new Date().getTime();//获取当前时间
-        var pertime = (nt-ot)/1000; //计算出上次调用该方法时到现在的时间差，单位为s
-        ot = new Date().getTime(); //重新赋值时间，用于下次计算
-        var perload = evt.loaded - oloaded; //计算该分段上传的文件大小，单位b
-        oloaded = evt.loaded;//重新赋值已上传文件大小，用以下次计算
-        //上传速度计算
-        var speed = perload/pertime;//单位b/s
-        var bspeed = speed;
-        var units = 'b/s';//单位名称
-        if(speed/1024>1){
-            speed = speed/1024;
-            units = 'k/s';
-        }
-        if(speed/1024>1){
-            speed = speed/1024;
-            units = 'M/s';
-        }
-        speed = speed.toFixed(1);
-        //剩余时间
-        var resttime = ((evt.total-evt.loaded)/bspeed).toFixed(1);
-        time.innerHTML = '，速度：'+speed+units+'，剩余时间：'+resttime+'s';
-        if(bspeed==0) time.innerHTML = '上传已取消';
-    }
-
-    $(function () {
-        initTable()
-        $('#locale').change(initTable)
-    })
-</script>
+        $(function () {
+            initTable()
+            $('#locale').change(initTable)
+        })
+    </script>
 </body>
+
 </html>
