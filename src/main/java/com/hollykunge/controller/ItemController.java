@@ -78,14 +78,15 @@ public class ItemController {
             Integer.parseInt(item.getAgreeMax());
             Integer.parseInt(item.getMemberSize());
         }catch (NumberFormatException e){
-            return error(bindingResult,"memberSize","error.memberSize","请输入数值字段",view);
+             error(bindingResult,"memberSize","error.memberSize","请输入数值字段");
+             return frashItemView(item);
         }
         if (bindingResult.hasErrors()) {
             List<ObjectError> allErrors = bindingResult.getAllErrors();
             allErrors.stream().forEach(error->{
                 log.error(error.getDefaultMessage());
             });
-            return view;
+            return frashItemView(item);
         } else {
             Long voteId = item.getVote().getId();
             itemService.save(item);
@@ -93,10 +94,13 @@ public class ItemController {
         }
     }
 
-    private String error(BindingResult bindingResult,String s,String s1,String s2,String view){
+    public String frashItemView(@Valid Item item)throws Exception {
+            return "/turnForm";
+    }
+
+    private void error(BindingResult bindingResult,String s,String s1,String s2){
         bindingResult
                 .rejectValue(s, s1, s2);
-        return view;
     }
 
     /**
@@ -123,6 +127,8 @@ public class ItemController {
                 Vote vote = new Vote();
                 vote.setId(voteId);
                 item.setVote(vote);
+                //添加页面时默认选择否同
+                item.setRules("1");
             }
             model.addAttribute("item", item);
             return "/turnForm";
