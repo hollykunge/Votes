@@ -28,7 +28,7 @@ public class Item {
         this.turnNum = turnNum;
     }
 
-    @Column(name = "turnNum", columnDefinition = "int(6) COMMENT '投票第几轮'")
+    @Column(name = "turn_num", columnDefinition = "int(6) COMMENT '投票第几轮'")
     private Integer turnNum;
 
     @Column(columnDefinition = "int(6) COMMENT '预计投票人数'")
@@ -54,18 +54,18 @@ public class Item {
     /**
      * 1为同意 0为否决
      */
-    @Column(name = "agreeRule")
+    @Column(name = "agree_rule")
     @NotEmpty(message = "必填项不能为空")
     private String agreeRule;
     /**
      * 否同最大范围
      */
-    @Column(name = "agreeMax")
+    @Column(name = "agree_max")
     private String agreeMax;
     /**
      * 否同最小范围
      */
-    @Column(name = "agreeMin")
+    @Column(name = "agree_min")
     private String agreeMin;
     /**
      * 说明
