@@ -52,7 +52,7 @@
                         <a th:href="@{'/editItem/{id}'(id=${item.id})}">
                             <button type="button" class="btn btn-outline-info btn-sm d-inline">投票项</button>
                         </a>
-                        <a th:href="@{'/voteVote/{id}'(id=${item.id})}">
+                        <a th:href="@{'/voteVote/{voteid}/{itemid}'(voteid=${vote.id}, itemid=${item.id})}">
                             <button type="button" class="btn btn-outline-primary btn-sm d-inline">编辑</button>
                         </a>
                         <a th:href="@{'/stat/{id}'(id=${item.id})}">

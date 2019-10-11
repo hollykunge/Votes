@@ -17,36 +17,42 @@
                       th:object="${item}" method="post" role="form">
                     <h2 class="text-center">添加新一轮投票</h2>
                     <hr class="mb-4"/>
+                    <label th:if="${#fields.hasErrors('memberSize')}" th:errors="*{memberSize}"
+                           class="alert alert-danger" style="width: 100%"></label>
                     <h4 class="mb-3">限制投票人数</h4>
                     <div class="row">
                         <div class="col-md-12">
-                            <input type="text" class="form-control" id="limitNum" required="" placeholder="" th:field="*{agreeMax}"/>
+                            <input type="text" class="form-control" id="memberSize" placeholder=""
+                                   required="" th:field="*{memberSize}"/>
                         </div>
                     </div>
-<!--                    <hr class="mb-4"/>-->
                     <br/>
                     <h4 class="mb-3">规则范围</h4>
                     <div class="row" style="margin-left: 240px;margin-bottom: 16px">
                         <div class="custom-control custom-radio col-md-3">
-                            <input id="isNot" name="role" type="radio" class="custom-control-input" checked=""
-                                   required="" value="1" th:onclick="'showRuleDiv()'" th:field="*{rules}"/>
+                            <input id="isNot" name="role" type="radio" class="custom-control-input"
+                                   required="" value="1" th:onclick="'showRuleDiv()'"
+                                   th:field="*{rules}" checked=""/>
                             <label class="custom-control-label" for="isNot">否同</label>
                         </div>
                         <div class="custom-control custom-radio col-md-3">
                             <input id="sort" name="role" type="radio" class="custom-control-input"
-                                   required="" value="2" th:onclick="'showRuleDiv()'" th:field="*{rules}"/>
+                                   required="" value="2" th:onclick="'showRuleDiv()'"
+                                   th:field="*{rules}"/>
                             <label class="custom-control-label" for="sort">排序</label>
                         </div>
                         <div class="custom-control custom-radio col-md-3">
                             <input id="count" name="role" type="radio" class="custom-control-input"
-                                   required="" value="3" th:onclick="'showRuleDiv()'" th:field="*{rules}"/>
+                                   required="" value="3" th:onclick="'showRuleDiv()'"
+                                   th:field="*{rules}"/>
                             <label class="custom-control-label" for="count">打分</label>
                         </div>
                     </div>
                     <div id="isNotDiv" class="row">
                         <div class="col-md-4 mb-3">
-                            <label for="roleList">规则</label>
-                            <select class="custom-select d-block w-100" id="roleList" th:field="*{agreeRule}">
+                            <label for="agreeRule">规则</label>
+                            <select class="custom-select d-block w-100" id="agreeRule"
+                                    th:field="*{agreeRule}">
                                 <option value="">选择...</option>
                                 <option value="1">同意</option>
                                 <option value="0">否决</option>
@@ -57,52 +63,67 @@
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="max">范围（最大）</label>
-                            <input type="text" class="form-control" id="max" placeholder="" th:field="*{agreeMax}"/>
+                            <input type="text" class="form-control" id="max" placeholder=""
+                                   th:field="*{agreeMax}"/>
                             <div class="invalid-feedback">
                                 填写最大数量
                             </div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label for="min">范围（最小）</label>
-                            <input type="text" class="form-control" id="min" placeholder="" th:field="*{agreeMin}"/>
+                            <input type="text" class="form-control" id="min" placeholder=""
+                                   th:field="*{agreeMin}"/>
                             <div class="invalid-feedback">
                                 填写最小数量
                             </div>
                         </div>
                     </div>
                     <div id="sortDiv" class="row">
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-6 mb-3">
                             <label for="max">分数（最高）</label>
-                            <input type="text" class="form-control" id="maxSort" placeholder="" th:field="*{agreeMax}"/>
+                            <input type="text" class="form-control" id="maxSort" placeholder=""
+                                   th:field="*{maxScore}"/>
                         </div>
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-6 mb-3">
                             <label for="min">分数（最低）</label>
-                            <input type="text" class="form-control" id="minSort" placeholder="" th:field="*{agreeMin}"/>
+                            <input type="text" class="form-control" id="minSort" placeholder=""
+                                   th:field="*{minScore}"/>
                         </div>
                     </div>
 
                     <div id="countDiv" class="row">
                         <div class="col-md-12">
-                            <label for="tips">说明</label>
+                            <label for="description">说明</label>
                             <textarea th:field="*{description}"
                                       placeholder="" class="form-control" id="description"/>
                         </div>
                     </div>
                     <br/>
-<!--                    <hr class="mb-4"/>-->
                     <h4 class="mb-3">注意事项</h4>
                     <div class="row">
                         <div class="col-md-12">
-                            <label th:if="${#fields.hasErrors('body')}" th:errors="*{body}"
-                                   class="alert alert-danger"></label>
                             <textarea th:field="*{body}"
                                       placeholder="" class="form-control" id="tips"/>
                             <input type="hidden" th:field="*{vote}"/>
                             <input type="hidden" th:field="*{user}"/>
+                            <input type="hidden" th:field="*{id}"/>
+                            <input type="hidden" th:field="*{turnNum}"/>
                         </div>
                     </div>
                     <hr class="mb-4"/>
-                    <button type="submit" class="btn btn-primary btn-block">保存</button>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <button type="submit" class="btn btn-primary btn-block">保存</button>
+                        </div>
+                    </div>
+                    <!--                    <div class="row">-->
+                    <!--                        <div class="col-md-12 mb-3">-->
+                    <!--                            <div class="btn-group" role="group" aria-label="Basic example" style="width: 100%;">-->
+                    <!--                                <button class="btn btn-light" th:href="@{'/vote/' + ${item.vote.id}}">取消</button>-->
+                    <!--                                <button type="submit" class="btn btn-primary">保存</button>-->
+                    <!--                            </div>-->
+                    <!--                        </div>-->
+                    <!--                    </div>-->
                 </form>
             </div>
         </div>
@@ -112,25 +133,9 @@
 <div th:replace="/fragments/footer :: footer"/>
 <script>
     /**
-     * TODO:
-     * 1.新增时radio默认选中第一个
-     * 2.数字项添加校验
-     * 3.后台-需添加字段：注意事项、限制投票人数
-     * 4.后台-编辑时，已传递item.id 但仍是新增投票论操作
-     * 5.后台-根据规则做必填项校验
-     */
-    /**
      * 根据规则范围，初始化页面
      */
     $(document).ready(function(){
-        var rule= $('input[type=radio]:checked').val();
-        console.log(rule)
-        if (rule == undefined) {
-            console.log(1111111)
-            // $("isNot").attr("checked",true);
-            // $("input[name='role']:eq(0)").attr("checked",'checked');
-            // $("input:radio[name='role'][value='1']").attr("checked",true);
-        }
         showRuleDiv();
     });
     /**
@@ -139,7 +144,8 @@
      */
     function showRuleDiv() {
         var rule= $('input[type=radio]:checked').val();
-        if (rule === '1' || rule == undefined) {
+        console.log(rule)
+        if (rule === '1') {
             $("#isNotDiv").attr("style","visibility:visible;");
             $("#sortDiv").attr("style","display:none;");
             $("#countDiv").attr("style","display:none;");
@@ -160,25 +166,25 @@
      */
     function setRequired(rule){
         if (rule === '1' || rule == undefined) {
-            $("#roleList").attr("required", true);
+            $("#agreeRule").attr("required", true);
             $("#max").attr("required", true);
             $("#min").attr("required", true);
             $("#maxSort").attr("required", false);
             $("#minSort").attr("required", false);
         }else if (rule === '2') {
-            $("#roleList").attr("required", false);
+            $("#agreeRule").attr("required", false);
             $("#max").attr("required", false);
             $("#min").attr("required", false);
             $("#maxSort").attr("required", false);
             $("#minSort").attr("required", false);
         }else if (rule === '3') {
-            $("#roleList").attr("required", false);
+            $("#agreeRule").attr("required", false);
             $("#max").attr("required", false);
             $("#min").attr("required", false);
             $("#maxSort").attr("required", true);
             $("#minSort").attr("required", true);
         }
-    }
+    };
 </script>
 </body>
 </html>
