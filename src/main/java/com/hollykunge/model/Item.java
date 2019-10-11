@@ -54,7 +54,6 @@ public class Item {
      * 1为同意 0为否决
      */
     @Column(name = "agree_rule")
-    @NotEmpty(message = "必填项不能为空")
     private String agreeRule;
     /**
      * 否同最大范围
