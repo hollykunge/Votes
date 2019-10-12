@@ -30,7 +30,7 @@ public class UserVoteController {
         try{
             Optional<Item> itemTemp = itemService.findByIdAndCode(id,code);
             if(!itemTemp.isPresent()){
-                throw new BaseException("无效连接...");
+                throw new BaseException("无效地址...");
             }
             model.addAttribute("item",itemTemp.get());
             model.addAttribute("itemStatus", ItemStatusConfig.getEnumByValue(itemTemp.get().getStatus()).getName());
