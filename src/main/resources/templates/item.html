@@ -3,25 +3,79 @@
 
 <head>
     <div th:replace="/fragments/header :: header-css" />
+    <style type="text/css">
+        .card.file-card{
+            width: 330px;
+            position: absolute;
+            z-index: 999;
+            top: 40px;
+            right: 3px;
+        }
+        .card.file-card .btn-primary{
+            float: right;
+        }
+        .hide{
+            display: none;
+        }
+        .alert-message{
+            min-width: 380px;
+            box-sizing: border-box;
+            border-radius: 4px;
+            position: fixed;
+            left: 50%;
+            top: 20px;
+            z-index: 999;
+            transform: translateX(-50%);
+            transition: opacity .3s,transform .4s,top .4s;
+            overflow: hidden;
+            padding: 15px 15px 15px 20px;
+            display: flex;
+            align-items: center;
+        }
+        .alert-warning{
+            display: none;
+        }
+    </style>
 </head>
 
 <body class="bg-light">
     <div th:replace="/fragments/header :: header" />
-    <progress id="progressBar" value="0" max="100" style="width: 300px;"></progress>
-    <span id="percentage"></span><span id="time"></span>
+ 
+    <div class="alert alert-warning alert-message" role="alert">上传格式错误，仅限 xlsx, cvs 格式！</div>
+
+    <div>
+        <!-- 否同 -->
+        <span th:if="${item.rules} eq 1">
+            <div>点击为否同</div>
+            <div th:text="${item.rules}">规则</div>
+        </span>
+    </div>
     <div class="container">
         <div class="card border-primary">
             <div class="card-header">
                 <button class="btn btn-primary btn-sm">新增</button>
-                <button class="btn btn-warning btn-sm">删除</button>
+                <button class="btn btn-danger btn-sm">删除</button>
                 <div style="float: right">
                     <a href="/item/export">下载导入模板</a>
                     <input style="display: none; " type="file" id="file" name="myfile" />
                     <label for="file" style="margin-bottom: 0;" class="btn btn-primary btn-sm">导入Excel</label>
-                    <input class="btn btn-secondary btn-sm" type="button"
-                        th:onclick="'javascript:excelImport('+${vote.id}+')'" value="上传" />
                     <button type="submit" class="btn btn-secondary btn-sm">添加</button>
                     <button type="submit" class="btn btn-primary btn-sm">发布</button>
+                </div>
+                <!-- 文件框 -->
+                <div class="card file-card hide">
+                  <div class="card-body">
+                    <h5 class="card-title">
+                        文件名称：<span class="fileName"></span>
+                        <input class="btn btn-primary btn-sm" type="button" th:onclick="'javascript:excelImport('+${item.id}+')'" value="上传" />
+                    </h5>
+                    <progress id="progressBar" value="0" max="100" style="width: 300px;"></progress>
+                    <span id="percentage"></span>
+                    <span id="time"></span>
+                    <div>
+                        
+                    </div>
+                  </div>
                 </div>
             </div>
             <div class="card-body text-primary">
@@ -37,7 +91,9 @@
         let $table = $('#table')
         let $remove = $('#remove')
         let selections = []
-        
+
+
+
         //定义按钮事件
         function excelImport(voteId) {
             var fileObj = document.getElementById("file").files[0]; // js 获取文件对象
@@ -141,17 +197,18 @@
         //         return sum + i
         //     }, 0)
         // }
-        window.operateEvents = {
-            'click .like': function (e, value, row, index) {
-                alert('You click like action, row: ' + JSON.stringify(row))
-            },
-            'click .remove': function (e, value, row, index) {
-                $table.bootstrapTable('remove', {
-                    field: 'id',
-                    values: [row.id]
-                })
-            }
-        }
+
+        // window.operateEvents = {
+        //     'click .like': function (e, value, row, index) {
+        //         alert('You click like action, row: ' + JSON.stringify(row))
+        //     },
+        //     'click .remove': function (e, value, row, index) {
+        //         $table.bootstrapTable('remove', {
+        //             field: 'id',
+        //             values: [row.id]
+        //         })
+        //     }
+        // }
 
 
         /*
@@ -296,6 +353,20 @@
 
         $(function () {
             initTable()
+            $('#file').on('change', function() {
+                // 存在文件
+                if(this.files.length > 0) {
+                    // 是 xlsx || csv 格式
+                   if(this.files[0].name.indexOf('.xlsx') !== -1 || this.files[0].name.indexOf('.csv') !== -1) {
+                        $('.fileName').html(this.files[0].name);
+                        $('.file-card').removeClass('hide');
+                        return;
+                   } 
+                   $('.alert-message')
+                    .fadeIn(500)
+                    .fadeOut(5000)
+                }
+            })
             $('#locale').change(initTable)
         })
     </script>
