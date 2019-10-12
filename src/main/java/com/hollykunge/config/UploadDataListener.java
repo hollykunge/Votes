@@ -1,6 +1,7 @@
 package com.hollykunge.config;
 
 import com.alibaba.fastjson.JSONObject;
+import com.hollykunge.model.Item;
 import com.hollykunge.model.Vote;
 import com.hollykunge.model.VoteItem;
 import com.hollykunge.service.VoteItemService;
@@ -23,11 +24,11 @@ public class UploadDataListener extends AnalysisEventListener<ItemUploadData> {
 
     private final VoteItemService voteItemService;
 
-    private final Vote vote;
+    private final Item item;
 
-    public UploadDataListener(Vote vote,VoteItemService voteItemService){
+    public UploadDataListener(Item item,VoteItemService voteItemService){
         this.voteItemService = voteItemService;
-        this.vote = vote;
+        this.item = item;
     }
 
 
@@ -60,11 +61,8 @@ public class UploadDataListener extends AnalysisEventListener<ItemUploadData> {
         log.info("{}条数据，开始存储数据库！", list.size());
         data.stream().forEach(item ->{
             VoteItem voteItem = JSONObject.parseObject(JSONObject.toJSONString(item),VoteItem.class);
-            //初始化导入被投票项设置默认
-            voteItem.setIsTrunNext("1");
             //所在轮数为第一轮
             voteItem.setTurnNum("1");
-            voteItem.setVote(vote);
             try {
                 voteItemService.add(voteItem);
                 log.info("存储数据库成功！");

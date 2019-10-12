@@ -254,14 +254,14 @@ public class ItemController {
     @RequestMapping(value = "/item/import", method = RequestMethod.POST)
     public String excelImport(MultipartFile file, HttpServletRequest request) throws IOException {
         try {
-            String voteIdTemp = request.getHeader("voteId");
-            if (StringUtils.isEmpty(voteIdTemp)) {
-                throw new RuntimeException("vote不能为空...");
+            String itemIdTemp = request.getHeader("itemId");
+            if (StringUtils.isEmpty(itemIdTemp)) {
+                throw new RuntimeException("item不能为空...");
             }
-            Vote vote = new Vote();
-            vote.setId(Long.parseLong(voteIdTemp));
-            EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadDataListener(vote, voteItemService)).sheet().doRead();
-            return "redirect:/editItem/" + voteIdTemp;
+            Item item = new Item();
+            item.setId(Long.parseLong(itemIdTemp));
+            EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadDataListener(item, voteItemService)).sheet().doRead();
+            return "redirect:/editItem/" + itemIdTemp;
         } catch (Exception e) {
             return "redirect:/error";
         }
