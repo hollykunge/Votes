@@ -12,9 +12,11 @@
 <div class="container">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#">我的投票</a></li>
-            <li class="breadcrumb-item"><a href="#" th:text="${item.getVote().title}">Library</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Library</li>
+            <li class="breadcrumb-item">
+                <a th:href="@{'/votes/' + ${#authentication.getName()}}">我的投票</a>
+            </li>
+            <li class="breadcrumb-item"><a th:href="@{'/vote/' + ${item.getVote().id}}" th:text="${item.getVote().title}"></a></li>
+            <li class="breadcrumb-item active" aria-current="page">新建一轮投票</li>
         </ol>
     </nav>
         <div class="row" style="margin-top:20px">
