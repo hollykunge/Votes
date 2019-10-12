@@ -34,6 +34,8 @@ public class ItemServiceImp implements ItemService {
         if(StringUtils.isEmpty(item.getId())){
             item.setTurnNum(itemsTemp.size()+1);
             item.setMemberNum(0);
+            //状态为保存
+            item.setStatus("1");
         }
         //设置随机码，防止用户窜改地址
         item.setCode(UUIDUtils.getUUID());
@@ -71,5 +73,15 @@ public class ItemServiceImp implements ItemService {
             throw new BaseException("状态不能为空...");
         }
         return true;
+    }
+
+    @Override
+    public Item deleteItem(Long id) {
+        Item one = itemRepository.findOne(id);
+        if(one == null){
+            throw new BaseException("查询不到这个数据...没法删除");
+        }
+        itemRepository.delete(id);
+        return one;
     }
 }
