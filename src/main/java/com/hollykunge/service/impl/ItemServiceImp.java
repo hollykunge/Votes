@@ -45,14 +45,14 @@ public class ItemServiceImp implements ItemService {
         return itemRepository.findById(id);
     }
     @Override
-    public Item setItemStatus(Item item) throws Exception{
-        Item result = null;
-        if(jurageItem(item)){
-            Item exitItem = itemRepository.findOne(item.getId());
-            exitItem.setStatus(item.getStatus());
-            result = itemRepository.saveAndFlush(exitItem);
+    public Item setItemStatus(Long id,String status) throws Exception{
+        Item exitItem = itemRepository.findOne(id);
+        if(exitItem == null){
+            throw new BaseException("暂无该伦次...");
         }
-        return result;
+        exitItem.setStatus(status);
+        itemRepository.saveAndFlush(exitItem);
+        return exitItem;
     }
 
     @Override
