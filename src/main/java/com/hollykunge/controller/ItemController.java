@@ -16,6 +16,7 @@ import com.hollykunge.service.ItemService;
 import com.hollykunge.service.VoteItemService;
 import com.hollykunge.service.VoteService;
 import com.hollykunge.service.UserService;
+import com.hollykunge.util.Base64Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,6 +26,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -291,7 +293,7 @@ public class ItemController {
     @RequestMapping(value = "/setItemStatus/{id}/{status}", method = RequestMethod.GET)
     public String setItemStatus(@PathVariable Long id,
                                 @PathVariable String status,
-                                Model model) throws Exception {
+                                RedirectAttributes redirectAttributes) throws Exception {
         //投票轮发布的时候，判断是否有投票项，没有不能发起投票
         Optional<List<VoteItem>> voteItems;
         if(Objects.equals(VoteConstants.ITEM_SEND_STATUS,status)){
@@ -300,7 +302,7 @@ public class ItemController {
             voteItems = voteItemService.findByItem(item);
             Item itemTemp = itemService.findById(id);
             if(voteItems.isPresent()){
-//                model.addAttribute("",);
+                redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("没有投票项不能发起投票"));
                 return "redirect:/vote/"+itemTemp.getVote().getId();
             }
         }
