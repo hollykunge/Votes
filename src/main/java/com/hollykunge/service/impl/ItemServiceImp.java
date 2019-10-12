@@ -33,6 +33,7 @@ public class ItemServiceImp implements ItemService {
         List<Item> itemsTemp = itemRepository.findByVote(item.getVote());
         if(StringUtils.isEmpty(item.getId())){
             item.setTurnNum(itemsTemp.size()+1);
+            item.setMemberNum(0);
         }
         //设置随机码，防止用户窜改地址
         item.setCode(UUIDUtils.getUUID());
