@@ -283,10 +283,20 @@ public class ItemController {
      */
     @RequestMapping(value = "/setItemStatus/{id}/{status}", method = RequestMethod.GET)
     public String setItemStatus(@PathVariable Long id,
-                                @PathVariable String status,
-                                Model model) throws Exception {
+                                @PathVariable String status) throws Exception {
         Item item = itemService.setItemStatus(id, status);
-        model.addAttribute("successMessage","操作成功");
+        return "redirect:/vote/"+item.getVote().getId();
+    }
+
+    /**
+     * 删除投票轮
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    public String deleteItem(@PathVariable Long id) throws Exception {
+        Item item = itemService.deleteItem(id);
         return "redirect:/vote/"+item.getVote().getId();
     }
 
