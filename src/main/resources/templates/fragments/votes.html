@@ -10,12 +10,14 @@
                 <tr class="do-tr">
                     <td class="do-td">标题</td>
                     <td class="do-td">时间</td>
+                    <td class="do-td">轮数</td>
                     <td class="do-td">描述</td>
                     <td class="do-td">操作</td>
                 </tr>
                 <tr class="do-tr" th:each="vote : ${pager.votes}">
                     <td class="do-td" th:text="${vote.title}">--</td>
                     <td class="do-td" th:text="${#dates.format(vote.createDate, 'yyyy-MM-dd')}">--/--/--</td>
+                    <td class="do-td" th:text="${vote.getItems().size()}">-</td>
                     <td class="do-td" th:text="${vote.body}">-</td>
                     <td class="do-td">
                         <a class="btn btn-outline-primary btn-sm" th:href="@{'/vote/' + ${vote.id}}"

@@ -7,6 +7,7 @@ import com.hollykunge.config.ItemStatusConfig;
 import com.hollykunge.config.ItemUploadData;
 import com.hollykunge.config.UploadDataListener;
 import com.hollykunge.constants.VoteConstants;
+import com.hollykunge.exception.BaseException;
 import com.hollykunge.model.Item;
 import com.hollykunge.model.User;
 import com.hollykunge.model.Vote;
@@ -32,6 +33,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.security.Principal;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -101,9 +103,14 @@ public class ItemController {
             });
             return frashItemView(item);
         } else {
-            Long voteId = item.getVote().getId();
-            itemService.save(item);
-            return "redirect:/vote/" + voteId;
+            try{
+                Long voteId = item.getVote().getId();
+                itemService.save(item);
+                return "redirect:/vote/" + voteId;
+            }catch (BaseException e){
+                error(bindingResult,"memberSize","error.memberSize",e.getMessage());
+                return frashItemView(item);
+            }
         }
     }
 
@@ -112,6 +119,10 @@ public class ItemController {
     }
 
     private void error(BindingResult bindingResult,String s,String s1,String s2){
+        bindingResult
+                .rejectValue(s, s1, s2);
+    }
+    private void success(BindingResult bindingResult,String s,String s1,String s2){
         bindingResult
                 .rejectValue(s, s1, s2);
     }
@@ -243,14 +254,14 @@ public class ItemController {
     @RequestMapping(value = "/item/import", method = RequestMethod.POST)
     public String excelImport(MultipartFile file, HttpServletRequest request) throws IOException {
         try {
-            String voteIdTemp = request.getHeader("voteId");
-            if (StringUtils.isEmpty(voteIdTemp)) {
-                throw new RuntimeException("vote不能为空...");
+            String itemIdTemp = request.getHeader("itemId");
+            if (StringUtils.isEmpty(itemIdTemp)) {
+                throw new RuntimeException("item不能为空...");
             }
-            Vote vote = new Vote();
-            vote.setId(Long.parseLong(voteIdTemp));
-            EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadDataListener(vote, voteItemService)).sheet().doRead();
-            return "redirect:/editItem/" + voteIdTemp;
+            Item item = new Item();
+            item.setId(Long.parseLong(itemIdTemp));
+            EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadDataListener(item, voteItemService)).sheet().doRead();
+            return "redirect:/editItem/" + itemIdTemp;
         } catch (Exception e) {
             return "redirect:/error";
         }
@@ -274,15 +285,30 @@ public class ItemController {
 
     /**
      * 设置投票轮状态
-     * todo:返回值没有定义，不清楚返回到哪个页面
-     * @param item
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/setItemStatus", method = RequestMethod.PUT)
-    public String setItemStatus(@RequestParam Item item) throws Exception {
-        itemService.setItemStatus(item);
-        return "";
+    @RequestMapping(value = "/setItemStatus/{id}/{status}", method = RequestMethod.GET)
+    public String setItemStatus(@PathVariable Long id,
+                                @PathVariable String status) throws Exception {
+        //投票轮发布的时候，判断是否有投票项，没有不能发起投票
+        if(Objects.equals(VoteConstants.ITEM_SEND_STATUS,status)){
+
+        }
+        Item item = itemService.setItemStatus(id, status);
+        return "redirect:/vote/"+item.getVote().getId();
+    }
+
+    /**
+     * 删除投票轮
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    public String deleteItem(@PathVariable Long id) throws Exception {
+        Item item = itemService.deleteItem(id);
+        return "redirect:/vote/"+item.getVote().getId();
     }
 
     /**
