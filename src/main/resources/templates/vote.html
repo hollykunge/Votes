@@ -31,7 +31,6 @@
 
         </div>
     </div>
-    <!--<div class="alert alert-info" th:if="${successMessage}" th:text="${successMessage}"></div>-->
     <div class="card border-dark mb-3" style="margin-top: 16px">
         <div class="card-header">投票轮
             <!--添加投票轮按钮-->
@@ -50,34 +49,39 @@
                     <td class="do-td">轮数</td>
                     <td class="do-td">创建时间</td>
                     <td class="do-td">投票情况</td>
+                    <td class="do-td">状态</td>
                     <td class="do-td">操作</td>
                 </tr>
                 <tr class="do-tr" th:each="item : ${vote.items}">
                     <td class="do-td"><strong th:text="'第'+${item.turnNum}+'轮'">Title</strong></td>
                     <td class="do-td" th:text="${#dates.format(item.createDate, 'yyyy-MM-dd')}">--/--/--</td>
                     <td class="do-td" th:text="${item.memberNum}+'/'+${item.memberSize}">-/-</td>
-
+                    <td class="do-td">
+                        <span th:if="${item.status} == '1'">新建</span>
+                        <span th:if="${item.status} == '2'">已发起</span>
+                        <span th:if="${item.status} == '3'">已结束</span>
+                    </td>
                     <td class="do-td">
                         <a th:href="@{'/editItem/{id}'(id=${item.id})}">
                             <button type="button" class="btn btn-outline-info btn-sm d-inline">投票项</button>
                         </a>
-                        <a th:href="@{'/voteVote/{voteid}/{itemid}'(voteid=${vote.id}, itemid=${item.id})}">
+                        <a th:if="${item.status} == '1'" th:href="@{'/voteVote/{voteid}/{itemid}'(voteid=${vote.id}, itemid=${item.id})}">
                             <button type="button" class="btn btn-outline-primary btn-sm d-inline">编辑</button>
                         </a>
                         <a th:href="@{'/stat/{id}'(id=${item.id})}">
                             <button type="button" class="btn btn-outline-success btn-sm d-inline">统计</button>
                         </a>
-                        <a th:href="@{'/setItemStatus/{id}/{status}'(id=${vote.id},status='0')}">
+                        <a th:if="${item.status == '1'}" th:href="@{'/delete/{id}'(id=${item.id})}">
                             <button type="button" class="btn btn-outline-danger btn-sm d-inline">删除</button>
                         </a>
-                        <a th:href="@{'/setItemStatus/{id}/{status}'(id=${vote.id},status='2')}">
+                        <a th:if="${item.status == '1'}" th:href="@{'/setItemStatus/{id}/{status}'(id=${item.id},status='2')}">
                             <button type="button" class="btn btn-outline-warning btn-sm d-inline">发起</button>
                         </a>
-                        <a th:href="@{'/voteVote/{id}'(id=${vote.id})}">
+                        <a th:if="${item.status == '2'}" th:href="@{'/setItemStatus/{id}/{status}'(id=${item.id},status='3')}">
                             <button type="button" class="btn btn-outline-dark btn-sm d-inline">结束</button>
                         </a>
 
-                        <button type="button" class="btn btn-outline-secondary btn-sm d-inline"
+                        <button th:if="${item.status != '3'}" type="button" class="btn btn-outline-secondary btn-sm d-inline"
                                 th:onclick="|showModel(${item.id})|">邀请码
                         </button>
                     </td>
