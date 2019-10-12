@@ -10,7 +10,9 @@
 <div class="container">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="#">我的投票</a></li>
+            <li class="breadcrumb-item">
+                <a th:href="@{'/votes/' + ${#authentication.getName()}}">我的投票</a>
+            </li>
             <li class="breadcrumb-item active" aria-current="page" th:text="${vote.title}">Library</li>
         </ol>
     </nav>
@@ -18,7 +20,7 @@
         <div class="card-header">详情
             <div style="float: right" sec:authorize="isAuthenticated()" th:if="${username}">
                 <a th:href="@{'/editVote/{id}'(id=${vote.id})}" class="col-md-2">
-                    <button type="button" class="btn btn-primary btn-sm" th:text="编辑">
+                    <button type="button" class="btn btn-secondary btn-sm" th:text="编辑">
                         <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
                         编辑
                     </button>
@@ -27,6 +29,7 @@
         </div>
         <div class="card-body">
             <h5 class="card-title" th:text="${vote.title}">Title</h5>
+            <hr class="my-4"/>
             <p class="card-text" th:text="${vote.body}">body</p>
 
         </div>
@@ -45,27 +48,28 @@
         </div>
         <div class="card-body card-nopadding">
             <table class="do-table" width='100%' border='0' cellspacing='0' cellpadding='0' align='center'>
-                <tr class="do-tr">
+                <tr class="do-tr do-head">
                     <td class="do-td">轮数</td>
                     <td class="do-td">创建时间</td>
                     <td class="do-td">投票情况</td>
                     <td class="do-td">状态</td>
                     <td class="do-td">操作</td>
                 </tr>
-                <tr class="do-tr" th:each="item : ${vote.items}">
+                <tr class="do-tr do-content" th:each="item : ${vote.items}">
                     <td class="do-td"><strong th:text="'第'+${item.turnNum}+'轮'">Title</strong></td>
                     <td class="do-td" th:text="${#dates.format(item.createDate, 'yyyy-MM-dd')}">--/--/--</td>
                     <td class="do-td" th:text="${item.memberNum}+'/'+${item.memberSize}">-/-</td>
                     <td class="do-td">
-                        <span th:if="${item.status} == '1'">新建</span>
-                        <span th:if="${item.status} == '2'">已发起</span>
-                        <span th:if="${item.status} == '3'">已结束</span>
+                        <span class="badge badge-primary" th:if="${item.status} == '1'">新建</span>
+                        <span class="badge badge-success" th:if="${item.status} == '2'">已发起</span>
+                        <span class="badge badge-secondary" th:if="${item.status} == '3'">已结束</span>
                     </td>
                     <td class="do-td">
                         <a th:href="@{'/editItem/{id}'(id=${item.id})}">
                             <button type="button" class="btn btn-outline-info btn-sm d-inline">投票项</button>
                         </a>
-                        <a th:if="${item.status} == '1'" th:href="@{'/voteVote/{voteid}/{itemid}'(voteid=${vote.id}, itemid=${item.id})}">
+                        <a th:if="${item.status} == '1'"
+                           th:href="@{'/voteVote/{voteid}/{itemid}'(voteid=${vote.id}, itemid=${item.id})}">
                             <button type="button" class="btn btn-outline-primary btn-sm d-inline">编辑</button>
                         </a>
                         <a th:href="@{'/stat/{id}'(id=${item.id})}">
@@ -74,14 +78,17 @@
                         <a th:if="${item.status == '1'}" th:href="@{'/delete/{id}'(id=${item.id})}">
                             <button type="button" class="btn btn-outline-danger btn-sm d-inline">删除</button>
                         </a>
-                        <a th:if="${item.status == '1'}" th:href="@{'/setItemStatus/{id}/{status}'(id=${item.id},status='2')}">
+                        <a th:if="${item.status == '1'}"
+                           th:href="@{'/setItemStatus/{id}/{status}'(id=${item.id},status='2')}">
                             <button type="button" class="btn btn-outline-warning btn-sm d-inline">发起</button>
                         </a>
-                        <a th:if="${item.status == '2'}" th:href="@{'/setItemStatus/{id}/{status}'(id=${item.id},status='3')}">
+                        <a th:if="${item.status == '2'}"
+                           th:href="@{'/setItemStatus/{id}/{status}'(id=${item.id},status='3')}">
                             <button type="button" class="btn btn-outline-dark btn-sm d-inline">结束</button>
                         </a>
 
-                        <button th:if="${item.status != '3'}" type="button" class="btn btn-outline-secondary btn-sm d-inline"
+                        <button th:if="${item.status != '3'}" type="button"
+                                class="btn btn-outline-secondary btn-sm d-inline"
                                 th:onclick="|showModel(${item.id})|">邀请码
                         </button>
                     </td>
@@ -98,13 +105,15 @@
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <input type="text" class="form-control" disabled="disabled"
+                                    <input type="text" class="form-control" disabled="disabled" id="code"
                                            th:value="${address}+${item.id}+'/'+${item.code}"/>
                                     <!--                                    <span th:text="${address}"></span><span th:text="${item.id}"></span><span>/</span><span th:text="${item.code}"></span>-->
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
-                                    <button type="button" class="btn btn-primary copyCode" data-clipboard-target="#code">复制</button>
+                                    <button type="button" class="btn btn-primary copyCode" id="copyCode"
+                                            data-clipboard-target="#code">复制
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -115,7 +124,6 @@
     </div>
 
 </div>
-
 <div th:replace="/fragments/footer :: footer"/>
 <script th:src="@{/webjars/clipboard.js/2.0.4/clipboard.min.js}"></script>
 <script>
@@ -137,14 +145,15 @@
         //         alert("数据没有成功返回!")
         //     }
         // });
-        $('#'+id).modal('show');
+        $('#' + id).modal('show');
     }
-    // let cp = new Clipboard(".copyCode");
-    // //点击按钮后的操作
-    // cp.on('success', function(e) {
-    //     alert('复制成功')
-    //     e.clearSelection();
-    // });
+
+    let cp = new Clipboard('#copyCode');
+    //点击按钮后的操作
+    cp.on('success', function(e) {
+        alert('复制成功')
+        e.clearSelection();
+    });
 </script>
 </body>
 </html>

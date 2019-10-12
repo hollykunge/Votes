@@ -8,6 +8,15 @@
 <body class="bg-light">
 <div th:replace="/fragments/header :: header"/>
 <div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a th:href="@{'/votes/' + ${#authentication.getName()}}">我的投票</a>
+            </li>
+            <li class="breadcrumb-item"><a th:href="@{'/vote/' + ${item.getVote().id}}" th:text="${item.getVote().title}"></a></li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="'第'+${item.turnNum}+'轮'">新建一轮投票</li>
+        </ol>
+    </nav>
     <div class="card bg-light mb-3">
         <div class="card-header" th:text="'第'+${item.turnNum}+'轮'">第几轮</div>
         <div class="card-body">
