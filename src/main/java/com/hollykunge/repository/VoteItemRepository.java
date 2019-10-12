@@ -14,5 +14,6 @@ import java.util.Optional;
  * @since: Create in 10:51 2019/10/9
  */
 public interface VoteItemRepository extends JpaRepository<VoteItem, Long> {
-    Optional<List<VoteItem>> findByVote(Vote vote);
+//    Optional<List<VoteItem>> findByVote(Vote vote);
+    Optional<List<VoteItem>> findByItem(Item item);
 }

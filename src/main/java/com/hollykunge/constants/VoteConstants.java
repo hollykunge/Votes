@@ -8,4 +8,10 @@ package com.hollykunge.constants;
 public class VoteConstants {
     public static final String AGREEMENT_LETTER = "http://";
     public static final String INVITECODE_RPC = "/userVote/";
+
+
+    /**
+     * 投票轮已发布状态
+     */
+    public static final String ITEM_SEND_STATUS = "2";
 }

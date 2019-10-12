@@ -25,9 +25,11 @@ VALUES (1, 1, '投票项1',
         {ts '2016-10-19 11:10:13.247'});
 
 -- Items
-INSERT INTO ITEM (vote_id, user_id, body, create_date,rules,agree_rule)
+INSERT INTO ITEM (vote_id, user_id, body, create_date,rules,agree_rule,agree_max,agree_min)
 VALUES (1, 1,
         '"第一轮投票"',
         CURRENT_TIMESTAMP(),
-        '23',
-        '32');
+        '1',
+        '32',
+        10,
+        1);

@@ -7,6 +7,7 @@ import com.hollykunge.config.ItemStatusConfig;
 import com.hollykunge.config.ItemUploadData;
 import com.hollykunge.config.UploadDataListener;
 import com.hollykunge.constants.VoteConstants;
+import com.hollykunge.exception.BaseException;
 import com.hollykunge.model.Item;
 import com.hollykunge.model.User;
 import com.hollykunge.model.Vote;
@@ -15,6 +16,7 @@ import com.hollykunge.service.ItemService;
 import com.hollykunge.service.VoteItemService;
 import com.hollykunge.service.VoteService;
 import com.hollykunge.service.UserService;
+import com.hollykunge.util.Base64Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,6 +26,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,6 +35,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.security.Principal;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -101,9 +105,14 @@ public class ItemController {
             });
             return frashItemView(item);
         } else {
-            Long voteId = item.getVote().getId();
-            itemService.save(item);
-            return "redirect:/vote/" + voteId;
+            try{
+                Long voteId = item.getVote().getId();
+                itemService.save(item);
+                return "redirect:/vote/" + voteId;
+            }catch (BaseException e){
+                error(bindingResult,"memberSize","error.memberSize",e.getMessage());
+                return frashItemView(item);
+            }
         }
     }
 
@@ -182,7 +191,7 @@ public class ItemController {
                            Model model)throws Exception {
         try {
             Item item = itemService.findById(id);
-            Optional<List<VoteItem>> voteItems = voteItemService.findByVoteId(item.getVote());
+            Optional<List<VoteItem>> voteItems = voteItemService.findByItem(item);
             model.addAttribute("item", item);
             model.addAttribute("vote",item.getVote());
             model.addAttribute("voteItems", null);
@@ -245,16 +254,16 @@ public class ItemController {
      * @throws IOException
      */
     @RequestMapping(value = "/item/import", method = RequestMethod.POST)
-    public String excelImport(MultipartFile file, HttpServletRequest request) throws IOException {
+    public String excelImport(MultipartFile file, HttpServletRequest request) throws Exception {
         try {
-            String voteIdTemp = request.getHeader("voteId");
-            if (StringUtils.isEmpty(voteIdTemp)) {
-                throw new RuntimeException("vote不能为空...");
+            String itemIdTemp = request.getHeader("itemId");
+            if (StringUtils.isEmpty(itemIdTemp)) {
+                throw new BaseException("item不能为空...");
             }
-            Vote vote = new Vote();
-            vote.setId(Long.parseLong(voteIdTemp));
-            EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadDataListener(vote, voteItemService)).sheet().doRead();
-            return "redirect:/editItem/" + voteIdTemp;
+            Item item = new Item();
+            item.setId(Long.parseLong(itemIdTemp));
+            EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadDataListener(item, voteItemService)).sheet().doRead();
+            return "redirect:/editItem/" + itemIdTemp;
         } catch (Exception e) {
             return "redirect:/error";
         }
@@ -283,7 +292,20 @@ public class ItemController {
      */
     @RequestMapping(value = "/setItemStatus/{id}/{status}", method = RequestMethod.GET)
     public String setItemStatus(@PathVariable Long id,
-                                @PathVariable String status) throws Exception {
+                                @PathVariable String status,
+                                RedirectAttributes redirectAttributes) throws Exception {
+        //投票轮发布的时候，判断是否有投票项，没有不能发起投票
+        Optional<List<VoteItem>> voteItems;
+        if(Objects.equals(VoteConstants.ITEM_SEND_STATUS,status)){
+            Item item = new Item();
+            item.setId(id);
+            voteItems = voteItemService.findByItem(item);
+            Item itemTemp = itemService.findById(id);
+            if(voteItems.isPresent()){
+                redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("没有投票项不能发起投票"));
+                return "redirect:/vote/"+itemTemp.getVote().getId();
+            }
+        }
         Item item = itemService.setItemStatus(id, status);
         return "redirect:/vote/"+item.getVote().getId();
     }

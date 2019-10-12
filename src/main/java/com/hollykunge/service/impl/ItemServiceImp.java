@@ -1,5 +1,6 @@
 package com.hollykunge.service.impl;
 
+import com.hollykunge.constants.VoteConstants;
 import com.hollykunge.exception.BaseException;
 import com.hollykunge.model.Item;
 import com.hollykunge.model.Vote;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -36,10 +38,33 @@ public class ItemServiceImp implements ItemService {
             item.setMemberNum(0);
             //状态为保存
             item.setStatus("1");
+            //创建的b不是第一轮投票
+            Item maxItem = null;
+            if(itemsTemp.size() > 0){
+                //添加的时候，查询上一轮次的item_id
+                maxItem = itemsTemp.stream().max(new Comparator<Item>() {
+                    @Override
+                    public int compare(Item o1, Item o2) {
+                        return Integer.compare(o1.getTurnNum(), o2.getTurnNum());
+                    }
+                }).get();
+                item.setPreviousId(String.valueOf(maxItem.getId()));
+            }
+            //上轮投票是否是已发布状态
+            if(!itemSending(maxItem)){
+                throw new BaseException("上一轮没有发布成功，不能再进行创建投票轮...");
+            }
         }
         //设置随机码，防止用户窜改地址
         item.setCode(UUIDUtils.getUUID());
         return itemRepository.saveAndFlush(item);
+    }
+
+    private boolean itemSending(Item item){
+        if(item == null||VoteConstants.ITEM_SEND_STATUS.equals(item.getStatus())){
+            return true;
+        }
+        return false;
     }
 
     @Override
