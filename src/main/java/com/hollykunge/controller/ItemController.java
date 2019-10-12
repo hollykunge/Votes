@@ -115,6 +115,10 @@ public class ItemController {
         bindingResult
                 .rejectValue(s, s1, s2);
     }
+    private void success(BindingResult bindingResult,String s,String s1,String s2){
+        bindingResult
+                .rejectValue(s, s1, s2);
+    }
 
 
     /**
@@ -274,15 +278,16 @@ public class ItemController {
 
     /**
      * 设置投票轮状态
-     * todo:返回值没有定义，不清楚返回到哪个页面
-     * @param item
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/setItemStatus", method = RequestMethod.PUT)
-    public String setItemStatus(@RequestParam Item item) throws Exception {
-        itemService.setItemStatus(item);
-        return "";
+    @RequestMapping(value = "/setItemStatus/{id}/{status}", method = RequestMethod.GET)
+    public String setItemStatus(@PathVariable Long id,
+                                @PathVariable String status,
+                                Model model) throws Exception {
+        Item item = itemService.setItemStatus(id, status);
+        model.addAttribute("successMessage","操作成功");
+        return "redirect:/vote/"+item.getVote().getId();
     }
 
     /**
