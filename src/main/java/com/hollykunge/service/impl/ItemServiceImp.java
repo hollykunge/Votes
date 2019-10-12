@@ -33,6 +33,7 @@ public class ItemServiceImp implements ItemService {
         List<Item> itemsTemp = itemRepository.findByVote(item.getVote());
         if(StringUtils.isEmpty(item.getId())){
             item.setTurnNum(itemsTemp.size()+1);
+            item.setMemberNum(0);
         }
         //设置随机码，防止用户窜改地址
         item.setCode(UUIDUtils.getUUID());
@@ -44,14 +45,14 @@ public class ItemServiceImp implements ItemService {
         return itemRepository.findById(id);
     }
     @Override
-    public Item setItemStatus(Item item) throws Exception{
-        Item result = null;
-        if(jurageItem(item)){
-            Item exitItem = itemRepository.findOne(item.getId());
-            exitItem.setStatus(item.getStatus());
-            result = itemRepository.saveAndFlush(exitItem);
+    public Item setItemStatus(Long id,String status) throws Exception{
+        Item exitItem = itemRepository.findOne(id);
+        if(exitItem == null){
+            throw new BaseException("暂无该伦次...");
         }
-        return result;
+        exitItem.setStatus(status);
+        itemRepository.saveAndFlush(exitItem);
+        return exitItem;
     }
 
     @Override

@@ -7,7 +7,6 @@
 <body class="bg-light">
 
 <div th:replace="/fragments/header :: header"/>
-
 <div class="container">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -32,7 +31,7 @@
 
         </div>
     </div>
-
+    <!--<div class="alert alert-info" th:if="${successMessage}" th:text="${successMessage}"></div>-->
     <div class="card border-dark mb-3" style="margin-top: 16px">
         <div class="card-header">投票轮
             <!--添加投票轮按钮-->
@@ -68,10 +67,10 @@
                         <a th:href="@{'/stat/{id}'(id=${item.id})}">
                             <button type="button" class="btn btn-outline-success btn-sm d-inline">统计</button>
                         </a>
-                        <a th:href="@{'/voteVote/{id}'(id=${vote.id})}">
+                        <a th:href="@{'/setItemStatus/{id}/{status}'(id=${vote.id},status='0')}">
                             <button type="button" class="btn btn-outline-danger btn-sm d-inline">删除</button>
                         </a>
-                        <a th:href="@{'/voteVote/{id}'(id=${vote.id})}">
+                        <a th:href="@{'/setItemStatus/{id}/{status}'(id=${vote.id},status='2')}">
                             <button type="button" class="btn btn-outline-warning btn-sm d-inline">发起</button>
                         </a>
                         <a th:href="@{'/voteVote/{id}'(id=${vote.id})}">
@@ -83,7 +82,8 @@
                         </button>
                     </td>
                     <!--邀请码-->
-                    <div class="modal fade" id="codeMode" tabindex="-1" role="dialog" aria-labelledby="codeTitle"
+
+                    <div class="modal fade" th:id="${item.id}" tabindex="-1" role="dialog" aria-labelledby="codeTitle"
                          aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
@@ -115,7 +115,7 @@
 <div th:replace="/fragments/footer :: footer"/>
 <script th:src="@{/webjars/clipboard.js/2.0.4/clipboard.min.js}"></script>
 <script>
-    function showModel() {
+    function showModel(id) {
         // $.ajax({
         //     url:"",
         //     async:true,
@@ -133,7 +133,7 @@
         //         alert("数据没有成功返回!")
         //     }
         // });
-        $('#codeMode').modal('show');
+        $('#'+id).modal('show');
     }
     // let cp = new Clipboard(".copyCode");
     // //点击按钮后的操作
