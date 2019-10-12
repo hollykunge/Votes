@@ -20,7 +20,7 @@
         <div class="card-header">详情
             <div style="float: right" sec:authorize="isAuthenticated()" th:if="${username}">
                 <a th:href="@{'/editVote/{id}'(id=${vote.id})}" class="col-md-2">
-                    <button type="button" class="btn btn-primary btn-sm" th:text="编辑">
+                    <button type="button" class="btn btn-secondary btn-sm" th:text="编辑">
                         <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
                         编辑
                     </button>
@@ -105,13 +105,13 @@
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <input type="text" class="form-control" disabled="disabled"
+                                    <input type="text" class="form-control" disabled="disabled" id="code"
                                            th:value="${address}+${item.id}+'/'+${item.code}"/>
                                     <!--                                    <span th:text="${address}"></span><span th:text="${item.id}"></span><span>/</span><span th:text="${item.code}"></span>-->
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
-                                    <button type="button" class="btn btn-primary copyCode"
+                                    <button type="button" class="btn btn-primary copyCode" id="copyCode"
                                             data-clipboard-target="#code">复制
                                     </button>
                                 </div>
@@ -148,12 +148,12 @@
         $('#' + id).modal('show');
     }
 
-    // let cp = new Clipboard(".copyCode");
-    // //点击按钮后的操作
-    // cp.on('success', function(e) {
-    //     alert('复制成功')
-    //     e.clearSelection();
-    // });
+    let cp = new Clipboard('#copyCode');
+    //点击按钮后的操作
+    cp.on('success', function(e) {
+        alert('复制成功')
+        e.clearSelection();
+    });
 </script>
 </body>
 </html>

@@ -107,3 +107,8 @@ a:hover, a:focus, a:active {
 .do-head {
     background: #f0f0f0 !important;
 }
+
+.bg-customer{
+    background: linear-gradient(to right, rgba(0, 123, 255, 0.5), white);
+    margin-top: 24px;
+}
