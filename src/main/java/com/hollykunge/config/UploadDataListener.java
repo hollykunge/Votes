@@ -63,6 +63,7 @@ public class UploadDataListener extends AnalysisEventListener<ItemUploadData> {
             VoteItem voteItem = JSONObject.parseObject(JSONObject.toJSONString(item),VoteItem.class);
             //所在轮数为第一轮
             voteItem.setTurnNum("1");
+            voteItem.setItem(this.item);
             try {
                 voteItemService.add(voteItem);
                 log.info("存储数据库成功！");
