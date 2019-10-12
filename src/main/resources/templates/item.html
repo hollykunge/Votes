@@ -2,16 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-
     <div th:replace="/fragments/header :: header-css" />
     <style type="text/css">
-/*        .card.file-card{
-            width: 330px;
-            position: absolute;
-            z-index: 999;
-            top: 40px;
-            right: 3px;
-        }*/
+        /*        .card.file-card{
+                    width: 330px;
+                    position: absolute;
+                    z-index: 999;
+                    top: 40px;
+                    right: 3px;
+                }*/
         .card.file-card .btn-primary{
             float: right;
         }
@@ -40,101 +39,83 @@
 </head>
 
 <body class="bg-light">
-    <div th:replace="/fragments/header :: header" />
- 
-    <div class="alert alert-warning alert-message" role="alert">上传格式错误，仅限 xlsx, cvs 格式！</div>
+<div th:replace="/fragments/header :: header" />
 
-    <!-- 
-    <div>
-       否同
-        <span th:if="${item.rules} eq 1">
-            <div>点击为否同</div>
-            <div th:text="${item.rules}">规则</div>
-        </span>
-    </div> 
-    -->
-    <div class="container">
-        <div class="card border-primary">
-            <div class="card-header">
-                <button class="btn btn-primary btn-sm">新增</button>
-                <button class="btn btn-danger btn-sm">删除</button>
-                <div style="float: right">
-                    <a href="/item/export">下载导入模板</a>
-                    <input style="display: none; " type="file" id="file" name="myfile" />
-                    <label for="file" style="margin-bottom: 0;" class="btn btn-primary btn-sm">导入Excel</label>
-                    <button type="submit" class="btn btn-secondary btn-sm">添加</button>
-                    <button type="submit" class="btn btn-primary btn-sm">发布</button>
-                </div>
-            </div>
-            <div class="card-body text-primary">
-                <table id="table"></table>
+<div class="alert alert-warning alert-message" role="alert">上传格式错误，仅限 xlsx, cvs 格式！</div>
+
+<!--
+<div>
+   否同
+    <span th:if="${item.rules} eq 1">
+        <div>点击为否同</div>
+        <div th:text="${item.rules}">规则</div>
+    </span>
+</div>
+-->
+<div class="container">
+    <div class="card border-primary">
+        <div class="card-header">
+            <button class="btn btn-primary btn-sm">新增</button>
+            <button class="btn btn-danger btn-sm">删除</button>
+            <div style="float: right">
+                <a href="/item/export">下载导入模板</a>
+                <input style="display: none; " type="file" id="file" name="myfile" />
+                <label for="file" style="margin-bottom: 0;" class="btn btn-primary btn-sm">导入Excel</label>
+                <button type="submit" class="btn btn-secondary btn-sm">添加</button>
+                <button type="submit" class="btn btn-primary btn-sm">发布</button>
             </div>
         </div>
-                    <!--邀请码-->
-                    <div class="modal fade" id="modal_dialog" tabindex="-1" role="dialog" aria-labelledby="codeTitle"
-                         aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="codeTitle">文件名称：<span class="fileName"></span></h5>
-                                </div>
-                                <div class="modal-body">
-                                    <!-- 文件框 -->
-                                        <h6>上传进度</h6>
-                                        <progress id="progressBar" value="0" max="100" style="width: 100%;"></progress>
-                                        <span id="percentage"></span>
-                                        <span id="time"></span>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
-                                    <button type="button" class="btn btn-primary copyCode" th:onclick="'javascript:excelImport('+${item.id}+')'" data-clipboard-target="#code">
-                                        上传
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
+        <div class="card-body text-primary">
+            <table id="table"></table>
+        </div>
     </div>
-
+    <!--邀请码-->
+    <div class="modal fade" id="modal_dialog" tabindex="-1" role="dialog" aria-labelledby="codeTitle"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="codeTitle">文件名称：<span class="fileName"></span></h5>
+                </div>
+                <div class="modal-body">
+                    <!-- 文件框 -->
+                    <h6>上传进度</h6>
+                    <progress id="progressBar" value="0" max="100" style="width: 100%;"></progress>
+                    <span id="percentage"></span>
+                    <span id="time"></span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary copyCode" th:onclick="'javascript:excelImport('+${item.id}+')'" data-clipboard-target="#code">
+                        上传
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div th:replace="/fragments/footer :: footer"/>
+
+<div th:replace="/fragments/footer :: footer" />
+
 <script th:inline="javascript">
     let data = JSON.parse([[${voteItems}]] || '[]')
     let $table = $('#table')
     let $remove = $('#remove')
     let selections = []
-    <script th:inline="javascript">
-        let data = JSON.parse([[${voteItems}]] || '[]')
-        let $table = $('#table')
-        let $remove = $('#remove')
-        let selections = []
-        let rules = [[${item.rules}]] // 规则范围
+    let rules = [[${item.rules}]] // 规则范围
 
 
 
-        //定义按钮事件
-        function excelImport(voteId) {
-            var fileObj = document.getElementById("file").files[0]; // js 获取文件对象
-            var url = "http://127.0.0.1:8090" + "/item/import"; // 接收上传文件的后台地址
-            var form = new FormData(); // FormData 对象
-            if (form) {
-                form.append("file", fileObj); // 文件对象
-            }
-            xhr = new XMLHttpRequest(); // XMLHttpRequest 对象
-            xhr.open("post", url, false); //post方式，url为服务器请求地址，true 该参数规定请求是否异步处理。
-            xhr.onload = uploadComplete; //请求完成
-            xhr.onerror = uploadFailed; //请求失败
-            xhr.upload.onprogress = progressFunction; //【上传进度调用方法实现】
-            xhr.upload.onloadstart = function () { //上传开始执行方法
-                ot = new Date().getTime(); //设置上传开始时间
-                oloaded = 0; //设置上传开始时，以上传的文件大小为0
-            };
-            xhr.setRequestHeader("itemId", voteId);
-            xhr.send(form); //开始上传，发送form数据
+    //定义按钮事件
+    function excelImport(voteId) {
+        var fileObj = document.getElementById("file").files[0]; // js 获取文件对象
+        var url = "http://127.0.0.1:8090" + "/item/import"; // 接收上传文件的后台地址
+        var form = new FormData(); // FormData 对象
+        if (form) {
+            form.append("file", fileObj); // 文件对象
         }
         xhr = new XMLHttpRequest(); // XMLHttpRequest 对象
-        xhr.open("post", url, true); //post方式，url为服务器请求地址，true 该参数规定请求是否异步处理。
+        xhr.open("post", url, false); //post方式，url为服务器请求地址，true 该参数规定请求是否异步处理。
         xhr.onload = uploadComplete; //请求完成
         xhr.onerror = uploadFailed; //请求失败
         xhr.upload.onprogress = progressFunction; //【上传进度调用方法实现】
@@ -142,7 +123,7 @@
             ot = new Date().getTime(); //设置上传开始时间
             oloaded = 0; //设置上传开始时，以上传的文件大小为0
         };
-        xhr.setRequestHeader("voteId", voteId);
+        xhr.setRequestHeader("itemId", voteId);
         xhr.send(form); //开始上传，发送form数据
     }
 
@@ -155,56 +136,45 @@
         }
 
     }
-        // 表格方法
-        function getIdSelections() {
-            return $.map($table.bootstrapTable('getSelections'), function (row) {
-                return row.id
-            })
+    //上传失败
+    function uploadFailed(evt) {
+        alert("上传失败！");
+    }
+
+    //上传进度实现方法，上传过程中会频繁调用该方法
+    function progressFunction(evt) {
+        var progressBar = document.getElementById("progressBar");
+        var percentageDiv = document.getElementById("percentage");
+        // event.total是需要传输的总字节，event.loaded是已经传输的字节。如果event.lengthComputable不为真，则event.total等于0
+        if (evt.lengthComputable) { //
+            progressBar.max = evt.total;
+            progressBar.value = evt.loaded;
+            percentageDiv.innerHTML = Math.round(evt.loaded / evt.total * 100) + "%";
         }
-
-        function showModel(id) {
-            $(id).modal('show');
+        var time = document.getElementById("time");
+        var nt = new Date().getTime(); //获取当前时间
+        var pertime = (nt - ot) / 1000; //计算出上次调用该方法时到现在的时间差，单位为s
+        ot = new Date().getTime(); //重新赋值时间，用于下次计算
+        var perload = evt.loaded - oloaded; //计算该分段上传的文件大小，单位b
+        oloaded = evt.loaded; //重新赋值已上传文件大小，用以下次计算
+        //上传速度计算
+        var speed = perload / pertime; //单位b/s
+        var bspeed = speed;
+        var units = 'b/s'; //单位名称
+        if (speed / 1024 > 1) {
+            speed = speed / 1024;
+            units = 'k/s';
         }
-        // 
-        // function operateFormatter(value, row, index) {
-        //     return [
-        //         '<a class="like" href="javascript:void(0)" title="Like">',
-        //         '<i class="fa fa-heart"></i>',
-        //         '</a>  ',
-        //         '<a class="remove" href="javascript:void(0)" title="Remove">',
-        //         '<i class="fa fa-trash"></i>',
-        //         '</a>'
-        //     ].join('')
-        // }
-        // function totalTextFormatter(data) {
-        //     return 'Total'
-        // }
-
-        // function totalNameFormatter(data) {
-        //     return data.length
-        // }
-
-        // function totalPriceFormatter(data) {
-        //     let field = this.field
-        //     return '$' + data.map(function (row) {
-        //         return +row[field].substring(1)
-        //     }).reduce(function (sum, i) {
-        //         return sum + i
-        //     }, 0)
-        // }
-
-        // window.operateEvents = {
-        //     'click .like': function (e, value, row, index) {
-        //         alert('You click like action, row: ' + JSON.stringify(row))
-        //     },
-        //     'click .remove': function (e, value, row, index) {
-        //         $table.bootstrapTable('remove', {
-        //             field: 'id',
-        //             values: [row.id]
-        //         })
-        //     }
-        // }
-
+        if (speed / 1024 > 1) {
+            speed = speed / 1024;
+            units = 'M/s';
+        }
+        speed = speed.toFixed(1);
+        //剩余时间
+        var resttime = ((evt.total - evt.loaded) / bspeed).toFixed(1);
+        time.innerHTML = '，速度：' + speed + units + '，剩余时间：' + resttime + 's';
+        if (bspeed == 0) time.innerHTML = '上传已取消';
+    }
 
     // 表格方法
     function getIdSelections() {
@@ -212,116 +182,24 @@
             return row.id
         })
     }
-        /*
-         *
-         * 初始化表格方法
-         * 
-         */
-        function initTable() {
 
-            $table.bootstrapTable('destroy').bootstrapTable({
-                height: 550, // 初始高度
-                clickToSelect: true,
-                minimumCountColumns: 2,
-                idField: 'id',
-                sidePagination: 'server',
-                // locale: $('#locale').val(), // 语言类型
-                // 列操作栏
-                columns: [
-                    {
-                        field: 'state',
-                        checkbox: true,
-                        align: 'center',
-                        valign: 'middle'
-                    }, 
-                    {
-                        title: '序号',
-                        field: 'voteItemId',
-                        align: 'center',
-                        valign: 'middle',
-                    },
-                    {
-                        field: 'name',
-                        title: '姓名',
-                        align: 'center'
-                    }, 
-                    {
-                        field: 'attr1',
-                        title: '性别',
-                        align: 'center',
-                    }, 
-                    {
-                        field: 'attr2',
-                        title: '部门',
-                        align: 'center',
-                    }, 
-                    {
-                        field: 'attr3',
-                        title: '职称',
-                        align: 'center',
-                    }, 
-                    {
-                        field: 'arrt4',
-                        title: '年龄',
-                        align: 'center',
-                    },
-                    {
-                        field: 'arrt4',
-                        title: '入职年限',
-                        align: 'center',
-                    },
-                    // {
-                    //     field: '',
-                    //     title: '投票规则',
-                    //     align: 'center',
-                    //     formatter:function(value, row, index){
-                    //         return [
-                    //              '<a class="remove" href="javascript:void(0)" title="Remove">',
-                    //                 '投票',
-                    //              '</a>'
-                    //         ].join('')
-                    //     }
-                    // }
-                ],
-                data: data,
-                // table detail api
-                // detailView: true, // 显示详细视图表
-                // detailViewIcon: true, // 显示详细视图列
-                // detailViewByClick: true, // 单击单元格时切换详细视图
-                // detailFormatter: function (index, row, element) { // 详细信息视图内容
-                //     return [
-                //         '<div>',
-                //         '<h4>详情内容</h4>',
-                //         '<div>',
-                //         '序号: ' + row.id,
-                //         '</div>',
-                //         '<div>',
-                //         '名称: ' + row.name,
-                //         '</div>',
-                //         '<div>',
-                //         '预留1: ' + row.arrt1,
-                //         '</div>',
-                //         '<div>',
-                //         '预留2: ' + row.arrt2,
-                //         '</div>',
-                //         '<div>',
-                //         '预留3: ' + row.arrt3,
-                //         '</div>',
-                //         '<div>',
-                //         '预留4: ' + row.arrt4,
-                //         '</div>',
-                //         '</div>',
-                //     ].join('')
-                // },
-                // detailFilter: function (index, row) { // 是否启用该行以进行扩展
-                //     return true
-                // },
-            })
-            // $table.on('check.bs.table uncheck.bs.table ' +
-            //     'check-all.bs.table uncheck-all.bs.table',
-            //     function () {
-            //         $remove.prop('disabled', !$table.bootstrapTable('getSelections').length)
-
+    function showModel(id) {
+        $(id).modal('show');
+    }
+    //
+    // function operateFormatter(value, row, index) {
+    //     return [
+    //         '<a class="like" href="javascript:void(0)" title="Like">',
+    //         '<i class="fa fa-heart"></i>',
+    //         '</a>  ',
+    //         '<a class="remove" href="javascript:void(0)" title="Remove">',
+    //         '<i class="fa fa-trash"></i>',
+    //         '</a>'
+    //     ].join('')
+    // }
+    // function totalTextFormatter(data) {
+    //     return 'Total'
+    // }
 
     // function totalNameFormatter(data) {
     //     return data.length
@@ -335,17 +213,18 @@
     //         return sum + i
     //     }, 0)
     // }
-    window.operateEvents = {
-        'click .like': function (e, value, row, index) {
-            alert('You click like action, row: ' + JSON.stringify(row))
-        },
-        'click .remove': function (e, value, row, index) {
-            $table.bootstrapTable('remove', {
-                field: 'id',
-                values: [row.id]
-            })
-        }
-    }
+
+    // window.operateEvents = {
+    //     'click .like': function (e, value, row, index) {
+    //         alert('You click like action, row: ' + JSON.stringify(row))
+    //     },
+    //     'click .remove': function (e, value, row, index) {
+    //         $table.bootstrapTable('remove', {
+    //             field: 'id',
+    //             values: [row.id]
+    //         })
+    //     }
+    // }
 
 
     /*
@@ -355,28 +234,104 @@
      */
     function initTable() {
 
-            $('#modal_dialog').on('hide.bs.modal', function (a,b,c) {
-                  if(a.type === 'hide') {
-                    $('#file').val('')
-                  }
-            })
-            $('#file').on('change', function() {
-                // 存在文件
-                if(this.files.length > 0) {
-                    // 是 xlsx || csv 格式
-                   if(this.files[0].name.indexOf('.xlsx') !== -1 || this.files[0].name.indexOf('.csv') !== -1) {
-                        showModel('#modal_dialog')
-                        $('.fileName').html(this.files[0].name);
-                        $('.file-card').removeClass('hide');
-                        return;
-                   } 
-                   $('.alert-message')
-                    .fadeIn(500)
-                    .fadeOut(5000)
-                }
-            })
-            $('#locale').change(initTable)
-
+        $table.bootstrapTable('destroy').bootstrapTable({
+            height: 550, // 初始高度
+            clickToSelect: true,
+            minimumCountColumns: 2,
+            idField: 'id',
+            sidePagination: 'server',
+            // locale: $('#locale').val(), // 语言类型
+            // 列操作栏
+            columns: [
+                {
+                    field: 'state',
+                    checkbox: true,
+                    align: 'center',
+                    valign: 'middle'
+                },
+                {
+                    title: '序号',
+                    field: 'voteItemId',
+                    align: 'center',
+                    valign: 'middle',
+                },
+                {
+                    field: 'name',
+                    title: '姓名',
+                    align: 'center'
+                },
+                {
+                    field: 'attr1',
+                    title: '性别',
+                    align: 'center',
+                },
+                {
+                    field: 'attr2',
+                    title: '部门',
+                    align: 'center',
+                },
+                {
+                    field: 'attr3',
+                    title: '职称',
+                    align: 'center',
+                },
+                {
+                    field: 'arrt4',
+                    title: '年龄',
+                    align: 'center',
+                },
+                {
+                    field: 'arrt4',
+                    title: '入职年限',
+                    align: 'center',
+                },
+                // {
+                //     field: '',
+                //     title: '投票规则',
+                //     align: 'center',
+                //     formatter:function(value, row, index){
+                //         return [
+                //              '<a class="remove" href="javascript:void(0)" title="Remove">',
+                //                 '投票',
+                //              '</a>'
+                //         ].join('')
+                //     }
+                // }
+            ],
+            data: data,
+            // table detail api
+            // detailView: true, // 显示详细视图表
+            // detailViewIcon: true, // 显示详细视图列
+            // detailViewByClick: true, // 单击单元格时切换详细视图
+            // detailFormatter: function (index, row, element) { // 详细信息视图内容
+            //     return [
+            //         '<div>',
+            //         '<h4>详情内容</h4>',
+            //         '<div>',
+            //         '序号: ' + row.id,
+            //         '</div>',
+            //         '<div>',
+            //         '名称: ' + row.name,
+            //         '</div>',
+            //         '<div>',
+            //         '预留1: ' + row.arrt1,
+            //         '</div>',
+            //         '<div>',
+            //         '预留2: ' + row.arrt2,
+            //         '</div>',
+            //         '<div>',
+            //         '预留3: ' + row.arrt3,
+            //         '</div>',
+            //         '<div>',
+            //         '预留4: ' + row.arrt4,
+            //         '</div>',
+            //         '</div>',
+            //     ].join('')
+            // },
+            // detailFilter: function (index, row) { // 是否启用该行以进行扩展
+            //     return true
+            // },
+        })
         // $table.on('check.bs.table uncheck.bs.table ' +
         //     'check-all.bs.table uncheck-all.bs.table',
         //     function () {
@@ -411,8 +366,29 @@
     }
 
 
+
     $(function () {
         initTable()
+        $('#modal_dialog').on('hide.bs.modal', function (a,b,c) {
+            if(a.type === 'hide') {
+                $('#file').val('')
+            }
+        })
+        $('#file').on('change', function() {
+            // 存在文件
+            if(this.files.length > 0) {
+                // 是 xlsx || csv 格式
+                if(this.files[0].name.indexOf('.xlsx') !== -1 || this.files[0].name.indexOf('.csv') !== -1) {
+                    showModel('#modal_dialog')
+                    $('.fileName').html(this.files[0].name);
+                    $('.file-card').removeClass('hide');
+                    return;
+                }
+                $('.alert-message')
+                    .fadeIn(500)
+                    .fadeOut(5000)
+            }
+        })
         $('#locale').change(initTable)
     })
 </script>
