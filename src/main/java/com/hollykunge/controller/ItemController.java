@@ -189,7 +189,7 @@ public class ItemController {
                            Model model)throws Exception {
         try {
             Item item = itemService.findById(id);
-            Optional<List<VoteItem>> voteItems = voteItemService.findByVoteId(item.getVote());
+            Optional<List<VoteItem>> voteItems = voteItemService.findByItem(item);
             model.addAttribute("item", item);
             model.addAttribute("vote",item.getVote());
             model.addAttribute("voteItems", null);
@@ -290,10 +290,19 @@ public class ItemController {
      */
     @RequestMapping(value = "/setItemStatus/{id}/{status}", method = RequestMethod.GET)
     public String setItemStatus(@PathVariable Long id,
-                                @PathVariable String status) throws Exception {
+                                @PathVariable String status,
+                                Model model) throws Exception {
         //投票轮发布的时候，判断是否有投票项，没有不能发起投票
+        Optional<List<VoteItem>> voteItems;
         if(Objects.equals(VoteConstants.ITEM_SEND_STATUS,status)){
-
+            Item item = new Item();
+            item.setId(id);
+            voteItems = voteItemService.findByItem(item);
+            Item itemTemp = itemService.findById(id);
+            if(voteItems.isPresent()){
+//                model.addAttribute("",);
+                return "redirect:/vote/"+itemTemp.getVote().getId();
+            }
         }
         Item item = itemService.setItemStatus(id, status);
         return "redirect:/vote/"+item.getVote().getId();
