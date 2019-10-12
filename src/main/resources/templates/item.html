@@ -4,13 +4,13 @@
 <head>
     <div th:replace="/fragments/header :: header-css" />
     <style type="text/css">
-        .card.file-card{
+/*        .card.file-card{
             width: 330px;
             position: absolute;
             z-index: 999;
             top: 40px;
             right: 3px;
-        }
+        }*/
         .card.file-card .btn-primary{
             float: right;
         }
@@ -43,13 +43,15 @@
  
     <div class="alert alert-warning alert-message" role="alert">上传格式错误，仅限 xlsx, cvs 格式！</div>
 
+    <!-- 
     <div>
-        <!-- 否同 -->
+       否同
         <span th:if="${item.rules} eq 1">
             <div>点击为否同</div>
             <div th:text="${item.rules}">规则</div>
         </span>
-    </div>
+    </div> 
+    -->
     <div class="container">
         <div class="card border-primary">
             <div class="card-header">
@@ -62,26 +64,35 @@
                     <button type="submit" class="btn btn-secondary btn-sm">添加</button>
                     <button type="submit" class="btn btn-primary btn-sm">发布</button>
                 </div>
-                <!-- 文件框 -->
-                <div class="card file-card hide">
-                  <div class="card-body">
-                    <h5 class="card-title">
-                        文件名称：<span class="fileName"></span>
-                        <input class="btn btn-primary btn-sm" type="button" th:onclick="'javascript:excelImport('+${item.id}+')'" value="上传" />
-                    </h5>
-                    <progress id="progressBar" value="0" max="100" style="width: 300px;"></progress>
-                    <span id="percentage"></span>
-                    <span id="time"></span>
-                    <div>
-                        
-                    </div>
-                  </div>
-                </div>
             </div>
             <div class="card-body text-primary">
                 <table id="table"></table>
             </div>
         </div>
+                    <!--邀请码-->
+                    <div class="modal fade" id="modal_dialog" tabindex="-1" role="dialog" aria-labelledby="codeTitle"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="codeTitle">文件名称：<span class="fileName"></span></h5>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- 文件框 -->
+                                        <h6>上传进度</h6>
+                                        <progress id="progressBar" value="0" max="100" style="width: 100%;"></progress>
+                                        <span id="percentage"></span>
+                                        <span id="time"></span>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                                    <button type="button" class="btn btn-primary copyCode" th:onclick="'javascript:excelImport('+${item.id}+')'" data-clipboard-target="#code">
+                                        上传
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
     </div>
 
     <div th:replace="/fragments/footer :: footer" />
@@ -91,6 +102,7 @@
         let $table = $('#table')
         let $remove = $('#remove')
         let selections = []
+        let rules = [[${item.rules}]] // 规则范围
 
 
 
@@ -170,6 +182,10 @@
                 return row.id
             })
         }
+
+        function showModel(id) {
+            $(id).modal('show');
+        }
         // 
         // function operateFormatter(value, row, index) {
         //     return [
@@ -235,7 +251,7 @@
                     }, 
                     {
                         title: '序号',
-                        field: 'id',
+                        field: 'voteItemId',
                         align: 'center',
                         valign: 'middle',
                     },
@@ -245,17 +261,17 @@
                         align: 'center'
                     }, 
                     {
-                        field: 'arrt1',
+                        field: 'attr1',
                         title: '性别',
                         align: 'center',
                     }, 
                     {
-                        field: 'arrt2',
+                        field: 'attr2',
                         title: '部门',
                         align: 'center',
                     }, 
                     {
-                        field: 'arrt3',
+                        field: 'attr3',
                         title: '职称',
                         align: 'center',
                     }, 
@@ -353,11 +369,17 @@
 
         $(function () {
             initTable()
+            $('#modal_dialog').on('hide.bs.modal', function (a,b,c) {
+                  if(a.type === 'hide') {
+                    $('#file').val('')
+                  }
+            })
             $('#file').on('change', function() {
                 // 存在文件
                 if(this.files.length > 0) {
                     // 是 xlsx || csv 格式
                    if(this.files[0].name.indexOf('.xlsx') !== -1 || this.files[0].name.indexOf('.csv') !== -1) {
+                        showModel('#modal_dialog')
                         $('.fileName').html(this.files[0].name);
                         $('.file-card').removeClass('hide');
                         return;
