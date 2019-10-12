@@ -254,11 +254,11 @@ public class ItemController {
      * @throws IOException
      */
     @RequestMapping(value = "/item/import", method = RequestMethod.POST)
-    public String excelImport(MultipartFile file, HttpServletRequest request) throws IOException {
+    public String excelImport(MultipartFile file, HttpServletRequest request) throws Exception {
         try {
             String itemIdTemp = request.getHeader("itemId");
             if (StringUtils.isEmpty(itemIdTemp)) {
-                throw new RuntimeException("item不能为空...");
+                throw new BaseException("item不能为空...");
             }
             Item item = new Item();
             item.setId(Long.parseLong(itemIdTemp));
