@@ -1,5 +1,6 @@
 package com.hollykunge.service.impl;
 
+import com.hollykunge.model.Item;
 import com.hollykunge.model.Vote;
 import com.hollykunge.model.VoteItem;
 import com.hollykunge.repository.VoteItemRepository;
@@ -40,8 +41,13 @@ public class VoteItemServiceImp implements VoteItemService {
         }
     }
 
+//    @Override
+//    public Optional<List<VoteItem>> findByItemId(Item item) {
+//        return voteItemRepository.findByItem(item);
+//    }
+
     @Override
-    public Optional<List<VoteItem>> findByVoteId(Vote vote) {
-        return voteItemRepository.findByVote(vote);
+    public Optional<List<VoteItem>> findByItem(Item item) {
+        return voteItemRepository.findByItem(item);
     }
 }
