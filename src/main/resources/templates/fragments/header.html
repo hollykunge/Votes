@@ -38,19 +38,19 @@
                     <div sec:authorize="!isAuthenticated()">
                         <a class="btn btn-primary" th:href="@{/registration}">注册</a>
                     </div>
-                    <!-- show login only if user is not yet authenticated -->
+
                     <div sec:authorize="!isAuthenticated()">
                         <a class="btn btn-primary" th:href="@{/login}">登录</a>
                     </div>
-                    <!-- show My Blog only if user is authenticated -->
+
                     <div sec:authorize="hasRole('USER')">
                         <a class="btn btn-primary" th:href="@{'/votes/' + ${#authentication.getName()}}">我的投票</a>
                     </div>
-                    <!-- show new post only if user is authenticated -->
+
                     <div sec:authorize="hasRole('USER')">
-                        <a class="btn btn-primary" th:href="@{/newVote}">新的投票</a>
+                        <a class="btn btn-primary" th:href="@{/newVote}">新建投票</a>
                     </div>
-                    <!-- show sign out only if user is authenticated -->
+
                     <div sec:authorize="isAuthenticated()">
                         <a class="btn btn-primary" th:href="@{/logout}">注销</a>
                     </div>

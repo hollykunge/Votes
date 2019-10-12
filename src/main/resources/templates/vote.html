@@ -9,11 +9,13 @@
 <div th:replace="/fragments/header :: header"/>
 
 <div class="container">
-    <div class="card bg-light">
+    <div class="card border-dark mb-3">
         <div class="card-header">详情
             <div style="float: right" sec:authorize="isAuthenticated()" th:if="${username}">
                 <a th:href="@{'/editVote/{id}'(id=${vote.id})}" class="col-md-2">
-                    <button type="button" class="btn btn-primary btn-sm" th:text="编辑">编辑</button>
+                    <button type="button" class="btn btn-primary btn-sm" th:text="编辑">
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        编辑</button>
                 </a>
             </div>
         </div>
@@ -24,18 +26,19 @@
         </div>
     </div>
 
-    <div class="card bg-light" style="margin-top: 16px">
+    <div class="card border-dark mb-3" style="margin-top: 16px">
         <div class="card-header">投票轮
             <!--添加投票轮按钮-->
             <!--如果有权限-->
             <div sec:authorize="isAuthenticated()" style="float: right">
                 <a th:href="@{'/voteVote/{voteId}/{itemId}'(voteId=${vote.id},itemId=0)}" class="col-md-2">
-                    <button type="button" class="btn btn-primary btn-sm" th:text="添加">添加
+                    <button type="button" class="btn btn-primary btn-sm">
+                        添加
                     </button>
                 </a>
             </div>
         </div>
-        <div class="card-body">
+        <div class="card-body card-nopadding">
             <table class="do-table" width='100%' border='0' cellspacing='0' cellpadding='0' align='center'>
                 <tr class="do-tr">
                     <td class="do-td">轮数</td>
@@ -52,7 +55,7 @@
                         <a th:href="@{'/editItem/{id}'(id=${item.id})}">
                             <button type="button" class="btn btn-outline-info btn-sm d-inline">投票项</button>
                         </a>
-                        <a th:href="@{'/voteVote/{id}'(id=${item.id})}">
+                        <a th:href="@{'/voteVote/{voteid}/{itemid}'(voteid=${vote.id}, itemid=${item.id})}">
                             <button type="button" class="btn btn-outline-primary btn-sm d-inline">编辑</button>
                         </a>
                         <a th:href="@{'/stat/{id}'(id=${item.id})}">

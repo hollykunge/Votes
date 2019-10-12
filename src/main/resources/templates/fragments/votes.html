@@ -3,23 +3,29 @@
 </head>
 <body>
 <div th:fragment="votes">
-    <table class="do-table" width='100%' border='0' cellspacing='0' cellpadding='0' align='center' >
-<!--        <tr class="do-tr">-->
-<!--            <td>标题</td>-->
-<!--            <td>时间</td>-->
-<!--            <td>描述</td>-->
-<!--            <td>操作</td>-->
-<!--        </tr>-->
-        <tr class="do-tr" th:each="vote : ${pager.votes}">
-            <td class="do-td"><h5 style="float: left;" th:text="${vote.title}">Title</h5></td>
-            <td class="do-td" th:text="${#dates.format(vote.createDate, 'yyyy-MM-dd')}">--/--/--</td>
-            <td class="do-td" th:text="${vote.body}">-</td>
-            <td class="do-td">
-                <a class="btn btn-outline-primary btn-sm" th:href="@{'/vote/' + ${vote.id}}" role="button">进入</a>
-                <a class="btn btn-outline-danger btn-sm" th:href="@{'/vote/' + ${vote.id}}" role="button">删除</a>
-            </td>
-        </tr>
-    </table>
+    <div class="card border-dark mb-3">
+        <div class="card-header">我的投票</div>
+        <div class="card-body card-nopadding">
+            <table class="do-table" width='100%' border='0' cellspacing='0' cellpadding='0' align='right'>
+                <tr class="do-tr">
+                    <td class="do-td">标题</td>
+                    <td class="do-td">时间</td>
+                    <td class="do-td">描述</td>
+                    <td class="do-td">操作</td>
+                </tr>
+                <tr class="do-tr" th:each="vote : ${pager.votes}">
+                    <td class="do-td" th:text="${vote.title}">--</td>
+                    <td class="do-td" th:text="${#dates.format(vote.createDate, 'yyyy-MM-dd')}">--/--/--</td>
+                    <td class="do-td" th:text="${vote.body}">-</td>
+                    <td class="do-td">
+                        <a class="btn btn-outline-primary btn-sm" th:href="@{'/vote/' + ${vote.id}}"
+                           role="button">进入</a>
+                        <a class="btn btn-outline-danger btn-sm" th:href="@{'/vote/' + ${vote.id}}" role="button">删除</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
 </div>
 </body>
 </html>

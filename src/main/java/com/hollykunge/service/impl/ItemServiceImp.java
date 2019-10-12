@@ -27,9 +27,6 @@ public class ItemServiceImp implements ItemService {
 
     @Override
     public Item save(Item item) throws Exception{
-        if(StringUtils.isEmpty(item.getAgreeMax())||StringUtils.isEmpty(item.getAgreeMin())){
-            throw new BaseException("规则最大范围最小范围不能为空...");
-        }
         if(item.getVote() == null){
             throw new BaseException("设置投票不能为空...");
         }
