@@ -150,10 +150,10 @@ public class ItemController {
             if(item == null){
                 item = new Item();
                 Optional<User> user = userService.findByUsername(principal.getName());
+                Optional<Vote> vote = voteService.findForId(voteId);
                 item.setUser(user.get());
-                Vote vote = new Vote();
-                vote.setId(voteId);
-                item.setVote(vote);
+
+                item.setVote(vote.get());
                 //添加页面时默认选择否同
                 item.setRules("1");
             }
