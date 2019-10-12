@@ -72,7 +72,7 @@ a:hover, a:focus, a:active {
 
 /* odd 标识奇数行，even标识偶数行 */
 .do-tr:hover {
-    background: #E0F0F0 !important;
+    background: #f0f0f0 !important;
 }
 
 .do-tr{

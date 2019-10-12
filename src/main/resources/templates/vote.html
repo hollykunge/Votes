@@ -8,13 +8,20 @@
 
 <div th:replace="/fragments/header :: header"/>
 <div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">我的投票</a></li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="${vote.title}">Library</li>
+        </ol>
+    </nav>
     <div class="card border-dark mb-3">
         <div class="card-header">详情
             <div style="float: right" sec:authorize="isAuthenticated()" th:if="${username}">
                 <a th:href="@{'/editVote/{id}'(id=${vote.id})}" class="col-md-2">
                     <button type="button" class="btn btn-primary btn-sm" th:text="编辑">
                         <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                        编辑</button>
+                        编辑
+                    </button>
                 </a>
             </div>
         </div>
@@ -73,9 +80,9 @@
                         <button type="button" class="btn btn-outline-secondary btn-sm d-inline"
                                 th:onclick="|showModel(${item.id})|">邀请码
                         </button>
-
                     </td>
                     <!--邀请码-->
+
                     <div class="modal fade" th:id="${item.id}" tabindex="-1" role="dialog" aria-labelledby="codeTitle"
                          aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -87,17 +94,18 @@
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <span th:text="${address}"></span><span th:text="${item.id}"></span><span>/</span><span th:text="${item.code}"></span>
+                                    <input type="text" class="form-control" disabled="disabled"
+                                           th:value="${address}+${item.id}+'/'+${item.code}"/>
+                                    <!--                                    <span th:text="${address}"></span><span th:text="${item.id}"></span><span>/</span><span th:text="${item.code}"></span>-->
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
-                                    <button type="button" class="btn btn-primary">复制</button>
+                                    <button type="button" class="btn btn-primary copyCode" data-clipboard-target="#code">复制</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </tr>
-
             </table>
         </div>
     </div>
@@ -105,7 +113,7 @@
 </div>
 
 <div th:replace="/fragments/footer :: footer"/>
-
+<script th:src="@{/webjars/clipboard.js/2.0.4/clipboard.min.js}"></script>
 <script>
     function showModel(id) {
         // $.ajax({
@@ -127,7 +135,12 @@
         // });
         $('#'+id).modal('show');
     }
-
+    // let cp = new Clipboard(".copyCode");
+    // //点击按钮后的操作
+    // cp.on('success', function(e) {
+    //     alert('复制成功')
+    //     e.clearSelection();
+    // });
 </script>
 </body>
 </html>
