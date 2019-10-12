@@ -77,7 +77,7 @@
 
                     </td>
                     <!--邀请码-->
-                    <div class="modal fade" id="code" tabindex="-1" role="dialog" aria-labelledby="codeTitle"
+                    <div class="modal fade" th:id="${item.id}" tabindex="-1" role="dialog" aria-labelledby="codeTitle"
                          aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
@@ -108,7 +108,7 @@
 <div th:replace="/fragments/footer :: footer"/>
 
 <script>
-    function showModel() {
+    function showModel(id) {
         // $.ajax({
         //     url:"",
         //     async:true,
@@ -126,7 +126,7 @@
         //         alert("数据没有成功返回!")
         //     }
         // });
-        $('#code').modal('show');
+        $('#'+id).modal('show');
     }
 
 </script>
