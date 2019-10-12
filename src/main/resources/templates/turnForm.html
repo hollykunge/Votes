@@ -10,7 +10,13 @@
 
 <div th:replace="/fragments/header :: header"/>
 <div class="container">
-    <div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">我的投票</a></li>
+            <li class="breadcrumb-item"><a href="#" th:text="${item.getVote().title}">Library</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Library</li>
+        </ol>
+    </nav>
         <div class="row" style="margin-top:20px">
             <div class="col-md-12">
                 <form autocomplete="off" action="#" th:action="@{/createTurn}"
@@ -127,7 +133,6 @@
                 </form>
             </div>
         </div>
-    </div>
 </div>
 
 <div th:replace="/fragments/footer :: footer"/>
