@@ -7,6 +7,7 @@ import com.hollykunge.config.ItemStatusConfig;
 import com.hollykunge.config.ItemUploadData;
 import com.hollykunge.config.UploadDataListener;
 import com.hollykunge.constants.VoteConstants;
+import com.hollykunge.exception.BaseException;
 import com.hollykunge.model.Item;
 import com.hollykunge.model.User;
 import com.hollykunge.model.Vote;
@@ -32,6 +33,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.security.Principal;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -101,9 +103,14 @@ public class ItemController {
             });
             return frashItemView(item);
         } else {
-            Long voteId = item.getVote().getId();
-            itemService.save(item);
-            return "redirect:/vote/" + voteId;
+            try{
+                Long voteId = item.getVote().getId();
+                itemService.save(item);
+                return "redirect:/vote/" + voteId;
+            }catch (BaseException e){
+                error(bindingResult,"memberSize","error.memberSize",e.getMessage());
+                return frashItemView(item);
+            }
         }
     }
 
@@ -284,6 +291,10 @@ public class ItemController {
     @RequestMapping(value = "/setItemStatus/{id}/{status}", method = RequestMethod.GET)
     public String setItemStatus(@PathVariable Long id,
                                 @PathVariable String status) throws Exception {
+        //投票轮发布的时候，判断是否有投票项，没有不能发起投票
+        if(Objects.equals(VoteConstants.ITEM_SEND_STATUS,status)){
+
+        }
         Item item = itemService.setItemStatus(id, status);
         return "redirect:/vote/"+item.getVote().getId();
     }
