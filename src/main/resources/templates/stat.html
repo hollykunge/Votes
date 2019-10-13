@@ -14,14 +14,17 @@
                 <a th:href="@{'/votes/' + ${#authentication.getName()}}">我的投票</a>
             </li>
             <li class="breadcrumb-item"><a th:href="@{'/vote/' + ${item.getVote().id}}" th:text="${item.getVote().title}"></a></li>
-            <li class="breadcrumb-item active" aria-current="page" th:text="'第'+${item.turnNum}+'轮'">新建一轮投票</li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="'第'+${item.turnNum}+'轮统计结果'">新建一轮投票</li>
         </ol>
     </nav>
     <div class="card bg-light mb-3">
-        <div class="card-header" th:text="'第'+${item.turnNum}+'轮'">第几轮</div>
+        <div class="card-header">
+            <div style="float: right">
+                <button type="button" class="btn btn-primary btn-sm" id="exportExcel" th:onclick="|showExportModel()|">导出</button>
+            </div>
+        </div>
         <div class="card-body">
-            <h5 class="card-title">Light card title</h5>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            <p class="card-text"></p>
         </div>
     </div>
 </div>
