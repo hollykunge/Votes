@@ -112,3 +112,7 @@ a:hover, a:focus, a:active {
     background: linear-gradient(to right, rgba(0, 123, 255, 0.5), white);
     margin-top: 24px;
 }
+
+.tips-hide{
+    display: none;
+}

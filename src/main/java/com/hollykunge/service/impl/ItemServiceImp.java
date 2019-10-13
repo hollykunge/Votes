@@ -52,7 +52,7 @@ public class ItemServiceImp implements ItemService {
             }
             //上轮投票是否是已发布状态
             if(!itemSending(maxItem)){
-                throw new BaseException("上一轮没有发布成功，不能再进行创建投票轮...");
+                throw new BaseException("上一轮没有发布成功，不能再创建投票轮");
             }
         }
         //设置随机码，防止用户窜改地址
