@@ -39,7 +39,7 @@
                 <button type="button" class="btn btn-secondary btn-sm">新增</button>
             </div>
         </div>
-        <div class="card-body text-primary">
+        <div class="card-body text-primary card-nopadding">
             <table id="table"></table>
         </div>
     </div>
@@ -91,7 +91,7 @@
     //定义按钮事件
     function excelImport(voteId) {
         var fileObj = document.getElementById("file").files[0]; // js 获取文件对象
-        var url = "http://localhost:8090" + "/item/import"; // 接收上传文件的后台地址
+        var url = window.location.origin + "/item/import"; // 接收上传文件的后台地址
         var form = new FormData(); // FormData 对象
         if (form) {
             form.append("file", fileObj); // 文件对象

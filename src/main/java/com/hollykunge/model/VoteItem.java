@@ -59,6 +59,27 @@ public class VoteItem {
      */
     @Column(name = "attr4")
     private String attr4;
+    @Column(name = "attr5")
+    private String attr5;
+
+    @Column(name = "attr6")
+    private String attr6;
+
+    public String getAttr6() {
+        return attr6;
+    }
+
+    public void setAttr6(String attr6) {
+        this.attr6 = attr6;
+    }
+
+    public String getAttr5() {
+        return attr5;
+    }
+
+    public void setAttr5(String attr5) {
+        this.attr5 = attr5;
+    }
 
     public Long getVoteItemId() {
         return voteItemId;
