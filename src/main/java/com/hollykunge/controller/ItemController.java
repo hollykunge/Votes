@@ -301,7 +301,7 @@ public class ItemController {
             item.setId(id);
             voteItems = voteItemService.findByItem(item);
             Item itemTemp = itemService.findById(id);
-            if(voteItems.isPresent()){
+            if(voteItems.get().size()==0){
                 redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("没有投票项不能发起投票"));
                 return "redirect:/vote/"+itemTemp.getVote().getId();
             }
