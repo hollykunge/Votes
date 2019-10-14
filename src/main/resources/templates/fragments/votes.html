@@ -4,27 +4,35 @@
 <body>
 <div th:fragment="votes">
     <div class="card border-dark mb-3">
-        <div class="card-header">我的投票</div>
+        <div class="card-header bg-secondary text-white">我的投票</div>
         <div class="card-body card-nopadding">
-            <table class="do-table" width='100%' border='0' cellspacing='0' cellpadding='0' align='right'>
-                <tr class="do-tr do-head">
-                    <td class="do-td">标题</td>
-                    <td class="do-td">时间</td>
-                    <td class="do-td">轮数</td>
-                    <td class="do-td">描述</td>
-                    <td class="do-td">操作</td>
+            <table class="do-table table table-hover" width='100%' border='0' cellspacing='0' cellpadding='0'
+                   align='right'>
+                <thead class="thead-light">
+                <tr>
+                    <th scope="col">序号</th>
+                    <th scope="col">标题</th>
+                    <th scope="col">时间</th>
+                    <th scope="col">轮数</th>
+                    <th scope="col">描述</th>
+                    <th scope="col">操作</th>
                 </tr>
-                <tr class="do-tr do-content" th:each="vote : ${pager.votes}">
-                    <td class="do-td" th:text="${vote.title}">--</td>
-                    <td class="do-td" th:text="${#dates.format(vote.createDate, 'yyyy-MM-dd')}">--/--/--</td>
-                    <td class="do-td" th:text="${vote.getItems().size()}">-</td>
-                    <td class="do-td" th:text="${vote.body}">-</td>
-                    <td class="do-td">
+                </thead>
+                <tbody>
+                <tr th:each="vote : ${pager.votes}">
+                    <th scope="row"></th>
+                    <td th:text="${vote.title}">--</td>
+                    <td th:text="${#dates.format(vote.createDate, 'yyyy-MM-dd')}">--/--/--</td>
+                    <td th:text="${vote.getItems().size()}">-</td>
+                    <td th:text="${vote.body}">-</td>
+                    <td>
                         <a class="btn btn-outline-primary btn-sm" th:href="@{'/vote/' + ${vote.id}}"
                            role="button">进入</a>
                         <a class="btn btn-outline-danger btn-sm" th:href="@{'/vote/' + ${vote.id}}" role="button">删除</a>
                     </td>
                 </tr>
+                </tbody>
+
             </table>
         </div>
     </div>
