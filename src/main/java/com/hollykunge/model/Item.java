@@ -42,7 +42,7 @@ public class Item {
     @Column(columnDefinition = "varchar(32) COMMENT '邀请码'")
     private String code;
 
-    @Column(columnDefinition = "text COMMENT '投票内容'")
+    @Column(columnDefinition = "text COMMENT '规则内容'")
     private String content;
     /**
      * 规则范围（1否同2排序3打分）
