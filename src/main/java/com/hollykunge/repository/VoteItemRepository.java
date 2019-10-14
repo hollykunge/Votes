@@ -1,10 +1,12 @@
 package com.hollykunge.repository;
 
 import com.hollykunge.model.Item;
+import com.hollykunge.model.UserVoteIp;
 import com.hollykunge.model.Vote;
 import com.hollykunge.model.VoteItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,4 +18,5 @@ import java.util.Optional;
 public interface VoteItemRepository extends JpaRepository<VoteItem, Long> {
 //    Optional<List<VoteItem>> findByVote(Vote vote);
     Optional<List<VoteItem>> findByItem(Item item);
+    List<VoteItem> findByUserIps(Collection<UserVoteIp> userVoteIps);
 }
