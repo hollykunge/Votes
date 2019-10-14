@@ -17,7 +17,7 @@
             </li>
             <li class="breadcrumb-item"><a th:href="@{'/vote/' + ${item.getVote().id}}"
                                            th:text="${item.getVote().title}"></a></li>
-            <li class="breadcrumb-item active" aria-current="page" th:text="'第'+${item.turnNum}+'轮'">新建一轮投票</li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="${item.turnNum == null ? '新建' : '第'+item.turnNum+'轮'}">新建一轮投票</li>
         </ol>
     </nav>
     <div class="row" style="margin-top:20px">
@@ -115,6 +115,8 @@
                         <input type="hidden" th:field="*{user}"/>
                         <input type="hidden" th:field="*{id}"/>
                         <input type="hidden" th:field="*{turnNum}"/>
+                        <input type="hidden" th:field="*{status}"/>
+                        <input type="hidden" th:field="*{memberNum}"/>
                     </div>
                 </div>
                 <hr class="mb-4"/>

@@ -17,7 +17,7 @@
         </ol>
     </nav>
     <div class="card border-dark mb-3">
-        <div class="card-header">详情
+        <div class="card-header bg-secondary text-white">详情
             <div style="float: right" sec:authorize="isAuthenticated()" th:if="${username}">
                 <a th:href="@{'/editVote/{id}'(id=${vote.id})}" class="col-md-2">
                     <button type="button" class="btn btn-secondary btn-sm" th:text="编辑">
@@ -36,37 +36,42 @@
     </div>
     <div class="alert alert-danger" th:if="${showAlertMessage}" th:utext="${showAlertMessage}"></div>
     <div class="card border-dark mb-3" style="margin-top: 16px">
-        <div class="card-header">投票轮
+        <div class="card-header bg-secondary text-white">投票轮
             <!--添加投票轮按钮-->
             <!--如果有权限-->
             <div sec:authorize="isAuthenticated()" style="float: right">
                 <a th:href="@{'/voteVote/{voteId}/{itemId}'(voteId=${vote.id},itemId=0)}" class="col-md-2">
-                    <button type="button" class="btn btn-primary btn-sm">
+                    <button type="button" class="btn btn-success btn-sm">
                         添加
                     </button>
                 </a>
             </div>
         </div>
         <div class="card-body card-nopadding">
-            <table class="do-table" width='100%' border='0' cellspacing='0' cellpadding='0' align='center'>
-                <tr class="do-tr do-head">
-                    <td class="do-td">轮数</td>
-                    <td class="do-td">创建时间</td>
-                    <td class="do-td">投票情况</td>
-                    <td class="do-td">状态</td>
-                    <td class="do-td">操作</td>
+            <table class="do-table table table-hover" width='100%' border='0' cellspacing='0' cellpadding='0'
+                   align='right'>
+                <thead class="thead-light">
+                <tr>
+                    <th scope="col">序号</th>
+                    <th scope="col">轮数</th>
+                    <th scope="col">创建时间</th>
+                    <th scope="col">投票情况</th>
+                    <th scope="col">状态</th>
+                    <th scope="col">操作</th>
                 </tr>
-                <tr class="do-tr do-content" th:each="item : ${vote.items}">
-                    <td class="do-td"><strong th:text="'第'+${item.turnNum}+'轮'">Title</strong></td>
-                    <td class="do-td" th:text="${#dates.format(item.createDate, 'yyyy-MM-dd')}">--/--/--</td>
-                    <td class="do-td" th:text="${item.memberNum}+'/'+${item.memberSize}">-/-</td>
-                    <td class="do-td">
+                </thead>
+                <tbody>
+                <tr th:each="item : ${vote.items}">
+                    <th scope="row"></th>
+                    <td><strong th:text="'第'+${item.turnNum}+'轮'">Title</strong></td>
+                    <td th:text="${#dates.format(item.createDate, 'yyyy-MM-dd')}">--/--/--</td>
+                    <td th:text="${item.memberNum}+'/'+${item.memberSize}">-/-</td>
+                    <td>
                         <span class="badge badge-primary" th:if="${item.status} == '1'">新建</span>
                         <span class="badge badge-success" th:if="${item.status} == '2'">已发起</span>
                         <span class="badge badge-secondary" th:if="${item.status} == '3'">已结束</span>
                     </td>
-                    <td class="do-td">
-
+                    <td>
                         <a th:if="${item.status} == '1'"
                            th:href="@{'/voteVote/{voteid}/{itemid}'(voteid=${vote.id}, itemid=${item.id})}">
                             <button type="button" class="btn btn-outline-primary btn-sm d-inline">编辑</button>
@@ -119,6 +124,7 @@
                         </div>
                     </div>
                 </tr>
+                </tbody>
             </table>
         </div>
     </div>
@@ -149,11 +155,11 @@
     }
 
     var clipboard = new ClipboardJS('#copyCode');
-    clipboard.on('success', function(e) {
+    clipboard.on('success', function (e) {
         $('#copyCode').text('复制成功');
     });
 
-    clipboard.on('error', function(e) {
+    clipboard.on('error', function (e) {
         $('#copyCode').val('复制失败');
     });
 </script>
