@@ -302,7 +302,14 @@ public class ItemController {
             voteItems = voteItemService.findByItem(item);
             Item itemTemp = itemService.findById(id);
             if(voteItems.get().size()==0){
-                redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("没有投票项不能发起投票"));
+                redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("第"+itemTemp.getTurnNum()+"轮，没有投票项不能发起投票"));
+                return "redirect:/vote/"+itemTemp.getVote().getId();
+            }
+        }
+        if(Objects.equals(VoteConstants.ITEM_FINAL_STATUS,status)){
+            Item itemTemp = itemService.findById(id);
+            if(itemTemp.getMemberNum() == 0){
+                redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("没有实际投票人数不能结束"));
                 return "redirect:/vote/"+itemTemp.getVote().getId();
             }
         }

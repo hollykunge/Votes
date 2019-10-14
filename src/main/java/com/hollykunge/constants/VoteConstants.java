@@ -14,4 +14,8 @@ public class VoteConstants {
      * 投票轮已发布状态
      */
     public static final String ITEM_SEND_STATUS = "2";
+    /**
+     * 投票轮结束状态
+     */
+    public static final String ITEM_FINAL_STATUS = "3";
 }
