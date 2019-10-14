@@ -22,11 +22,11 @@
                 <h4 class="my-0 font-weight-normal">投票规则</h4>
             </div>
             <div class="card-body">
-                <h1 class="card-title pricing-card-title">
+                <h1 class="card-title">
                     <div th:switch="*{item.rules}">
                         <div th:case="1">
-                            <span th:text="${item.agreeRule == '1' ? '同意' : '否同'}"></span>
-                            <small class="text-muted" th:text="${item.agreeRule == '1' ? '/ 否同' : '/ 同意'}"></small>
+                            <span th:text="${item.agreeRule == '1' ? '同意' : '否决'}"></span>
+                            <small class="text-muted">/ 否同</small>
                         </div>
                         <div th:case="2">
                             <span>排序</span>
@@ -35,7 +35,6 @@
                             <span>评分</span>
                         </div>
                     </div>
-
                 </h1>
                 <ul class="list-unstyled mt-3 mb-4">
                     <div th:switch="*{item.rules}">

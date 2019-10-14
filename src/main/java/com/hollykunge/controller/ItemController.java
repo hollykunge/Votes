@@ -309,7 +309,7 @@ public class ItemController {
         if(Objects.equals(VoteConstants.ITEM_FINAL_STATUS,status)){
             Item itemTemp = itemService.findById(id);
             if(itemTemp.getMemberNum() == 0){
-                redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("没有实际投票人数不能结束"));
+                redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("暂无投票，不能结束本轮投票！"));
                 return "redirect:/vote/"+itemTemp.getVote().getId();
             }
         }
