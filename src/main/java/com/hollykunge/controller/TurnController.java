@@ -5,10 +5,13 @@ import com.hollykunge.model.Vote;
 import com.hollykunge.model.User;
 import com.hollykunge.service.VoteService;
 import com.hollykunge.service.UserService;
+import com.hollykunge.util.Base64Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -93,10 +96,14 @@ public class TurnController {
     public String getVoteWithId(@PathVariable Long id,
                                 Principal principal,
                                 Model model,
-                                HttpServletRequest request) throws UnknownHostException {
+                                HttpServletRequest request,
+                                @ModelAttribute("redirect") String redirect) throws UnknownHostException {
 
         Optional<Vote> optionalVote = voteService.findForId(id);
 
+        if(!StringUtils.isEmpty(redirect)){
+            model.addAttribute("showAlertMessage", Base64Utils.decryption(redirect));
+        }
         if (optionalVote.isPresent()) {
             Vote vote = optionalVote.get();
 

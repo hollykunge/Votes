@@ -1,5 +1,6 @@
 package com.hollykunge.service;
 
+import com.hollykunge.model.Item;
 import com.hollykunge.model.Vote;
 import com.hollykunge.model.VoteItem;
 
@@ -20,7 +21,8 @@ public interface VoteItemService {
 
     /**
      * 通过vote查询voteitem
-     * @param vote
      */
-    Optional<List<VoteItem>> findByVoteId(Vote vote);
+//    Optional<List<VoteItem>> findByItemId(Item item);
+
+    Optional<List<VoteItem>> findByItem(Item item);
 }

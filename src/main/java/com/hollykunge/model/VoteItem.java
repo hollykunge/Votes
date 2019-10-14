@@ -33,16 +33,11 @@ public class VoteItem {
      */
     @Column(name = "turn_num", nullable = false)
     private String turnNum;
-    /**
-     * 是否进入下一轮(1为是，0为否)
-     */
-    @Column(name = "is_trun_next", nullable = false)
-    private String isTrunNext;
 
     @ManyToOne
-    @JoinColumn(name = "vote_id", referencedColumnName = "vote_id", nullable = false)
+    @JoinColumn(name = "item_id", referencedColumnName = "id", nullable = false)
     @NotNull
-    private Vote vote;
+    private Item item;
 
     /**
      * 扩展字段1
@@ -89,21 +84,6 @@ public class VoteItem {
         this.turnNum = turnNum;
     }
 
-    public String getIsTrunNext() {
-        return isTrunNext;
-    }
-
-    public void setIsTrunNext(String isTrunNext) {
-        this.isTrunNext = isTrunNext;
-    }
-
-    public Vote getVote() {
-        return vote;
-    }
-
-    public void setVote(Vote vote) {
-        this.vote = vote;
-    }
 
     public String getAttr1() {
         return attr1;
@@ -135,5 +115,13 @@ public class VoteItem {
 
     public void setAttr4(String attr4) {
         this.attr4 = attr4;
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
     }
 }
