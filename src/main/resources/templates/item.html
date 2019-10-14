@@ -77,10 +77,14 @@
     let $table = $('#table')
     let $remove = $('#remove')
     let selections = []
-    let rules = [[${item.rules}]] // 规则范围
+    let rules = [[${item.rules}]] // 规则范围 1否同 2排序 3打分
+    let agree_rule = [[${item.agreeRule}]] // 规则范围 1否同 2排序 3打分
 
     $(function () {
-        initTable()
+        initTable({
+            rules: rules,
+            data: data
+        })
         // 清空 file 值 
         $('#importModel').on('hide.bs.modal', function (a,b,c) {
             if(a.type === 'hide') {
