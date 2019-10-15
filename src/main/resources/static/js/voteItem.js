@@ -1,3 +1,4 @@
+    // 弹窗显示
     function showImportModel() {
         $('#importModel').modal('show');
     }
@@ -81,11 +82,38 @@
     function showModel(id) {
         $(id).modal('show');
     }
+    function columnConfig(columnsArr, rules) {
+        // 格式 column option
+        let columnsOption = Object.keys(data[0])
+            .map(item => {
+                return {
+                    title: item,
+                    field: item,
+                    align: 'center',
+                    valign: 'middle'
+                }
+            })
+            .filter(item => {
+                if(item.title.indexOf(rules.hideKeys.join('|')) !== -1) {
+                    return false
+                }
+                return item
+            })
+        // switch(rules) {
+        //     case '1':
+        //     break;
+        //     case '2':
+        //     break;
+        //     default: ;
+        // }
 
+        console.log(columnsOption)
+        return columnsOption
+    }
     /**
      * 初始化表格
      */
-    function initTable() {
+    function initTable(options) {
         $table.bootstrapTable('destroy').bootstrapTable({
             height: 550, // 初始高度
             clickToSelect: true,
@@ -94,62 +122,10 @@
             sidePagination: 'server',
             // locale: $('#locale').val(), // 语言类型
             // 列操作栏
-            columns: [
-                {
-                    field: 'state',
-                    checkbox: true,
-                    align: 'center',
-                    valign: 'middle'
-                },
-                {
-                    title: '序号',
-                    field: 'voteItemId',
-                    align: 'center',
-                    valign: 'middle',
-                },
-                {
-                    field: 'name',
-                    title: '姓名',
-                    align: 'center'
-                },
-                {
-                    field: 'attr1',
-                    title: '性别',
-                    align: 'center',
-                },
-                {
-                    field: 'attr2',
-                    title: '部门',
-                    align: 'center',
-                },
-                {
-                    field: 'attr3',
-                    title: '职称',
-                    align: 'center',
-                },
-                {
-                    field: 'arrt4',
-                    title: '年龄',
-                    align: 'center',
-                },
-                {
-                    field: 'arrt4',
-                    title: '入职年限',
-                    align: 'center',
-                }
-                // {
-                //     field: '',
-                //     title: '投票规则',
-                //     align: 'center',
-                //     formatter:function(value, row, index){
-                //         return [
-                //              '<a class="remove" href="javascript:void(0)" title="Remove">',
-                //                 '投票',
-                //              '</a>'
-                //         ].join('')
-                //     }
-                // }
-            ],
-            data: data
+            columns: columnConfig(options.data[0], {
+                rules: options.rules,
+                hideKeys: ['item']
+            }),
+            data: options.data
         })
     }

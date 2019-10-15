@@ -5,77 +5,21 @@
 </head>
 <body class="bg-light">
 <div th:replace="/fragments/header :: header"/>
+<div class="panel panel-primary"></div>
 <div class="row" th:if="${item.status}!=2">
     <div class="col-md-4"></div>
     <div class="col-md-4">
-        <h2 class="jumbotron">
-            <span th:text="${'该轮次投票状态为：' + itemStatus}"></span><br/>
-            <span>暂不支持投票</span>
-        </h2>
+        <div class="jumbotron">
+            <h1>
+                <span>该轮次投票状态为：</span><br/>
+                <span th:text="${itemStatus}"></span>
+            </h1>
+        </div>
     </div>
+    <div class="col-md-4"></div>
 </div>
-<div class="container" th:if="${item.status}==2">
-    <h3 class="text-center" th:text="${item.vote.title}"></h3>
-    <div class="card-deck mb-3 text-center">
-        <div class="card border-dark mb-3 shadow-sm">
-            <div class="card-header">
-                <h4 class="my-0 font-weight-normal">投票规则</h4>
-            </div>
-            <div class="card-body">
-                <h1 class="card-title">
-                    <div th:switch="*{item.rules}">
-                        <div th:case="1">
-                            <span th:text="${item.agreeRule == '1' ? '同意' : '否决'}"></span>
-                            <small class="text-muted">/ 否同</small>
-                        </div>
-                        <div th:case="2">
-                            <span>排序</span>
-                        </div>
-                        <div th:case="3">
-                            <span>评分</span>
-                        </div>
-                    </div>
-                </h1>
-                <ul class="list-unstyled mt-3 mb-4">
-                    <div th:switch="*{item.rules}">
-                        <div th:case="1">
-                            <li th:text="${'大于'+ item.agreeMin}"></li>
-                            <li th:text="${'小于'+ item.agreeMax}"></li>
-                        </div>
-                        <div th:case="3">
-                            <li th:text="${'大于'+ item.minScore}"></li>
-                            <li th:text="${'小于'+ item.maxScore}"></li>
-                        </div>
-                    </div>
-                </ul>
-            </div>
-        </div>
-        <div class="card border-dark mb-3 shadow-sm">
-            <div class="card-header">
-                <h4 class="my-0 font-weight-normal">注意事项</h4>
-            </div>
-            <div class="card-body" style="margin: 0px auto">
-                <p style="width:200px;text-align: justify;" th:text="${item.body}"></p>
-            </div>
-
-        </div>
-        <div class="card border-dark mb-3 shadow-sm">
-            <div class="card-header">
-                <h4 class="my-0 font-weight-normal">投票说明</h4>
-            </div>
-            <div class="card-body" style="margin: 0px auto;">
-                <p style="width:200px;text-align: justify;" th:text="${item.description}"></p>
-            </div>
-        </div>
-    </div>
-    <div class="card border-dark mb-3 shadow-sm">
-        <div class="card-header">
-            <h4 class="my-0 font-weight-normal">投票</h4>
-        </div>
-        <div class="card-body">
-            <table id="table"></table>
-        </div>
-    </div>
+<div class="row" th:if="${item.status}==2">
+    投票项列表
 </div>
 <div th:replace="/fragments/footer :: footer"/>
 </body>
