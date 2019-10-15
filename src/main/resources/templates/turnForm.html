@@ -27,7 +27,7 @@
                 <label th:if="${#fields.hasErrors('memberSize')}" th:errors="*{memberSize}"
                        class="alert alert-danger" style="width: 100%"></label>
                 <h3 class="text-center">编辑一轮投票</h3>
-                <h6 class="p-1 mb-2 bg-customer text-black-50">投票人数</h6>
+                <h6 class="p-1 mb-2 bg-customer text-white">投票人数</h6>
                 <div class="row">
                     <div class="col-md-12">
                         <input type="text" class="form-control" id="memberSize" placeholder=""
@@ -35,7 +35,7 @@
                     </div>
                 </div>
                 <br/>
-                <h6 class="p-1 mb-2 bg-customer text-black-50">投票规则</h6>
+                <h6 class="p-1 mb-2 bg-customer text-white">投票规则</h6>
                 <div class="row" style="margin-left: 240px;margin-bottom: 16px">
                     <div class="custom-control custom-radio col-md-3">
                         <input id="isNot" name="role" type="radio" class="custom-control-input"
@@ -106,7 +106,7 @@
                                   placeholder="" class="form-control" id="description"/>
                     </div>
                 </div>
-                <h6 class="p-1 mb-2 bg-customer text-black-50">注意事项</h6>
+                <h6 class="p-1 mb-2 bg-customer text-white">注意事项</h6>
                 <div class="row">
                     <div class="col-md-12">
                             <textarea th:field="*{body}"
