@@ -1,13 +1,16 @@
 package com.hollykunge.service.impl;
 
+import com.hollykunge.exception.BaseException;
 import com.hollykunge.model.Vote;
 import com.hollykunge.model.User;
 import com.hollykunge.repository.VoteRepository;
 import com.hollykunge.service.VoteService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.Optional;
 
@@ -44,6 +47,36 @@ public class VoteServiceImp implements VoteService {
     @Override
     public void delete(Vote vote) {
         voteRepository.delete(vote);
+    }
+
+    @Override
+    public Vote updateById(Vote vote) throws Exception{
+        if(StringUtils.isEmpty(vote.getId())){
+            throw new BaseException("id不能为空...");
+        }
+        Optional<Vote> byId = voteRepository.findById(vote.getId());
+        if(!byId.isPresent()){
+            throw new BaseException("不存在这个vote...");
+        }
+        Vote votedata = byId.get();
+        setVote(vote,votedata);
+        voteRepository.saveAndFlush(votedata);
+        return votedata;
+    }
+
+    private void setVote(Vote source,Vote target){
+        if (!StringUtils.isEmpty(source.getBody())){
+            target.setBody(source.getBody());
+        }
+        if (source.getCreateDate() != null){
+            target.setCreateDate(source.getCreateDate());
+        }
+        if (!StringUtils.isEmpty(source.getExcelHeader())){
+            target.setExcelHeader(source.getExcelHeader());
+        }
+        if (!StringUtils.isEmpty(source.getTitle())){
+            target.setTitle(source.getTitle());
+        }
     }
 
     private int subtractPageByOne(int page){

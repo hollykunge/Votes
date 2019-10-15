@@ -17,4 +17,6 @@ public interface VoteService {
     Page<Vote> findAllOrderedByDatePageable(int page);
 
     void delete(Vote vote);
+
+    Vote updateById(Vote vote) throws Exception;
 }

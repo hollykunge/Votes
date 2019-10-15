@@ -2,10 +2,7 @@ package com.hollykunge.controller;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSONObject;
-import com.hollykunge.config.ItemDownloadData;
-import com.hollykunge.config.ItemStatusConfig;
-import com.hollykunge.config.ItemUploadData;
-import com.hollykunge.config.UploadDataListener;
+import com.hollykunge.config.*;
 import com.hollykunge.constants.VoteConstants;
 import com.hollykunge.exception.BaseException;
 import com.hollykunge.model.Item;
@@ -263,6 +260,7 @@ public class ItemController {
             Item item = new Item();
             item.setId(Long.parseLong(itemIdTemp));
             EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadDataListener(item, voteItemService)).sheet().doRead();
+            EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadHeaderDataListener(item,voteService,itemService)).sheet().doRead();
             return "redirect:/editItem/" + itemIdTemp;
         } catch (Exception e) {
             return "redirect:/error";
