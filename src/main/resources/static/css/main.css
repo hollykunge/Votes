@@ -109,7 +109,7 @@ a:hover, a:focus, a:active {
 }
 
 .bg-customer{
-    background: linear-gradient(to right, rgba(0, 123, 255, 0.5), white);
+    background: linear-gradient(to right, rgb(133, 133, 133), white);
     margin-top: 24px;
 }
 

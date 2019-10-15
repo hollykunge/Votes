@@ -53,8 +53,4 @@ public class VoteItemServiceImp implements VoteItemService {
         return voteItemRepository.findByItem(item);
     }
 
-    @Override
-    public List<VoteItem> findByUserIps(Collection<UserVoteIp> userVoteIps) {
-        return voteItemRepository.findByUserIps(userVoteIps);
-    }
 }
