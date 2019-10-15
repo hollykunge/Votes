@@ -2,6 +2,9 @@
     function showImportModel() {
         $('#importModel').modal('show');
     }
+    function showAddModel() {
+        $('#addModel').modal('show');
+    }
     //定义按钮事件
     function excelImport(voteId) {
         var fileObj = document.getElementById("file").files[0]; // js 获取文件对象
@@ -84,7 +87,7 @@
     }
     function columnConfig(columnsArr, rules) {
         // 格式 column option
-        let columnsOption = Object.keys(data[0])
+        let columnsOption = Object.keys(columnsArr || [])
             .map(item => {
                 return {
                     title: item,
@@ -106,8 +109,7 @@
         //     break;
         //     default: ;
         // }
-
-        console.log(columnsOption)
+        columnsOption.unshift({checkbox: rules.checkbox})
         return columnsOption
     }
     /**
@@ -124,7 +126,8 @@
             // 列操作栏
             columns: columnConfig(options.data[0], {
                 rules: options.rules,
-                hideKeys: ['item']
+                hideKeys: ['item'],
+                checkbox: options.checkbox
             }),
             data: options.data
         })

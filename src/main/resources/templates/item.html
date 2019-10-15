@@ -20,17 +20,18 @@
     </nav>
     <div class="card border-dark mb-3">
         <div class="card-header">
-            <button class="btn btn-outline-danger btn-sm">删除</button>
+            <button class="btn btn-outline-danger btn-sm" id="delBtn">删除</button>
             <div style="float: right">
                 <a href="/item/export" class="btn btn-link">下载模板</a>
 
                 <button type="button" class="btn btn-primary btn-sm" id="importExcel" th:onclick="|showImportModel()|">导入</button>
                 <button type="button" class="btn btn-secondary btn-sm">使用上一轮投票项</button>
-                <button type="button" class="btn btn-secondary btn-sm">新增</button>
+                <button type="button" class="btn btn-secondary btn-sm" th:onclick="|showAddModel()|">新增</button>
             </div>
         </div>
         <div class="card-body text-primary card-nopadding">
-            <table id="table"></table>
+            <table id="table">
+            </table>
         </div>
     </div>
     <div class="card border-dark mb-3">
@@ -69,6 +70,33 @@
             </div>
         </div>
     </div>
+
+    <!--新增框-->
+    <div class="modal fade" id="addModel" tabindex="-1" role="dialog" aria-labelledby="addTitle" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addTitle">新增</h5>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-row">
+                            <div class="form-group col-md-6" th:each="attr: ${voteItemsObj}">
+                                <label th:text="*{attr.attr1}"></label>
+                                <input class="form-control"/>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary copy-code" id="addBtn">
+                        保存
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div th:replace="/fragments/footer :: footer" />
@@ -82,11 +110,13 @@
     let agree_rule = [[${item.agreeRule}]] // 规则范围 1否同 2排序 3打分
 
     $(function () {
+        // 添加checkbox列
         initTable({
             rules: rules,
-            data: data
+            data: data,
+            checkbox: true
         })
-        // 清空 file 值 
+        // 清空 file 值
         $('#importModel').on('hide.bs.modal', function (a,b,c) {
             if(a.type === 'hide') {
                 $('#file').val('')
@@ -108,6 +138,21 @@
                 }
             }
         })
+        // 删除
+        $('#delBtn').click(function () {
+            var selectItems = $table.bootstrapTable('getSelections')
+            var ids = '';
+            selectItems.forEach(item => {
+                ids = ids + item.voteItemId + ','
+            })
+            // TODO后台删除功能待完成
+            // self.location.href="/delete/1"
+        })
+        // 新增
+        $('#addBtn').click(function () {
+
+        })
+
     })
 </script>
 <script type="text/javascript" th:src="@{/js/voteItem.js}"></script>
