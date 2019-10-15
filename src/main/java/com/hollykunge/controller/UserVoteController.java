@@ -1,5 +1,6 @@
 package com.hollykunge.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.hollykunge.config.ItemStatusConfig;
 import com.hollykunge.constants.VoteConstants;
 import com.hollykunge.exception.BaseException;
@@ -47,7 +48,8 @@ public class UserVoteController {
             model.addAttribute("item",itemTemp.get());
             model.addAttribute("itemStatus", ItemStatusConfig.getEnumByValue(itemTemp.get().getStatus()).getName());
             //用户列表页面显示的投票项
-            model.addAttribute("voteItems",optVoteItems.get());
+
+            model.addAttribute("voteItems", JSONObject.toJSONString(optVoteItems.get()));
             return "/userVote";
         }catch (Exception e){
             throw e;
