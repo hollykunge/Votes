@@ -99,15 +99,56 @@
                 }
                 return item
             })
-        // switch(rules) {
-        //     case '1':
-        //     break;
-        //     case '2':
-        //     break;
-        //     default: ;
-        // }
+            // ## 是否是编辑页面
+        switch(rules.rules) {
+            // 
+            case '1':
+                columnsOption.push({
+                    title: '投票',
+                    field: "total",
+                    align: 'center',
+                    valign: 'middle',
+                    events: window.operateEvents,
+                    formatter: function(value, row, index){
+                        return [
+                          '<a class="remove" href="javascript:void(0)" title="vote">',
+                          '投票',
+                          '</a>'
+                        ].join('')
+                    }
+                })
+            break;
+            case '2':
+                 columnsOption.push({
+                    title: '排序',
+                    field: "SerialNumber",
+                    align: 'center',
+                    valign: 'middle',
+                    events: window.operateEvents,
+                    formatter: function(value, row, index){
+                        return [
+                            '<select title="selectVote" data-index="'+index+'" class="form-control selectVote" id="exampleFormControlSelect1">',
+                            '<option value="">请选择</option>',
+                             data.map((item, index) => {
+                                return [
+                                    `<option value="${index * 1 + 1}">${index * 1 + 1}</option>`
+                                ].join('');
+                             }).join(''),
+                            '</select>'
+                        ].join('')
+                    }
+                })
+            break;
+            default: ;
+        }
+        // columns 添加序号表头
+        columnsOption.unshift({
+            title: '序号',
+            field: "voteItemId",
+            align: 'center',
+            valign: 'middle'
+        })
 
-        console.log(columnsOption)
         return columnsOption
     }
     /**
@@ -129,3 +170,43 @@
             data: options.data
         })
     }
+
+    /**
+     * 格式化 data 数据
+     */
+     function resetData(data, ruleOption) {
+
+        return data.map(item => {
+            var obj = {}
+            for(let key in item ) {
+                obj[key] = item[key]
+            }
+            if(ruleOption.rules === '1') {
+                obj['votes'] = ''
+            } else {
+                obj['SerialNumber'] = ''
+            }
+            return obj
+        })
+     }
+    /**
+     * delSelect
+     */
+     function delSelect(elarr, tagIndex, value, hasorder) {
+        // 是空值，则将值逐一赋回
+        if(value === '') {
+            let arr = $(elarr).eq(tagIndex).find(`option`)
+            for (var i = 0; i < arr.length; i++) {
+                if(arr.eq(i).prop('class') !== 'hide' && arr.eq(i).val() !== '') {
+                    $(elarr).find(`option[value=${arr.eq(i).val()}]`).removeClass('hide')
+                }
+            }
+            return
+        }
+        for (var i = 0; i < elarr.length; i++) {
+            if(i !== tagIndex) {
+                
+                $(elarr[i]).find(`option[value=${value}]`).addClass('hide')
+            }
+        }
+     }
