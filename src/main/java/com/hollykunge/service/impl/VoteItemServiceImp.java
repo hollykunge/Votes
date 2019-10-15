@@ -1,6 +1,7 @@
 package com.hollykunge.service.impl;
 
 import com.hollykunge.model.Item;
+import com.hollykunge.model.UserVoteIp;
 import com.hollykunge.model.Vote;
 import com.hollykunge.model.VoteItem;
 import com.hollykunge.repository.VoteItemRepository;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,5 +51,10 @@ public class VoteItemServiceImp implements VoteItemService {
     @Override
     public Optional<List<VoteItem>> findByItem(Item item) {
         return voteItemRepository.findByItem(item);
+    }
+
+    @Override
+    public List<VoteItem> findByUserIps(Collection<UserVoteIp> userVoteIps) {
+        return voteItemRepository.findByUserIps(userVoteIps);
     }
 }

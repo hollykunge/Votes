@@ -24,10 +24,31 @@
                 <h4 class="my-0 font-weight-normal">投票规则</h4>
             </div>
             <div class="card-body">
-                <h1 class="card-title pricing-card-title">同意 <small class="text-muted">/ 否同</small></h1>
+                <h1 class="card-title">
+                    <div th:switch="*{item.rules}">
+                        <div th:case="1">
+                            <span th:text="${item.agreeRule == '1' ? '同意' : '否决'}"></span>
+                            <small class="text-muted">/ 否同</small>
+                        </div>
+                        <div th:case="2">
+                            <span>排序</span>
+                        </div>
+                        <div th:case="3">
+                            <span>评分</span>
+                        </div>
+                    </div>
+                </h1>
                 <ul class="list-unstyled mt-3 mb-4">
-                    <li>大于10</li>
-                    <li>小于15</li>
+                    <div th:switch="*{item.rules}">
+                        <div th:case="1">
+                            <li th:text="${'大于'+ item.agreeMin}"></li>
+                            <li th:text="${'小于'+ item.agreeMax}"></li>
+                        </div>
+                        <div th:case="3">
+                            <li th:text="${'大于'+ item.minScore}"></li>
+                            <li th:text="${'小于'+ item.maxScore}"></li>
+                        </div>
+                    </div>
                 </ul>
             </div>
         </div>
@@ -36,12 +57,9 @@
                 <h4 class="my-0 font-weight-normal">投票说明</h4>
             </div>
             <div class="card-body">
-                <ul class="list-unstyled mt-3 mb-4">
-                    <li>这个地方一共需要四行</li>
-                    <li>这个地方10个字一行</li>
-                    <li>这个地方10个字一行</li>
-                    <li>这个地方10个字一行</li>
-                </ul>
+                <div class="card-text" th:text="${item.body}">
+                    暂无说明
+                </div>
             </div>
         </div>
         <div class="card border-dark mb-3 shadow-sm">
@@ -49,7 +67,10 @@
                 <h4 class="my-0 font-weight-normal">投票人数</h4>
             </div>
             <div class="card-body">
-                <h1 class="card-title pricing-card-title">29 <small class="text-muted">/ 30</small></h1>
+                <h1 class="card-title">
+                    <span th:text="${item.memberNum}">0/</span>
+                    <small class="text-muted" th:text="'/'+${item.memberSize}+'人'">--</small>
+                </h1>
             </div>
         </div>
     </div>

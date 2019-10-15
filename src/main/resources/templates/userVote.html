@@ -20,11 +20,7 @@
 </div>
 <div class="row" th:if="${item.status}==2">
     投票项列表
-    <table class="vote-table"></table>
 </div>
 <div th:replace="/fragments/footer :: footer"/>
 </body>
-<script th:inline="javascript" type="text/javascript">
-    let a = [[${JSONObject.fromObject(item)}]]
-</script>
 </html>
