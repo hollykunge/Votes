@@ -18,4 +18,10 @@ public class VoteConstants {
      * 投票轮结束状态
      */
     public static final String ITEM_FINAL_STATUS = "3";
+
+    public static final String DEFUALT_CLIENTIP = "127.0.0.1";
+    /**
+     * 用户一个ip已完成投票标识
+     */
+    public static final String USER_IP_VOTE_FINAL_FLAG = "1";
 }

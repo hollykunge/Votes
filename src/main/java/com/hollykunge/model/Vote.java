@@ -30,6 +30,9 @@ public class Vote {
     @Column(name = "body", columnDefinition = "TEXT")
     private String body;
 
+    @Column(name = "excel_header")
+    private String excelHeader;
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "create_date", nullable = false, updatable = false)
     @CreationTimestamp
@@ -86,6 +89,14 @@ public class Vote {
 
     public void setItems(Collection<Item> items) {
         this.items = items;
+    }
+
+    public String getExcelHeader() {
+        return excelHeader;
+    }
+
+    public void setExcelHeader(String excelHeader) {
+        this.excelHeader = excelHeader;
     }
 
     @OneToMany(mappedBy = "vote", cascade = CascadeType.REMOVE)
