@@ -28,5 +28,4 @@ public interface VoteItemService {
 
     Optional<List<VoteItem>> findByItem(Item item);
 
-    List<VoteItem> findByUserIps(Collection<UserVoteIp> userVoteIps);
 }

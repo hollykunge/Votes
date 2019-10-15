@@ -146,15 +146,4 @@ public class VoteItem {
         this.item = item;
     }
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "user_item_vote", joinColumns = @JoinColumn(name = "vote_item_id"), inverseJoinColumns = @JoinColumn(name = "user_ip"))
-    private Collection<UserVoteIp> userIps;
-
-    public Collection<UserVoteIp> getUserIps() {
-        return userIps;
-    }
-
-    public void setUserIps(Collection<UserVoteIp> userIps) {
-        this.userIps = userIps;
-    }
 }
