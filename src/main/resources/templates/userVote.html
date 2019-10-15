@@ -11,7 +11,7 @@
 <body class="bg-light">
 <div th:replace="/fragments/header :: header"/>
 <div class="panel panel-primary"></div>
-
+    
 <div class="row" th:if="${item.status}!=2">
     <div class="col-md-4"></div>
     <div class="col-md-4">
@@ -44,22 +44,38 @@
     }
     const data = JSON.parse([[${voteItems}]] || '[]')
     const $table = $('#voteTable')
+    let titleConfig =  [[${item.vote.excelHeader}]]
+    let hasOrderArr = [],
+        allOrderArr = data.map(function(item, index){
+            return index * 1 + 1;
+        })
 
+
+
+    if(titleConfig) {
+        titleConfig = titleConfig
+        .replace(/\{|\}/g, '')
+        .split(',')
+        .map(item => {
+            return item.split(':')[1].replace(/\"/g, '')
+        })
+    }
 
     $(function(){
         window.operateEvents = {
             // 排序选择事件
             'change .selectVote': function (e, value, row, index) {
                 let tagIndex = $(e.target).data('index')
-                // select
+                // selectitem.
                 const el = $('.selectVote')
                 // seleted 设置值
                 row.SerialNumber = $(e.target).val()
-                delSelect(el, tagIndex, $(e.target).val())
+                delSelect($(e.target).val(), allOrderArr, data, index)
             }
         }
         initTable({
             rules: voteOption.rules,
+            titleConfig: titleConfig,
             data: data
         })
     })
