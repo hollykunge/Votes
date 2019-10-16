@@ -125,24 +125,28 @@
             //     }
             // );
             $.ajax({
-                url: window.location.origin + "/userVote/add",    //请求的url地址
-                headers:{'Content-Type':'application/json;charset=utf8'},
+                url: window.location.origin + "/userVote/add" window.location.pathname.replace('/userVote', ''),    //请求的url地址
+                headers:{
+                    'Content-Type':'application/json;charset=utf8'
+                },
                 // dataType:"json",   //返回格式为json
                 async:true,//请求是否异步，默认为异步，这也是ajax重要特性
-                data:{
-                    userVoteItems: data.map(function (item, index) {
-                        let obj = {}
-                        // obj.id = ''
-                        obj.agreeFlag = ''
-                        obj.order = item.SerialNumber
-                        obj.score = ''
-                        obj.voteItem = {}
-                        obj.item = item.item
-                        obj.ip = ''
-                        obj.order = item.SerialNumber
-                        return obj
-                    })
-                },    //参数值
+                data:JSON.stringify(data.map(function (item, index) {
+                    let obj = {}
+                    // obj.id = ''
+                    obj.agreeFlag = ''
+                    obj.score = ''
+                    // obj.ip = ''
+                    return
+                    obj.order = item.SerialNumber
+                    obj.voteItem = {}
+                    for(let key in item) {
+                        obj.voteItem[key] = item[key]
+                    }
+                    obj.item = item.item
+                    obj.order = item.SerialNumber
+                    return obj
+                })),    //参数值
                 type:"POST",   //请求方式
                 beforeSend:function(){
                     //请求前的处理
