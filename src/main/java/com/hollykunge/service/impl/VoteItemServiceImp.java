@@ -48,5 +48,19 @@ public class VoteItemServiceImp implements VoteItemService {
     public Optional<List<VoteItem>> findByItem(Item item) {
         return voteItemRepository.findByItem(item);
     }
+    @Override
+    public void deleteVoteItem(List<String> ids)throws Exception{
+        if(ids.size() == 0){
+            return;
+        }
+        try {
+            for (String id:
+                 ids) {
+                voteItemRepository.delete(Long.valueOf(id));
+            }
+        }catch (Exception e){
+            log.error(ExceptionCommonUtil.getExceptionMessage(e));
+        }
+    }
 
 }

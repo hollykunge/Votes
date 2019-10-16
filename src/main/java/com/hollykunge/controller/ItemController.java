@@ -29,12 +29,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * @author lark
@@ -328,25 +327,29 @@ public class ItemController {
     }
 
     /**
-     * 进入邀请码页面
-     * @param id
-     * @param model
-     * @param request
+     * 删除投票项
+     * @param itemId
+     * @param ids
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/inviteCode/{id}", method = RequestMethod.GET)
-    public String inviteCodeView(@PathVariable Long id,
-                                 Model model,HttpServletRequest request) throws Exception {
-        try{
-            Item itemTemp = itemService.findById(id);
-            model.addAttribute("item",itemTemp);
-            model.addAttribute("itemStatus",ItemStatusConfig.getEnumByValue(itemTemp.getStatus()).getName());
-            InetAddress address= InetAddress.getByName(request.getServerName());
-            String hostAddress = address.getHostAddress()+LINK+request.getServerPort();
-            model.addAttribute("address", VoteConstants.AGREEMENT_LETTER +hostAddress+VoteConstants.INVITECODE_RPC+id);
-            return "/inviteCode";
-        }catch (Exception e){
+    @RequestMapping(value = "/deleteVoteItem/{itemId}/{ids}", method = RequestMethod.GET)
+    public String deleteVoteItems(@PathVariable String itemId,
+                                  @PathVariable String ids)throws Exception{
+        try {
+            voteItemService.deleteVoteItem(Arrays.asList(ids.split(",")));
+            return "/editItem/"+itemId;
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+    @RequestMapping(value = "/addVoteItem/{itemId}", method = RequestMethod.POST)
+    public String addVoteItem(@Valid VoteItem voteItem,
+                              @PathVariable Long itemId)throws Exception{
+        try {
+            voteItemService.add(voteItem);
+            return "/editItem/"+itemId;
+        } catch (Exception e) {
             throw e;
         }
     }
