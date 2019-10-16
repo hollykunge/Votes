@@ -9,10 +9,7 @@ import com.hollykunge.model.Item;
 import com.hollykunge.model.User;
 import com.hollykunge.model.Vote;
 import com.hollykunge.model.VoteItem;
-import com.hollykunge.service.ItemService;
-import com.hollykunge.service.VoteItemService;
-import com.hollykunge.service.VoteService;
-import com.hollykunge.service.UserService;
+import com.hollykunge.service.*;
 import com.hollykunge.util.Base64Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author lark
@@ -47,13 +41,16 @@ public class ItemController {
     private final UserService userService;
     private final ItemService itemService;
     private final VoteItemService voteItemService;
+    private final UserVoteItemService userVoteItemService;
 
     @Autowired
-    public ItemController(VoteService voteService, UserService userService, ItemService itemService, VoteItemService voteItemService) {
+    public ItemController(VoteService voteService, UserService userService,
+                          ItemService itemService, VoteItemService voteItemService,UserVoteItemService userVoteItemService) {
         this.voteService = voteService;
         this.userService = userService;
         this.itemService = itemService;
         this.voteItemService = voteItemService;
+        this.userVoteItemService = userVoteItemService;
     }
 
     /**
@@ -355,6 +352,38 @@ public class ItemController {
         try {
             voteItemService.add(voteItem);
             return "/editItem/"+voteItem.getItem().getId();
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    /**
+     * 统计接口
+     * @param item
+     * @param model
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/statistics", method = RequestMethod.GET)
+    public String getStatistics(@Valid Item item,
+                                Model model)throws Exception{
+        try {
+            Map<String, Object> statistics = userVoteItemService.getStatistics(item);
+            model.addAttribute("statistics",statistics);
+            return "";
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    public String test(Model model)throws Exception{
+        try {
+            Item item = new Item();
+            item.setId(Long.valueOf("1"));
+            item.setRules("1");
+            Map<String, Object> statistics = userVoteItemService.getStatistics(item);
+            model.addAttribute("statistics",statistics);
+            return "";
         } catch (Exception e) {
             throw e;
         }
