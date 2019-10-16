@@ -63,19 +63,22 @@ public class UserVoteController {
 
     /**
      * 用户开始投票的保存
-     * @param userVoteItem
+     * @param userVoteItems
      * @return
      * @throws Exception
      */
     @RequestMapping(value = VoteConstants.INVITECODE_RPC+"add", method = RequestMethod.POST)
     public String add(
-            @Valid UserVoteItem userVoteItem,
+            @RequestBody List<UserVoteItem> userVoteItems,
                       Model model,
                       HttpServletRequest request) throws Exception {
         try{
             String clientIp = getClientIp(request);
-            userVoteItem.setIp(clientIp);
-            userVoteItemService.add(userVoteItem);
+            for (UserVoteItem userVoteItem:
+            userVoteItems) {
+                userVoteItem.setIp(clientIp);
+                userVoteItemService.add(userVoteItem);
+            }
             model.addAttribute("showMessage","操作成功！");
             return "/userVote";
         }catch (Exception e){
