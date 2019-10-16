@@ -33,7 +33,7 @@ public class UserVoteItem {
      * 分数
      */
     @Column(name = "score")
-    private String score;
+    private Integer score;
 
     @ManyToOne
     @JoinColumn(name = "vote_item_id", referencedColumnName = "id", nullable = false)
@@ -74,11 +74,11 @@ public class UserVoteItem {
         this.order = order;
     }
 
-    public String getScore() {
+    public Integer getScore() {
         return score;
     }
 
-    public void setScore(String score) {
+    public void setScore(Integer score) {
         this.score = score;
     }
 

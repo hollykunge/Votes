@@ -5,6 +5,7 @@ import com.hollykunge.model.UserVoteItem;
 import com.hollykunge.model.VoteItem;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author: zhhongyu
@@ -17,4 +18,13 @@ public interface UserVoteItemService {
     List<UserVoteItem> findByUserIp(String ip);
 
     List<UserVoteItem> findByItemAndIp(Item item, String ip);
+
+    /**
+     * 查询item投票人数
+     * @param item
+     * @return
+     */
+    Long countIpByItem(Item item);
+
+    Map<String,Object> getStatistics(Item item)throws Exception;
 }

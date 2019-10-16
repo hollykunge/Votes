@@ -24,4 +24,16 @@ public class VoteConstants {
      * 用户一个ip已完成投票标识
      */
     public static final String USER_IP_VOTE_FINAL_FLAG = "1";
+    /**
+     * 否同规则
+     */
+    public static final String ITEM_RULE_AGER = "1";
+    /**
+     * 排序
+     */
+    public static final String ITEM_RULE_ORDER = "2";
+    /**
+     * 打分
+     */
+    public static final String ITEM_RULE_SCORE = "3";
 }
