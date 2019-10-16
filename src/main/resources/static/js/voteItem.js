@@ -88,7 +88,7 @@
     function columnConfig(columnsArr, rules) {
         // 格式 column option
         let columnsOption = Object.keys(columnsArr || [])
-            .map(item => {
+            .map((item, index) => {
                 return {
                     title: rules.titleConfig[index],
                     field: item,
@@ -97,7 +97,7 @@
                 }
             })
             .filter(item => {
-                if(item.title.indexOf(rules.hideKeys.join('|')) !== -1) {
+                if(item.title && item.title.indexOf(rules.hideKeys.join('|')) !== -1) {
                     return false
                 }
                 return item
@@ -171,7 +171,7 @@
             columns: columnConfig(options.data[0], {
                 rules: options.rules,
                 hideKeys: ['item'],
-                titleConfig: options.titleConfig
+                titleConfig: options.titleConfig,
                 checkbox: options.checkbox
             }),
             data: options.data

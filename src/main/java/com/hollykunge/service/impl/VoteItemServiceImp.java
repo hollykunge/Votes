@@ -1,11 +1,8 @@
 package com.hollykunge.service.impl;
 
 import com.hollykunge.model.Item;
-import com.hollykunge.model.UserVoteIp;
-import com.hollykunge.model.Vote;
 import com.hollykunge.model.VoteItem;
 import com.hollykunge.repository.VoteItemRepository;
-import com.hollykunge.repository.VoteRepository;
 import com.hollykunge.service.VoteItemService;
 import com.hollykunge.util.ExceptionCommonUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 

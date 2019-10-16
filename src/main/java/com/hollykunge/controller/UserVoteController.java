@@ -48,7 +48,6 @@ public class UserVoteController {
             model.addAttribute("item",itemTemp.get());
             model.addAttribute("itemStatus", ItemStatusConfig.getEnumByValue(itemTemp.get().getStatus()).getName());
             //用户列表页面显示的投票项
-
             model.addAttribute("voteItems", JSONObject.toJSONString(optVoteItems.get()));
             return "/userVote";
         }catch (Exception e){
@@ -68,14 +67,12 @@ public class UserVoteController {
                       Model model,
                       HttpServletRequest request) throws Exception {
         try{
-            //为了不影响user中前台提示信息，给username，password设置系统默认值了
-            if(userVoteItem.getUserVoteIp() == null){
-                String clientIp = request.getHeader("clientIp");
-                UserVoteIp userVoteIp = this.setClientIp(clientIp);
-                //设置为投票完成
-                userVoteIp.setStatus(VoteConstants.USER_IP_VOTE_FINAL_FLAG);
-                userVoteItem.setUserVoteIp(userVoteIp);
+            String clientIp = request.getHeader("clientIp");
+            //如果请求头中没有ip，则为本地测试，使用默认值了
+            if(StringUtils.isEmpty(clientIp)){
+                clientIp = VoteConstants.DEFUALT_CLIENTIP;
             }
+            userVoteItem.setIp(clientIp);
             userVoteItemService.add(userVoteItem);
             model.addAttribute("showMessage","操作成功！");
             return "/userVote";
@@ -86,7 +83,6 @@ public class UserVoteController {
 
     /**
      * 用户开始投票之后显示自己投票完的数据
-     * @param voteItem
      * @param model
      * @param request
      * @return
@@ -98,24 +94,20 @@ public class UserVoteController {
             HttpServletRequest request) throws Exception {
         try{
             String clientIp = request.getHeader("clientIp");
-            UserVoteIp userVoteIp = this.setClientIp(clientIp);
+            //如果请求头中没有ip，则为本地测试，使用默认值了
+            if(StringUtils.isEmpty(clientIp)){
+                clientIp = VoteConstants.DEFUALT_CLIENTIP;
+            }
             //为了不影响user中前台提示信息，给username，password设置系统默认值了
-            List<UserVoteItem> voteItems = userVoteItemService.findByUserIp(userVoteIp);
+            List<UserVoteItem> voteItems = userVoteItemService.findByUserIp(clientIp);
+            Item item = new Item();
+            item.setId((long) 1);
+            userVoteItemService.findByItemAndIp(item,clientIp);
             //用户列表页面显示的投票项
             model.addAttribute("voteItems",voteItems);
             return "/userVote";
         }catch (Exception e){
             throw e;
         }
-    }
-
-    private UserVoteIp setClientIp(String clientIp){
-        //如果请求头中没有ip，则为本地测试，使用默认值了
-        if(StringUtils.isEmpty(clientIp)){
-            clientIp = VoteConstants.DEFUALT_CLIENTIP;
-        }
-        UserVoteIp userVoteIp = new UserVoteIp();
-        userVoteIp.setIp(clientIp);
-        return userVoteIp;
     }
 }
