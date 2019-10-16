@@ -338,7 +338,7 @@ public class ItemController {
                                   @PathVariable String ids)throws Exception{
         try {
             voteItemService.deleteVoteItem(Arrays.asList(ids.split(",")));
-            return "/editItem/"+itemId;
+            return "redirect:/editItem/"+itemId;
         } catch (Exception e) {
             throw e;
         }
@@ -351,10 +351,10 @@ public class ItemController {
      * @throws Exception
      */
     @RequestMapping(value = "/addVoteItem", method = RequestMethod.POST)
-    public String addVoteItem(@Valid VoteItem voteItem)throws Exception{
+    public String addVoteItem(@RequestBody VoteItem voteItem)throws Exception{
         try {
             voteItemService.add(voteItem);
-            return "/editItem/"+voteItem.getItem().getId();
+            return "redirect:/editItem/"+voteItem.getItem().getId();
         } catch (Exception e) {
             throw e;
         }
