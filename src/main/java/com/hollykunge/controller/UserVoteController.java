@@ -1,5 +1,6 @@
 package com.hollykunge.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hollykunge.config.ItemStatusConfig;
 import com.hollykunge.constants.VoteConstants;
@@ -69,13 +70,14 @@ public class UserVoteController {
      */
     @RequestMapping(value = VoteConstants.INVITECODE_RPC+"add", method = RequestMethod.POST)
     public String add(
-            @RequestBody List<UserVoteItem> userVoteItems,
+            @RequestBody String userVoteItems,
                       Model model,
                       HttpServletRequest request) throws Exception {
         try{
             String clientIp = getClientIp(request);
+            List<UserVoteItem> userVoteItemlist = JSONArray.parseArray(userVoteItems, UserVoteItem.class);
             for (UserVoteItem userVoteItem:
-            userVoteItems) {
+                    userVoteItemlist) {
                 userVoteItem.setIp(clientIp);
                 userVoteItemService.add(userVoteItem);
             }
