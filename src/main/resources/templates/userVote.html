@@ -108,15 +108,21 @@
 
         $('.submit').on('click', function (e) {
             var e = window.event || e
-            if(data.filter(function (item) {
-                if(!item.SerialNumber) {
+            if (data.filter(function (item) {
+                if (!item.SerialNumber) {
                     return item
                 }
             }).length > 0) {
                 alert('排序填写不完整');
                 return;
             }
-            console.log()
+            // function (item, index) {
+            //     console.log（）
+
+            //     return obj
+            // }
+
+
             // $.getScript(
             //     "http://pv.sohu.com/cityjson?ie=utf-8",
             //     function (data) {
@@ -126,45 +132,47 @@
             // );
             $.ajax({
                 url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),    //请求的url地址
-                headers:{
-                    'Content-Type':'application/json;charset=utf8'
+                headers: {
+                    'Content-Type': 'application/json;charset=utf8'
                 },
                 // dataType:"json",   //返回格式为json
-                async:true,//请求是否异步，默认为异步，这也是ajax重要特性
-                data:JSON.stringify(data.map(function (item, index) {
+                async: true,//请求是否异步，默认为异步，这也是ajax重要特性
+                data: JSON.stringify(data.map(function (item, index) {
                     let obj = {}
                     // obj.id = ''
                     obj.agreeFlag = ''
                     obj.score = ''
                     // obj.ip = ''
-                    return
                     obj.order = item.SerialNumber
                     obj.voteItem = {}
-                    for(let key in item) {
+                    for (let key in item) {
                         obj.voteItem[key] = item[key]
                     }
                     obj.item = item.item
                     obj.order = item.SerialNumber
                     return obj
                 })),    //参数值
-                type:"POST",   //请求方式
-                beforeSend:function(){
+                type: "POST",   //请求方式
+                beforeSend: function () {
                     //请求前的处理
                     // xhr.setRequestHeader("content-Type:'1333333333'");
                 },
-                success:function(req){
+                success: function (req) {
                     //请求成功时处理
                 },
-                complete:function(success){
+                complete: function (success) {
+                    if(success.responseText === 'success') {
+                        // window.location.href = '/vote/2'
+                        alert('投票成功')
+                    }
                     //请求完成的处理
                     console.log(success)
                 },
-                error:function(error){
+                error: function (error) {
                     //请求出错处理
                     console.log(error)
                 }
             });
-
 
 
         })
