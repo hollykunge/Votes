@@ -151,14 +151,14 @@
                 ids = ids + item.voteItemId + ','
             })
             ids = ids.substring(0,ids.length-1)
-            self.location.href="/deleteVoteItem/{itemId}/{ids}"
+            // self.location.href="/deleteVoteItem/{itemId}/{ids}"
             $.ajax({
                 url:"/deleteVoteItem/"+[[${item.id}]]+"/"+ ids,
                 async:true,
                 type:"get",
                 dataType: 'html',
                 success:function(){
-                    alert("删除成功!");
+                    window.location.reload();
                 }
             });
         })
