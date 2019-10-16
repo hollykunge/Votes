@@ -2,10 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <div th:replace="/fragments/header :: header-css"/>
+    <style type="text/css">
+        .hide{
+            display: none;
+        }
+    </style>
 </head>
 <body class="bg-light">
 <div th:replace="/fragments/header :: header"/>
 <div class="panel panel-primary"></div>
+    
 <div class="row" th:if="${item.status}!=2">
     <div class="col-md-4"></div>
     <div class="col-md-4">
@@ -18,9 +24,62 @@
     </div>
     <div class="col-md-4"></div>
 </div>
-<div class="row" th:if="${item.status}==2">
+<!-- <div class="row" th:if="${item.status}==2">
     投票项列表
+</div> -->
+<div>
+    <table id="voteTable"></table>
 </div>
 <div th:replace="/fragments/footer :: footer"/>
 </body>
+<script type="text/javascript" th:inline="javascript"> 
+    const voteOption = {
+        rules: [[${item.rules}]], // 规则范围 1否同 2排序 3打分
+        agreeRule: [[${item.agreeRule}]], // 1为同意 0为否决
+        agreeMax: [[${item.agreeMax}]], // 否同最大范围
+        agreeMin: [[${item.agreeMin}]], // 否同最小范围
+        description: [[${item.description}]], // 说明
+        maxScore: [[${item.maxScore}]], // 最大分数
+        minScore: [[${item.minScore}]], // 最小分数
+    }
+    const data = JSON.parse([[${voteItems}]] || '[]')
+    const $table = $('#voteTable')
+    let titleConfig =  [[${item.vote.excelHeader}]]
+    let hasOrderArr = [],
+        allOrderArr = data.map(function(item, index){
+            return index * 1 + 1;
+        })
+
+
+
+    if(titleConfig) {
+        titleConfig = titleConfig
+        .replace(/\{|\}/g, '')
+        .split(',')
+        .map(item => {
+            return item.split(':')[1].replace(/\"/g, '')
+        })
+    }
+
+    $(function(){
+        window.operateEvents = {
+            // 排序选择事件
+            'change .selectVote': function (e, value, row, index) {
+                let tagIndex = $(e.target).data('index')
+                // selectitem.
+                const el = $('.selectVote')
+                // seleted 设置值
+                row.SerialNumber = $(e.target).val()
+                delSelect($(e.target).val(), allOrderArr, data, index)
+            }
+        }
+        initTable({
+            rules: voteOption.rules,
+            titleConfig: titleConfig,
+            data: data
+        })
+    })
+
+</script>
+<script type="text/javascript" th:src="@{/js/voteItem.js}"></script>
 </html>

@@ -1,13 +1,12 @@
 package com.hollykunge.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.hollykunge.config.ItemStatusConfig;
 import com.hollykunge.constants.VoteConstants;
 import com.hollykunge.exception.BaseException;
-import com.hollykunge.model.Item;
-import com.hollykunge.model.User;
-import com.hollykunge.model.UserVoteIp;
-import com.hollykunge.model.VoteItem;
+import com.hollykunge.model.*;
 import com.hollykunge.service.ItemService;
+import com.hollykunge.service.UserVoteItemService;
 import com.hollykunge.service.VoteItemService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +31,8 @@ public class UserVoteController {
     private ItemService itemService;
     @Autowired
     private VoteItemService voteItemService;
+    @Autowired
+    private UserVoteItemService userVoteItemService;
 
 
     @RequestMapping(value = VoteConstants.INVITECODE_RPC+"{id}/{code}", method = RequestMethod.GET)
@@ -47,7 +48,8 @@ public class UserVoteController {
             model.addAttribute("item",itemTemp.get());
             model.addAttribute("itemStatus", ItemStatusConfig.getEnumByValue(itemTemp.get().getStatus()).getName());
             //用户列表页面显示的投票项
-            model.addAttribute("voteItems",optVoteItems.get());
+
+            model.addAttribute("voteItems", JSONObject.toJSONString(optVoteItems.get()));
             return "/userVote";
         }catch (Exception e){
             throw e;
@@ -56,23 +58,25 @@ public class UserVoteController {
 
     /**
      * 用户开始投票的保存
-     * @param voteItem
+     * @param userVoteItem
      * @return
      * @throws Exception
      */
     @RequestMapping(value = VoteConstants.INVITECODE_RPC+"add", method = RequestMethod.POST)
     public String add(
-            @Valid VoteItem voteItem,
+            @Valid UserVoteItem userVoteItem,
                       Model model,
                       HttpServletRequest request) throws Exception {
         try{
-            String clientIp = request.getHeader("clientIp");
-            UserVoteIp userVoteIp = this.setClientIp(clientIp);
-            //设置为投票完成
-            userVoteIp.setStatus(VoteConstants.USER_IP_VOTE_FINAL_FLAG);
             //为了不影响user中前台提示信息，给username，password设置系统默认值了
-            voteItem.setUserIps(Collections.singletonList(userVoteIp));
-            voteItemService.add(voteItem);
+            if(userVoteItem.getUserVoteIp() == null){
+                String clientIp = request.getHeader("clientIp");
+                UserVoteIp userVoteIp = this.setClientIp(clientIp);
+                //设置为投票完成
+                userVoteIp.setStatus(VoteConstants.USER_IP_VOTE_FINAL_FLAG);
+                userVoteItem.setUserVoteIp(userVoteIp);
+            }
+            userVoteItemService.add(userVoteItem);
             model.addAttribute("showMessage","操作成功！");
             return "/userVote";
         }catch (Exception e){
@@ -90,15 +94,13 @@ public class UserVoteController {
      */
     @RequestMapping(value = VoteConstants.INVITECODE_RPC+"all", method = RequestMethod.GET)
     public String getAll(
-            @Valid VoteItem voteItem,
             Model model,
             HttpServletRequest request) throws Exception {
         try{
             String clientIp = request.getHeader("clientIp");
             UserVoteIp userVoteIp = this.setClientIp(clientIp);
             //为了不影响user中前台提示信息，给username，password设置系统默认值了
-            voteItem.setUserIps(Collections.singletonList(userVoteIp));
-            List<VoteItem> voteItems = voteItemService.findByUserIps(Collections.singletonList(userVoteIp));
+            List<UserVoteItem> voteItems = userVoteItemService.findByUserIp(userVoteIp);
             //用户列表页面显示的投票项
             model.addAttribute("voteItems",voteItems);
             return "/userVote";

@@ -108,12 +108,21 @@
     let selections = []
     let rules = [[${item.rules}]] // 规则范围 1否同 2排序 3打分
     let agree_rule = [[${item.agreeRule}]] // 规则范围 1否同 2排序 3打分
-
+    let titleConfig =  [[${item.vote.excelHeader}]]
+    if(titleConfig) {
+        titleConfig = titleConfig
+        .replace(/\{|\}/g, '')
+        .split(',')
+        .map(item => {
+            return item.split(':')[1].replace(/\"/g, '')
+        })
+    }
     $(function () {
         // 添加checkbox列
         initTable({
             rules: rules,
             data: data,
+            titleConfig: titleConfig,
             checkbox: true
         })
         // 清空 file 值
