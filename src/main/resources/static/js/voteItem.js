@@ -1,7 +1,42 @@
-// 弹窗显示
-function showImportModel() {
-    $('#importModel').modal('show');
-}
+
+    // 弹窗显示
+    function showImportModel() {
+        $('#importModel').modal('show');
+    }
+    function showAddModel() {
+        if (titleConfig == null) {
+            alert('请先操作导入')
+            return;
+        }
+        $('#addModel').modal('show');
+        var inputdiv = "";
+        for (var i=0;i<titleConfig.length;i++) {
+            inputdiv = inputdiv + "<div class='form-group col-md-6'>";
+            inputdiv  = inputdiv + "<label>"+titleConfig[i]+"</label><input class='form-control'/>";
+            inputdiv = inputdiv + "</div>";
+        }
+        $('#formRow').append(inputdiv);
+    }
+    //定义按钮事件
+    function excelImport(voteId) {
+        var fileObj = document.getElementById("file").files[0]; // js 获取文件对象
+        var url = window.location.origin + "/item/import"; // 接收上传文件的后台地址
+        var form = new FormData(); // FormData 对象
+        if (form) {
+            form.append("file", fileObj); // 文件对象
+        }
+        xhr = new XMLHttpRequest(); // XMLHttpRequest 对象
+        xhr.open("post", url, false); //post方式，url为服务器请求地址，true 该参数规定请求是否异步处理。
+        xhr.onload = uploadComplete; //请求完成
+        xhr.onerror = uploadFailed; //请求失败
+        xhr.upload.onprogress = progressFunction; //【上传进度调用方法实现】
+        xhr.upload.onloadstart = function () { //上传开始执行方法
+            ot = new Date().getTime(); //设置上传开始时间
+            oloaded = 0; //设置上传开始时，以上传的文件大小为0
+        };
+        xhr.setRequestHeader("itemId", voteId);
+        xhr.send(form); //开始上传，发送form数据
+    }
 
 function showAddModel() {
     $('#addModel').modal('show');

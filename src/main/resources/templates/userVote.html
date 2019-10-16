@@ -29,7 +29,9 @@
 </div> -->
 <div>
     <table id="voteTable"></table>
-    <div class="submit"><button>完成</button></div>
+    <div class="submit">
+        <button>完成</button>
+    </div>
 
 </div>
 <div th:replace="/fragments/footer :: footer"/>
@@ -70,7 +72,9 @@
             // 排序点击事件回调
             'mousedown .selectVote': function (e, value, row, index) {
                 // 点击排序时, 绘制option
-                allOrder = [... new Set(allOrder)]
+                allOrder = [...new
+                Set(allOrder)
+            ]
                 if (value) {
                     currentVal = value;
                     currentValue = '<option selected="true" value="' + value + '">' + value + '</option>'
@@ -85,7 +89,7 @@
                             .map(function (item) {
                                 return '<option value="' + item + '">' + item + '</option>'
                             }))
-                            .join('')
+                        .join('')
                 )
             },
             // 排序选择事件回调
@@ -104,7 +108,61 @@
 
         $('.submit').on('click', function (e) {
             var e = window.event || e
-            console.log(data)
+            if(data.filter(function (item) {
+                if(!item.SerialNumber) {
+                    return item
+                }
+            }).length > 0) {
+                alert('排序填写不完整');
+                return;
+            }
+            console.log()
+            // $.getScript(
+            //     "http://pv.sohu.com/cityjson?ie=utf-8",
+            //     function (data) {
+            //         //localIP = returnCitySN["cip"];
+            //         console.log(returnCitySN);
+            //     }
+            // );
+            $.ajax({
+                url: window.location.origin + "/userVote/add",    //请求的url地址
+                headers:{'Content-Type':'application/json;charset=utf8'},
+                // dataType:"json",   //返回格式为json
+                async:true,//请求是否异步，默认为异步，这也是ajax重要特性
+                data:{
+                    userVoteItems: data.map(function (item, index) {
+                        let obj = {}
+                        // obj.id = ''
+                        obj.agreeFlag = ''
+                        obj.order = item.SerialNumber
+                        obj.score = ''
+                        obj.voteItem = {}
+                        obj.item = item.item
+                        obj.ip = ''
+                        obj.order = item.SerialNumber
+                        return obj
+                    })
+                },    //参数值
+                type:"POST",   //请求方式
+                beforeSend:function(){
+                    //请求前的处理
+                    // xhr.setRequestHeader("content-Type:'1333333333'");
+                },
+                success:function(req){
+                    //请求成功时处理
+                },
+                complete:function(success){
+                    //请求完成的处理
+                    console.log(success)
+                },
+                error:function(error){
+                    //请求出错处理
+                    console.log(error)
+                }
+            });
+
+
+
         })
     })
 
