@@ -38,7 +38,8 @@ public class UserVoteController {
     @RequestMapping(value = VoteConstants.INVITECODE_RPC+"{id}/{code}", method = RequestMethod.GET)
     public String inviteCodeView(@PathVariable Long id,
                                  @PathVariable String code,
-                                 Model model) throws Exception {
+                                 Model model,
+                                 HttpServletRequest request) throws Exception {
         try{
             Optional<Item> itemTemp = itemService.findByIdAndCode(id,code);
             if(!itemTemp.isPresent()){
@@ -49,6 +50,11 @@ public class UserVoteController {
             model.addAttribute("itemStatus", ItemStatusConfig.getEnumByValue(itemTemp.get().getStatus()).getName());
             //用户列表页面显示的投票项
             model.addAttribute("voteItems", JSONObject.toJSONString(optVoteItems.get()));
+
+            String clientIp = getClientIp(request);
+            List<UserVoteItem> userVoteItems = userVoteItemService.findByItemAndIp(itemTemp.get(), clientIp);
+            //用户投完票项目，前台展示可采用如果userVoteItems没有数据，则为第一次投票列表使用voteItems
+            model.addAttribute("userVoteItems",JSONObject.toJSONString(userVoteItems));
             return "/userVote";
         }catch (Exception e){
             throw e;
@@ -67,11 +73,7 @@ public class UserVoteController {
                       Model model,
                       HttpServletRequest request) throws Exception {
         try{
-            String clientIp = request.getHeader("clientIp");
-            //如果请求头中没有ip，则为本地测试，使用默认值了
-            if(StringUtils.isEmpty(clientIp)){
-                clientIp = VoteConstants.DEFUALT_CLIENTIP;
-            }
+            String clientIp = getClientIp(request);
             userVoteItem.setIp(clientIp);
             userVoteItemService.add(userVoteItem);
             model.addAttribute("showMessage","操作成功！");
@@ -93,11 +95,7 @@ public class UserVoteController {
             Model model,
             HttpServletRequest request) throws Exception {
         try{
-            String clientIp = request.getHeader("clientIp");
-            //如果请求头中没有ip，则为本地测试，使用默认值了
-            if(StringUtils.isEmpty(clientIp)){
-                clientIp = VoteConstants.DEFUALT_CLIENTIP;
-            }
+            String clientIp = getClientIp(request);
             //为了不影响user中前台提示信息，给username，password设置系统默认值了
             List<UserVoteItem> voteItems = userVoteItemService.findByUserIp(clientIp);
             Item item = new Item();
@@ -109,5 +107,14 @@ public class UserVoteController {
         }catch (Exception e){
             throw e;
         }
+    }
+    
+    public String getClientIp(HttpServletRequest request){
+        String clientIp = request.getHeader("clientIp");
+        //如果请求头中没有ip，则为本地测试，使用默认值了
+        if(StringUtils.isEmpty(clientIp)){
+            clientIp = VoteConstants.DEFUALT_CLIENTIP;
+        }
+        return clientIp;
     }
 }
