@@ -343,12 +343,18 @@ public class ItemController {
             throw e;
         }
     }
-    @RequestMapping(value = "/addVoteItem/{itemId}", method = RequestMethod.POST)
-    public String addVoteItem(@Valid VoteItem voteItem,
-                              @PathVariable Long itemId)throws Exception{
+
+    /**
+     * 添加一个投票项
+     * @param voteItem
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/addVoteItem", method = RequestMethod.POST)
+    public String addVoteItem(@Valid VoteItem voteItem)throws Exception{
         try {
             voteItemService.add(voteItem);
-            return "/editItem/"+itemId;
+            return "/editItem/"+voteItem.getItem().getId();
         } catch (Exception e) {
             throw e;
         }
