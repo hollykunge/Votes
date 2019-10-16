@@ -125,7 +125,7 @@
             //     }
             // );
             $.ajax({
-                url: window.location.origin + "/userVote/add" window.location.pathname.replace('/userVote', ''),    //请求的url地址
+                url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),    //请求的url地址
                 headers:{
                     'Content-Type':'application/json;charset=utf8'
                 },
