@@ -3,7 +3,18 @@
         $('#importModel').modal('show');
     }
     function showAddModel() {
+        if (titleConfig == null) {
+            alert('请先操作导入')
+            return;
+        }
         $('#addModel').modal('show');
+        var inputdiv = "";
+        for (var i=0;i<titleConfig.length;i++) {
+            inputdiv = inputdiv + "<div class='form-group col-md-6'>";
+            inputdiv  = inputdiv + "<label>"+titleConfig[i]+"</label><input class='form-control'/>";
+            inputdiv = inputdiv + "</div>";
+        }
+        $('#formRow').append(inputdiv);
     }
     //定义按钮事件
     function excelImport(voteId) {
