@@ -1,10 +1,9 @@
 package com.hollykunge.service;
 
-import com.hollykunge.model.UserVoteIp;
+import com.hollykunge.model.Item;
 import com.hollykunge.model.UserVoteItem;
 import com.hollykunge.model.VoteItem;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -15,5 +14,7 @@ import java.util.List;
 public interface UserVoteItemService {
     UserVoteItem add(UserVoteItem userVoteItem);
 
-    List<UserVoteItem> findByUserIp(UserVoteIp userVoteIp);
+    List<UserVoteItem> findByUserIp(String ip);
+
+    List<UserVoteItem> findByItemAndIp(Item item, String ip);
 }

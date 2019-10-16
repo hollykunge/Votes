@@ -1,11 +1,8 @@
 package com.hollykunge.service;
 
 import com.hollykunge.model.Item;
-import com.hollykunge.model.UserVoteIp;
-import com.hollykunge.model.Vote;
 import com.hollykunge.model.VoteItem;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,4 +25,5 @@ public interface VoteItemService {
 
     Optional<List<VoteItem>> findByItem(Item item);
 
+    void deleteVoteItem(List<String> ids)throws Exception;
 }

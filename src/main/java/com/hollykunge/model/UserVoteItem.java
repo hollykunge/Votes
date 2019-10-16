@@ -1,10 +1,8 @@
 package com.hollykunge.model;
 
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Collection;
 
 /**
  * @deprecation 用户投票项信息主表
@@ -39,11 +37,18 @@ public class UserVoteItem {
 
     @ManyToOne
     @JoinColumn(name = "vote_item_id", referencedColumnName = "id", nullable = false)
+    @NotNull
     private VoteItem voteItem;
 
     @ManyToOne
-    @JoinColumn(name = "user_ip", referencedColumnName = "ip", nullable = false)
-    private UserVoteIp userVoteIp;
+    @JoinColumn(name = "item_id", referencedColumnName = "id", nullable = false)
+    @NotNull
+    private Item item;
+
+
+    @Column(name = "user_ip")
+    private String ip;
+
 
     public Long getId() {
         return id;
@@ -85,11 +90,19 @@ public class UserVoteItem {
         this.voteItem = voteItem;
     }
 
-    public UserVoteIp getUserVoteIp() {
-        return userVoteIp;
+    public String getIp() {
+        return ip;
     }
 
-    public void setUserVoteIp(UserVoteIp userVoteIp) {
-        this.userVoteIp = userVoteIp;
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
     }
 }
