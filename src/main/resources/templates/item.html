@@ -80,17 +80,13 @@
                 </div>
                 <div class="modal-body">
                     <form>
-                        <div class="form-row">
-                            <div class="form-group col-md-6" th:each="attr: ${voteItemsObj}">
-                                <label th:text="*{attr.attr1}"></label>
-                                <input class="form-control"/>
-                            </div>
+                        <div class="form-row" id="formRow">
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
-                    <button type="button" class="btn btn-primary copy-code" id="addBtn">
+                    <button type="button" class="btn btn-primary copy-code" id="saveAddBtn">
                         保存
                     </button>
                 </div>
@@ -154,13 +150,44 @@
             selectItems.forEach(item => {
                 ids = ids + item.voteItemId + ','
             })
-            // TODO后台删除功能待完成
-            // self.location.href="/delete/1"
+            ids = ids.substring(0,ids.length-1)
+            self.location.href="/deleteVoteItem/{itemId}/{ids}"
+            $.ajax({
+                url:"/deleteVoteItem/"+[[${item.id}]]+"/"+ ids,
+                async:true,
+                type:"get",
+                dataType: 'html',
+                success:function(){
+                    alert("删除成功!");
+                }
+            });
         })
         // 新增
-        $('#addBtn').click(function () {
-
+        $('#saveAddBtn').click(function () {
+            var voteItems = JSON.parse([[${voteItems}]] || '[]');
+            var voteItem = voteItems[0];
+            voteItem.attr1 = $("form input:eq(0)").val();
+            voteItem.attr2 = $("form input:eq(1)").val();
+            voteItem.attr3 = $("form input:eq(2)").val();
+            voteItem.attr4 = $("form input:eq(3)").val();
+            voteItem.attr5 = $("form input:eq(4)").val();
+            voteItem.attr6 = $("form input:eq(5)").val();
+            voteItem.voteItemId = "";
+            $.ajax({
+                url:"/addVoteItem",
+                async:true,
+                contentType:"application/json;charset=utf-8",
+                dataType: 'html',
+                data:JSON.stringify(voteItem),
+                type:"post",
+                success:function(){
+                    $('#addModel').modal('hide');
+                },error:function(result){
+                    alert("数据没有成功返回!")
+                }
+            });
         })
+
 
     })
 </script>
