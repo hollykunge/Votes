@@ -178,10 +178,12 @@
                 async:true,
                 contentType:"application/json;charset=utf-8",
                 dataType: 'html',
+                cache: false,
                 data:JSON.stringify(voteItem),
                 type:"post",
                 success:function(){
                     $('#addModel').modal('hide');
+                    window.location.reload();
                 },error:function(result){
                     alert("数据没有成功返回!")
                 }
