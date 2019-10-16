@@ -3,7 +3,7 @@
 <head>
     <div th:replace="/fragments/header :: header-css"/>
     <style type="text/css">
-        .hide{
+        .hide {
             display: none;
         }
     </style>
@@ -11,7 +11,7 @@
 <body class="bg-light">
 <div th:replace="/fragments/header :: header"/>
 <div class="panel panel-primary"></div>
-    
+
 <div class="row" th:if="${item.status}!=2">
     <div class="col-md-4"></div>
     <div class="col-md-4">
@@ -29,10 +29,14 @@
 </div> -->
 <div>
     <table id="voteTable"></table>
+    <div class="submit">
+        <button>完成</button>
+    </div>
+
 </div>
 <div th:replace="/fragments/footer :: footer"/>
 </body>
-<script type="text/javascript" th:inline="javascript"> 
+<script type="text/javascript" th:inline="javascript">
     const voteOption = {
         rules: [[${item.rules}]], // 规则范围 1否同 2排序 3打分
         agreeRule: [[${item.agreeRule}]], // 1为同意 0为否决
@@ -42,41 +46,135 @@
         maxScore: [[${item.maxScore}]], // 最大分数
         minScore: [[${item.minScore}]], // 最小分数
     }
-    const data = JSON.parse([[${voteItems}]] || '[]')
-    const $table = $('#voteTable')
-    let titleConfig =  [[${item.vote.excelHeader}]]
-    let hasOrderArr = [],
-        allOrderArr = data.map(function(item, index){
-            return index * 1 + 1;
-        })
-
-
-
-    if(titleConfig) {
+    const data = JSON.parse([[${voteItems}]] || '[]') // voteItem
+    const $table = $('#voteTable') // 当前页面表格
+    let titleConfig = [[${item.vote.excelHeader}]] // excelHeader
+    // 表头 column title
+    if (titleConfig) {
         titleConfig = titleConfig
-        .replace(/\{|\}/g, '')
-        .split(',')
-        .map(item => {
-            return item.split(':')[1].replace(/\"/g, '')
-        })
+            .replace(/\{|\}/g, '')
+            .split(',')
+            .map(function (item) {
+                    return item.split(':')[1].replace(/\"/g, '')
+                }
+            )
     }
 
-    $(function(){
+    $(function () {
+        let allOrder = data
+                .map(function (item, index) {
+                    return index * 1 + 1
+                }),
+            delOrder = [];
+        let currentVal = '';
+        let currentValue = ''
         window.operateEvents = {
-            // 排序选择事件
+            // 排序点击事件回调
+            'mousedown .selectVote': function (e, value, row, index) {
+                // 点击排序时, 绘制option
+                allOrder = [...new
+                Set(allOrder)
+            ]
+                if (value) {
+                    currentVal = value;
+                    currentValue = '<option selected="true" value="' + value + '">' + value + '</option>'
+                }
+                $(e.target).html(
+                    [
+                        '<option value="">请选择</option>',
+                        currentValue
+                    ]
+                        .concat(allOrder
+                            .sort()
+                            .map(function (item) {
+                                return '<option value="' + item + '">' + item + '</option>'
+                            }))
+                        .join('')
+                )
+            },
+            // 排序选择事件回调
             'change .selectVote': function (e, value, row, index) {
-                let tagIndex = $(e.target).data('index')
-                // selectitem.
-                const el = $('.selectVote')
-                // seleted 设置值
+                currentValue = ''
                 row.SerialNumber = $(e.target).val()
-                delSelect($(e.target).val(), allOrderArr, data, index)
+                columnOperation(data, $(e.target).val(), delOrder, allOrder, currentVal)
+                currentVal = ''
             }
         }
         initTable({
             rules: voteOption.rules,
             titleConfig: titleConfig,
             data: data
+        })
+
+        $('.submit').on('click', function (e) {
+            var e = window.event || e
+            if (data.filter(function (item) {
+                if (!item.SerialNumber) {
+                    return item
+                }
+            }).length > 0) {
+                alert('排序填写不完整');
+                return;
+            }
+            // function (item, index) {
+            //     console.log（）
+
+            //     return obj
+            // }
+
+
+            // $.getScript(
+            //     "http://pv.sohu.com/cityjson?ie=utf-8",
+            //     function (data) {
+            //         //localIP = returnCitySN["cip"];
+            //         console.log(returnCitySN);
+            //     }
+            // );
+            $.ajax({
+                url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),    //请求的url地址
+                headers: {
+                    'Content-Type': 'application/json;charset=utf8'
+                },
+                // dataType:"json",   //返回格式为json
+                async: true,//请求是否异步，默认为异步，这也是ajax重要特性
+                data: JSON.stringify(data.map(function (item, index) {
+                    let obj = {}
+                    // obj.id = ''
+                    obj.agreeFlag = ''
+                    obj.score = ''
+                    // obj.ip = ''
+                    obj.order = item.SerialNumber
+                    obj.voteItem = {}
+                    for (let key in item) {
+                        obj.voteItem[key] = item[key]
+                    }
+                    obj.item = item.item
+                    obj.order = item.SerialNumber
+                    return obj
+                })),    //参数值
+                type: "POST",   //请求方式
+                beforeSend: function () {
+                    //请求前的处理
+                    // xhr.setRequestHeader("content-Type:'1333333333'");
+                },
+                success: function (req) {
+                    //请求成功时处理
+                },
+                complete: function (success) {
+                    if(success.responseText === 'success') {
+                        // window.location.href = '/vote/2'
+                        alert('投票成功')
+                    }
+                    //请求完成的处理
+                    console.log(success)
+                },
+                error: function (error) {
+                    //请求出错处理
+                    console.log(error)
+                }
+            });
+
+
         })
     })
 
