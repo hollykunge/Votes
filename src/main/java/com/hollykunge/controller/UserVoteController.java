@@ -69,6 +69,7 @@ public class UserVoteController {
      * @throws Exception
      */
     @RequestMapping(value = VoteConstants.INVITECODE_RPC+"add/{id}/{code}", method = RequestMethod.POST)
+    @ResponseBody
     public String add(@PathVariable String id,
             @PathVariable String code,
             @RequestBody String userVoteItems,
@@ -83,7 +84,7 @@ public class UserVoteController {
                 userVoteItemService.add(userVoteItem);
             }
             model.addAttribute("showMessage","操作成功！");
-            return "redirect:/userVote/"+id+"/"+code;
+            return "success";
         }catch (Exception e){
             throw e;
         }
