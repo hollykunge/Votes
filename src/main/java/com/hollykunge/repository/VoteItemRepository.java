@@ -1,12 +1,9 @@
 package com.hollykunge.repository;
 
 import com.hollykunge.model.Item;
-import com.hollykunge.model.UserVoteIp;
-import com.hollykunge.model.Vote;
 import com.hollykunge.model.VoteItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
