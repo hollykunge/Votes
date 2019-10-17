@@ -109,6 +109,7 @@
         maxScore: [[${item.maxScore}]], // 最大分数
         minScore: [[${item.minScore}]], // 最小分数
     }
+    const hasVotes = JSON.parse([[${userVoteItems}]] || '[]')
     const data = JSON.parse([[${voteItems}]] || '[]') // voteItem
     const $table = $('#voteTable') // 当前页面表格
     let titleConfig = [[${item.vote.excelHeader}]] // excelHeader
@@ -132,12 +133,22 @@
         let currentVal = '';
         let currentValue = ''
         window.operateEvents = {
+            'change .voteInput': function (e, value, row, index) {
+
+                console.log($(e.target).val())
+                row.score = $(e.target).val()
+                $._fraction.push(initDataItem(row))
+            },
+            'click .castVote': function (e, value, row, index) {
+                $(e.target).text('已投').removeClass('castVote')
+                $._voteArr.push(initDataItem(row, 'castVote'))
+            },
             // 排序点击事件回调
             'mousedown .selectVote': function (e, value, row, index) {
                 // 点击排序时, 绘制option
                 allOrder = [...new
                 Set(allOrder)
-                ]
+            ]
                 if (value) {
                     currentVal = value;
                     currentValue = '<option selected="true" value="' + value + '">' + value + '</option>'
@@ -166,77 +177,49 @@
         initTable({
             rules: voteOption.rules,
             titleConfig: titleConfig,
-            data: data
+            data: data,
+            hasData: hasVotes
         })
 
         $('#voteDone').on('click', function (e) {
             var e = window.event || e
-            if (data.filter(function (item) {
-                if (!item.SerialNumber) {
-                    return item
+            let requestBody = []
+            if (voteOption.rules === '2') {
+                if (data.filter(function (item) {
+                    if (!item.SerialNumber) {
+                        return item
+                    }
+                }).length > 0) {
+                    alert('排序填写不完整');
+                    return;
                 }
-            }).length > 0) {
-                alert('排序填写不完整');
-                return;
             }
-            // function (item, index) {
-            //     console.log（）
 
-            //     return obj
-            // }
-
-
-            // $.getScript(
-            //     "http://pv.sohu.com/cityjson?ie=utf-8",
-            //     function (data) {
-            //         //localIP = returnCitySN["cip"];
-            //         console.log(returnCitySN);
-            //     }
-            // );
-            $.ajax({
-                url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),    //请求的url地址
-                headers: {
-                    'Content-Type': 'application/json;charset=utf8'
-                },
-                // dataType:"json",   //返回格式为json
-                async: true,//请求是否异步，默认为异步，这也是ajax重要特性
-                data: JSON.stringify(data.map(function (item, index) {
-                    let obj = {}
-                    // obj.id = ''
-                    obj.agreeFlag = ''
-                    obj.score = ''
-                    // obj.ip = ''
-                    obj.order = item.SerialNumber
-                    obj.voteItem = {}
-                    for (let key in item) {
-                        obj.voteItem[key] = item[key]
-                    }
-                    obj.item = item.item
-                    obj.order = item.SerialNumber
-                    return obj
-                })),    //参数值
-                type: "POST",   //请求方式
-                beforeSend: function () {
-                    //请求前的处理
-                    // xhr.setRequestHeader("content-Type:'1333333333'");
-                },
-                success: function (req) {
-                    //请求成功时处理
-                },
-                complete: function (success) {
-                    if (success.responseText === 'success') {
-                        // window.location.href = '/vote/2'
-                        alert('投票成功')
-                    }
-                    //请求完成的处理
-                    console.log(success)
-                },
-                error: function (error) {
-                    //请求出错处理
-                    console.log(error)
+            if ($._voteArr) {
+                if ($._voteArr.length > 0) {
+                    requestBody = $._voteArr
+                    // request({
+                    //     url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),
+                    //     data: JSON.stringify($._voteArr)
+                    // })
                 }
-            });
-
+            }
+            if ($._fraction) {
+                if ($._fraction.length > 0) {
+                    requestBody = $._fraction
+                    // request({
+                    //     url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),
+                    //     data: JSON.stringify($._fraction)
+                    // })
+                }
+            }
+            requestBody = data.map(function (item, index) {
+                return initDataItem(item)
+            })
+            request({
+                url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),
+                data: JSON.stringify(requestBody)
+            })
 
         })
     })
