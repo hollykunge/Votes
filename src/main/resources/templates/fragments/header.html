@@ -36,23 +36,19 @@
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav do-right">
                     <div sec:authorize="!isAuthenticated()">
-                        <a class="btn btn-primary" th:href="@{/registration}">注册</a>
+                        <a class="btn btn-primary mr-1" th:href="@{/registration}">注册</a>
                     </div>
-
                     <div sec:authorize="!isAuthenticated()">
-                        <a class="btn btn-primary" th:href="@{/login}">登录</a>
+                        <a class="btn btn-primary mr-1" th:href="@{/login}">登录</a>
                     </div>
-
                     <div sec:authorize="hasRole('USER')">
-                        <a class="btn btn-primary" th:href="@{'/votes/' + ${#authentication.getName()}}">我的投票</a>
+                        <a class="btn btn-warning mr-1" th:href="@{/newVote}">新建投票</a>
                     </div>
-
                     <div sec:authorize="hasRole('USER')">
-                        <a class="btn btn-primary" th:href="@{/newVote}">新建投票</a>
+                        <a class="btn btn-primary mr-1" th:href="@{'/votes/' + ${#authentication.getName()}}">我的投票</a>
                     </div>
-
                     <div sec:authorize="isAuthenticated()">
-                        <a class="btn btn-primary" th:href="@{/logout}">注销</a>
+                        <a class="btn btn-primary mr-1" th:href="@{/logout}">注销</a>
                     </div>
                 </div>
             </div>

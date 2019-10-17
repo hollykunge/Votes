@@ -2,18 +2,86 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <div th:replace="/fragments/header :: header-css"/>
-    <style type="text/css">
-        .hide {
-            display: none;
-        }
-    </style>
 </head>
 <body class="bg-light">
 <div th:replace="/fragments/header :: header"/>
-<div class="panel panel-primary"></div>
+
+<div class="container">
+    <div class="card-deck mb-3 text-center">
+        <div class="card border-dark mb-3 shadow-sm">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal ">投票规则</h4>
+            </div>
+            <div class="card-body">
+                <h1 class="card-title text-primary">
+                    <div th:switch="*{item.rules}">
+                        <div th:case="1">
+                            <span th:text="${item.agreeRule == '1' ? '同意' : '否决'}"></span>
+                            <small class="text-muted">/ 否同</small>
+                        </div>
+                        <div th:case="2">
+                            <span>排序</span>
+                        </div>
+                        <div th:case="3">
+                            <span>评分</span>
+                        </div>
+                    </div>
+                </h1>
+                <ul class="list-unstyled mt-3 mb-4">
+                    <div th:switch="*{item.rules}">
+                        <div th:case="1">
+                            <li th:text="${'大于'+ item.agreeMin}"></li>
+                            <li th:text="${'小于'+ item.agreeMax}"></li>
+                        </div>
+                        <div th:case="3">
+                            <li th:text="${'大于'+ item.minScore}"></li>
+                            <li th:text="${'小于'+ item.maxScore}"></li>
+                        </div>
+                    </div>
+                </ul>
+            </div>
+        </div>
+        <div class="card border-dark mb-3 shadow-sm">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">投票说明</h4>
+            </div>
+            <div class="card-body">
+                <div class="card-text text-primary" th:text="${item.body}">
+                    暂无说明
+                </div>
+            </div>
+        </div>
+        <div class="card border-dark mb-3 shadow-sm">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">投票情况</h4>
+            </div>
+            <div class="card-body">
+                <h1 class="card-title text-primary">
+                    <span th:text="${item.memberNum}">0/</span>
+                    <small class="text-muted" th:text="'/'+${item.memberSize}+'人'">--</small>
+                </h1>
+            </div>
+        </div>
+    </div>
+    <div class="card border-dark mb-3">
+        <div class="card-header">
+            <span>投票项</span>
+        </div>
+        <div class="card-body text-primary card-nopadding">
+            <table id="voteTable"
+                   data-virtual-scroll="true"
+            ></table>
+        </div>
+    </div>
+    <hr class="mb-4"/>
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <button id="voteDone" type="submit" class="btn btn-success btn-block">提交</button>
+        </div>
+    </div>
+</div>
 
 <div class="row" th:if="${item.status}!=2">
-    <div class="col-md-4"></div>
     <div class="col-md-4">
         <div class="jumbotron">
             <h1>
@@ -27,13 +95,8 @@
 <!-- <div class="row" th:if="${item.status}==2">
     投票项列表
 </div> -->
-<div>
-    <table id="voteTable"></table>
-    <div class="submit">
-        <button>完成</button>
-    </div>
 
-</div>
+
 <div th:replace="/fragments/footer :: footer"/>
 </body>
 <script type="text/javascript" th:inline="javascript">
@@ -74,7 +137,7 @@
                 // 点击排序时, 绘制option
                 allOrder = [...new
                 Set(allOrder)
-            ]
+                ]
                 if (value) {
                     currentVal = value;
                     currentValue = '<option selected="true" value="' + value + '">' + value + '</option>'
@@ -106,7 +169,7 @@
             data: data
         })
 
-        $('.submit').on('click', function (e) {
+        $('#voteDone').on('click', function (e) {
             var e = window.event || e
             if (data.filter(function (item) {
                 if (!item.SerialNumber) {
@@ -161,7 +224,7 @@
                     //请求成功时处理
                 },
                 complete: function (success) {
-                    if(success.responseText === 'success') {
+                    if (success.responseText === 'success') {
                         // window.location.href = '/vote/2'
                         alert('投票成功')
                     }
