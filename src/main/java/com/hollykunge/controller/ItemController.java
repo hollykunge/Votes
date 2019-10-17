@@ -31,6 +31,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author lark
@@ -423,7 +424,12 @@ public class ItemController {
             one.add("序号");
             list.add(one);
             Collection<Object> values = jsonObject.values();
+            AtomicInteger index = new AtomicInteger();
             values.forEach((Object ob) ->{
+                index.getAndIncrement();
+                if(index.intValue() > 7){
+                    return;
+                }
                 List<String> head = new ArrayList<String>();
                 head.add((String) ob);
                 list.add(head);
