@@ -33,4 +33,23 @@ public interface UserVoteItemRepository extends JpaRepository<UserVoteItem, Long
             "            having item_id = ?1 " +
             "            order by sco desc", nativeQuery = true)
     List<Object[]> scoreRule(Long itemId);
+
+    @Query(value = "SELECT u.order_rule der" +
+            "                        FROM USER_VOTE_ITEM u " +
+            "                        group by" +
+            "                        u.order_rule," +
+            "                        u.vote_item_id," +
+            "                        u.item_id" +
+            "                        having item_id = ?1" +
+            "                        and u.vote_item_id = ?2" +
+            "                        order by der desc", nativeQuery = true)
+    List<Integer> orderRule(Long itemId,Long voteItemId);
+    @Query(value = "SELECT max(u.order_rule) " +
+            "                        FROM USER_VOTE_ITEM u " +
+            "                        group by" +
+            "                        u.vote_item_id," +
+            "                        u.item_id" +
+            "                        having item_id = ?1" +
+            "                        and u.vote_item_id = ?2", nativeQuery = true)
+    Integer orderRuleMaxScore(Long itemId,Long voteItemId);
 }

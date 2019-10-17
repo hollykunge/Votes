@@ -64,10 +64,12 @@ public class VoteItem {
 
     @Column(name = "attr6")
     private String attr6;
-
+    @Column(name = "statistics_num")
     private String statisticsNum;
-
+    @Column(name = "statistics_toal_score")
     private String statisticsToalScore;
+    @Column(name = "statistics_order_score")
+    private Integer statisticsOrderScore;
 
     public String getStatisticsNum() {
         return statisticsNum;
@@ -166,4 +168,11 @@ public class VoteItem {
         this.item = item;
     }
 
+    public Integer getStatisticsOrderScore() {
+        return statisticsOrderScore;
+    }
+
+    public void setStatisticsOrderScore(Integer statisticsOrderScore) {
+        this.statisticsOrderScore = statisticsOrderScore;
+    }
 }

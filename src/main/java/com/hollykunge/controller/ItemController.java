@@ -379,8 +379,8 @@ public class ItemController {
     public String test(Model model)throws Exception{
         try {
             Item item = new Item();
-            item.setId(Long.valueOf("1"));
-            item.setRules("1");
+            item.setId(Long.valueOf("2"));
+            item.setRules("2");
             Map<String, Object> statistics = userVoteItemService.getStatistics(item);
             model.addAttribute("statistics",statistics);
             return "";
