@@ -65,6 +65,26 @@ public class VoteItem {
     @Column(name = "attr6")
     private String attr6;
 
+    private String statisticsNum;
+
+    private String statisticsToalScore;
+
+    public String getStatisticsNum() {
+        return statisticsNum;
+    }
+
+    public void setStatisticsNum(String statisticsNum) {
+        this.statisticsNum = statisticsNum;
+    }
+
+    public String getStatisticsToalScore() {
+        return statisticsToalScore;
+    }
+
+    public void setStatisticsToalScore(String statisticsToalScore) {
+        this.statisticsToalScore = statisticsToalScore;
+    }
+
     public String getAttr6() {
         return attr6;
     }

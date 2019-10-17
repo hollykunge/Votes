@@ -1,5 +1,6 @@
 package com.hollykunge.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hollykunge.config.ItemStatusConfig;
 import com.hollykunge.constants.VoteConstants;
@@ -63,21 +64,27 @@ public class UserVoteController {
 
     /**
      * 用户开始投票的保存
-     * @param userVoteItem
+     * @param userVoteItems
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = VoteConstants.INVITECODE_RPC+"add", method = RequestMethod.POST)
-    public String add(
-            @Valid UserVoteItem userVoteItem,
+    @RequestMapping(value = VoteConstants.INVITECODE_RPC+"add/{id}/{code}", method = RequestMethod.POST)
+    @ResponseBody
+    public String add(@PathVariable String id,
+            @PathVariable String code,
+            @RequestBody String userVoteItems,
                       Model model,
                       HttpServletRequest request) throws Exception {
         try{
             String clientIp = getClientIp(request);
-            userVoteItem.setIp(clientIp);
-            userVoteItemService.add(userVoteItem);
+            List<UserVoteItem> userVoteItemlist = JSONArray.parseArray(userVoteItems, UserVoteItem.class);
+            for (UserVoteItem userVoteItem:
+                    userVoteItemlist) {
+                userVoteItem.setIp(clientIp);
+                userVoteItemService.add(userVoteItem);
+            }
             model.addAttribute("showMessage","操作成功！");
-            return "/userVote";
+            return "success";
         }catch (Exception e){
             throw e;
         }
