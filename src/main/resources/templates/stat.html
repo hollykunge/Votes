@@ -21,7 +21,7 @@
     <div class="card-deck mb-3 text-center">
         <div class="card border-dark mb-3 shadow-sm">
             <div class="card-header">
-                <h4 class="my-0 font-weight-normal">投票规则</h4>
+                <h4 class="my-0 font-weight-normal ">投票规则</h4>
             </div>
             <div class="card-body">
                 <h1 class="card-title">
@@ -82,18 +82,9 @@
             <table id="table"></table>
         </div>
     </div>
-    <!--    <div class="card border-dark mb-3">-->
-    <!--        <div class="card-header bg-secondary text-white">-->
-    <!--            统计结果-->
-    <!--            <div style="float: right">-->
-    <!--                <button type="button" class="btn btn-success btn-sm" id="exportExcel" th:onclick="|showExportModel()|">导出</button>-->
-    <!--            </div>-->
-    <!--        </div>-->
-    <!--        <div class="card-body">-->
-    <!--            <h6 class="p-1 mb-2 bg-customer text-black-50">投票人数</h6>-->
-    <!--            <p class="card-text"></p>-->
-    <!--        </div>-->
-    <!--    </div>-->
 </div>
+<script th:inline="javascript">
+    let data = JSON.parse([[${voteItems}]] || '[]')
+</script>
 </body>
 </html>

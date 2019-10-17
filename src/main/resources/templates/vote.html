@@ -16,7 +16,7 @@
             <li class="breadcrumb-item active" aria-current="page" th:text="${vote.title}">Library</li>
         </ol>
     </nav>
-    <div class="card border-dark mb-3">
+    <div class="card border-dark mb-3 shadow-sm">
         <div class="card-header bg-secondary text-white">详情
             <div style="float: right" sec:authorize="isAuthenticated()" th:if="${username}">
                 <a th:href="@{'/editVote/{id}'(id=${vote.id})}" class="col-md-2">
@@ -35,7 +35,7 @@
         </div>
     </div>
     <div class="alert alert-danger" th:if="${showAlertMessage}" th:utext="${showAlertMessage}"></div>
-    <div class="card border-dark mb-3" style="margin-top: 16px">
+    <div class="card border-dark mb-3 shadow-sm" style="margin-top: 16px">
         <div class="card-header bg-secondary text-white">投票轮
             <!--添加投票轮按钮-->
             <!--如果有权限-->
@@ -116,7 +116,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
-                                    <button type="button" class="btn btn-primary copyCode" id="copyCode"
+                                    <button type="button" class="btn btn-success copyCode" id="copyCode"
                                             data-clipboard-action="copy" data-clipboard-target="#code">复制
                                     </button>
                                 </div>

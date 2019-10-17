@@ -22,7 +22,7 @@
                 <div class="form-label-group">
                     <label th:if="${#fields.hasErrors('title')}" th:errors="*{title}"
                            class="alert alert-danger"></label>
-                    <input type="text" th:field="*{title}" placeholder="名称" autofocus="autofocus"
+                    <input type="text" th:field="*{title}" placeholder="输入投票标题" autofocus="autofocus"
                            th:value="${vote.title}"
                            class="form-control input-lg"/>
                 </div>
@@ -30,14 +30,14 @@
                 <div class="form-label-group">
                     <label th:if="${#fields.hasErrors('body')}" th:errors="*{body}"
                            class="alert alert-danger"></label>
-                    <textarea th:field="*{body}" placeholder="描述"
-                              class="form-control input-lg" th:value="${vote.body}"/>
+                    <textarea th:field="*{body}" placeholder="输入投票描述"
+                              class="form-control input-lg" th:value="${vote.body}" rows="4"></textarea>
                 </div>
 
                 <input type="hidden" th:field="*{user}"/>
                 <input type="hidden" th:field="*{id}"/>
 
-                <input type="submit" class="btn btn-primary btn-block" value="保存"/>
+                <input type="submit" class="btn btn-success btn-block" value="保存"/>
             </form>
             <div class="col-md-5" th:if="${vote.id}" style="marginTop: 8px;width: 100%;max-width: 420px;margin: auto;">
                 <form action="#" th:action="@{'/vote/{id}'(id=${vote.id})}" th:method="delete"
