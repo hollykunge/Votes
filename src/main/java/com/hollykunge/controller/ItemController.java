@@ -374,7 +374,8 @@ public class ItemController {
             Item item = getItem(id);
             Map<String, Object> statistics = userVoteItemService.getStatistics(item);
             model.addAttribute("statistics",statistics);
-            return "";
+            model.addAttribute("item",item);
+            return "/stat";
         } catch (Exception e) {
             throw e;
         }
