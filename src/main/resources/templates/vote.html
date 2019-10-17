@@ -89,7 +89,7 @@
                                 th:onclick="|showModel(${item.id})|">邀请码
                         </button>
                         <a th:if="${item.status != '1'}"
-                           th:href="@{'/stat/{id}'(id=${item.id})}">
+                           th:href="@{'/statistics/{id}'(id=${item.id})}">
                             <button type="button" class="btn btn-outline-success btn-sm d-inline">统计</button>
                         </a>
                         <a th:if="${item.status == '2'}"
