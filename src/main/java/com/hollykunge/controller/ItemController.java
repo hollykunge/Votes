@@ -1,6 +1,8 @@
 package com.hollykunge.controller;
 
 import com.alibaba.excel.EasyExcel;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.hollykunge.config.*;
 import com.hollykunge.constants.VoteConstants;
@@ -11,6 +13,7 @@ import com.hollykunge.model.Vote;
 import com.hollykunge.model.VoteItem;
 import com.hollykunge.service.*;
 import com.hollykunge.util.Base64Utils;
+import com.hollykunge.util.ExceptionCommonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -359,15 +362,15 @@ public class ItemController {
 
     /**
      * 统计接口
-     * @param item
      * @param model
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/statistics", method = RequestMethod.GET)
-    public String getStatistics(@Valid Item item,
+    @RequestMapping(value = "/statistics/{id}", method = RequestMethod.GET)
+    public String getStatistics(@PathVariable Long id,
                                 Model model)throws Exception{
         try {
+            Item item = getItem(id);
             Map<String, Object> statistics = userVoteItemService.getStatistics(item);
             model.addAttribute("statistics",statistics);
             return "";
@@ -375,16 +378,62 @@ public class ItemController {
             throw e;
         }
     }
-    @RequestMapping(value = "/test", method = RequestMethod.GET)
-    public String test(Model model)throws Exception{
+
+    private Item getItem(Long id){
+        Item item = null;
+        item = itemService.findById(id);
+        if(item == null){
+            throw new BaseException("错误的投票轮..");
+        }
+        return item;
+    }
+
+    /**
+     * 统计结果excel导出
+     * @param id(item的id)
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/statistics/import/{id}", method = RequestMethod.GET)
+    public @ResponseBody String statisticsImport (@PathVariable Long id,
+                                HttpServletResponse response)throws Exception{
         try {
-            Item item = new Item();
-            item.setId(Long.valueOf("2"));
-            item.setRules("2");
+            Item item = this.getItem(id);
             Map<String, Object> statistics = userVoteItemService.getStatistics(item);
-            model.addAttribute("statistics",statistics);
-            return "";
+            List<VoteItem> voteItems = (List<VoteItem>) statistics.get("voteItems");
+            List<StatisticsDownloadData> statisticsDownloadData = JSONArray.parseArray(JSONObject.toJSONString(voteItems), StatisticsDownloadData.class);
+            response.setContentType("application/vnd.ms-excel");
+            response.setCharacterEncoding("utf-8");
+            response.setHeader("Content-disposition", "attachment;filename=itemResult.xlsx");
+            EasyExcel.write(response.getOutputStream())
+                    .head(head(item.getVote().getExcelHeader()))
+                    .sheet("统计情况")
+                    .doWrite(statisticsDownloadData);
+            return "success";
         } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    private List<List<String>> head(String header) {
+        try{
+            JSONObject jsonObject = JSON.parseObject(header);
+            List<List<String>> list = new ArrayList<List<String>>();
+            List<String> one = new ArrayList<>();
+            one.add("序号");
+            list.add(one);
+            Collection<Object> values = jsonObject.values();
+            values.forEach((Object ob) ->{
+                List<String> head = new ArrayList<String>();
+                head.add((String) ob);
+                list.add(head);
+            });
+            List<String> fina = new ArrayList<>();
+            fina.add("统计结果");
+            list.add(fina);
+            return list;
+        }catch (Exception e){
+            log.error(ExceptionCommonUtil.getExceptionMessage(e));
             throw e;
         }
     }
