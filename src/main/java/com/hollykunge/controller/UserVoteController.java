@@ -70,7 +70,7 @@ public class UserVoteController {
      */
     @RequestMapping(value = VoteConstants.INVITECODE_RPC+"add/{id}/{code}", method = RequestMethod.POST)
     @ResponseBody
-    public String add(@PathVariable String id,
+    public String add(@PathVariable Long id,
             @PathVariable String code,
             @RequestBody String userVoteItems,
                       Model model,
@@ -83,6 +83,10 @@ public class UserVoteController {
                 userVoteItem.setIp(clientIp);
                 userVoteItemService.add(userVoteItem);
             }
+            Item item = itemService.findById(id);
+            Long memgerNum = userVoteItemService.countIpByItem(item);
+            item.setMemberNum(Integer.parseInt(String.valueOf(memgerNum)));
+            itemService.save(item);
             model.addAttribute("showMessage","操作成功！");
             return "success";
         }catch (Exception e){
