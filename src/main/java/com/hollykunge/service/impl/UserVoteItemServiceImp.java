@@ -76,7 +76,8 @@ public class UserVoteItemServiceImp implements UserVoteItemService {
         }
         //排序
         if (Objects.equals(item.getRules(), VoteConstants.ITEM_RULE_ORDER)) {
-
+            result.put("voteItems", this.getOrderRuleList(item));
+            return result;
         }
         //打分规则
         if (Objects.equals(item.getRules(), VoteConstants.ITEM_RULE_SCORE)) {
@@ -89,7 +90,7 @@ public class UserVoteItemServiceImp implements UserVoteItemService {
 
     private List<VoteItem> getRuleList(List<Object[]> projections, String flag) {
         List<VoteItem> voteItems = new ArrayList<>();
-        for (Object[] objects:
+        for (Object[] objects :
                 projections) {
             VoteItem one = voteItemRepository.findOne(Long.parseLong(String.valueOf(objects[1])));
             if (Objects.equals(flag, VoteConstants.ITEM_RULE_AGER)) {
@@ -101,5 +102,35 @@ public class UserVoteItemServiceImp implements UserVoteItemService {
             voteItems.add(one);
         }
         return voteItems;
+    }
+
+    /**
+     * 排序规则算法
+     * @param item
+     * @return
+     */
+    private List<VoteItem> getOrderRuleList(Item item){
+        Optional<List<VoteItem>> byItem = voteItemRepository.findByItem(item);
+        if (byItem.isPresent() && byItem.get().size() > 0) {
+            for (VoteItem voteItem:
+                 byItem.get()) {
+                List<Integer> integers = userVoteItemRepository.orderRule(item.getId(), voteItem.getVoteItemId());
+                Integer max = userVoteItemRepository.orderRuleMaxScore(item.getId(), voteItem.getVoteItemId());
+                voteItem.setStatisticsOrderScore(calculate(max, integers));
+            }
+            Collections.sort(byItem.get(), new Comparator<VoteItem>() {
+                @Override
+                public int compare(VoteItem o1, VoteItem o2) {
+                    //倒序
+                    return o2.getStatisticsOrderScore().compareTo(o1.getStatisticsOrderScore());
+                }
+            });
+        }
+        return byItem.get();
+    }
+
+    private Integer calculate (Integer max,List<Integer> list){
+        int i = list.stream().mapToInt(integer -> integer*(max + 1 - integer)).sum();
+        return i;
     }
 }

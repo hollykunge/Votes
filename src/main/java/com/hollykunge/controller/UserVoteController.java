@@ -106,7 +106,7 @@ public class UserVoteController {
             //为了不影响user中前台提示信息，给username，password设置系统默认值了
             List<UserVoteItem> voteItems = userVoteItemService.findByUserIp(clientIp);
             Item item = new Item();
-            item.setId((long) 1);
+            item.setId((long) 2);
             userVoteItemService.findByItemAndIp(item,clientIp);
             //用户列表页面显示的投票项
             model.addAttribute("voteItems",voteItems);

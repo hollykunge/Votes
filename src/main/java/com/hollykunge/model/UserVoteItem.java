@@ -28,7 +28,7 @@ public class UserVoteItem {
      * 排序
      */
     @Column(name = "order_rule")
-    private String order;
+    private Integer order;
     /**
      * 分数
      */
@@ -66,11 +66,11 @@ public class UserVoteItem {
         this.agreeFlag = agreeFlag;
     }
 
-    public String getOrder() {
+    public Integer getOrder() {
         return order;
     }
 
-    public void setOrder(String order) {
+    public void setOrder(Integer order) {
         this.order = order;
     }
 
