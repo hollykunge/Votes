@@ -79,12 +79,37 @@
             <h4 class="my-0 font-weight-normal">投票结果</h4>
         </div>
         <div class="card-body">
-            <table id="table"></table>
+            <table id="table"
+                   data-virtual-scroll="true"
+            ></table>
         </div>
     </div>
 </div>
+<script type="text/javascript" th:src="@{/js/voteItem.js}"></script>
+<script type="text/javascript"
+        src="/webjars/bootstrap-table/1.15.4/dist/bootstrap-table.min.js"></script>
 <script th:inline="javascript">
-    let data = JSON.parse([[${voteItems}]] || '[]')
+    var item = JSON.parse([[${itemObj}]] || '[]');
+    var statistics = JSON.parse([[${statistics}]] || '[]');
+    var titleConfig = item.user.votes[0].excelHeader;
+    var data = statistics.voteItems;
+    var $table = $('#table') // 当前页面表格
+    if(titleConfig) {
+        titleConfig = titleConfig
+            .replace(/\{|\}/g, '')
+            .split(',')
+            .map(item => {
+            return item.split(':')[1].replace(/\"/g, '')
+        })
+    }
+    $(function () {
+        initTable({
+                rules: null,
+                titleConfig: titleConfig,
+                data: data
+            });
+    })
 </script>
+
 </body>
 </html>
