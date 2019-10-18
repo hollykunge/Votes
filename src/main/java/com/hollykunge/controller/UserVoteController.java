@@ -5,7 +5,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.hollykunge.config.ItemStatusConfig;
 import com.hollykunge.constants.VoteConstants;
 import com.hollykunge.exception.BaseException;
-import com.hollykunge.model.*;
+import com.hollykunge.model.Item;
+import com.hollykunge.model.UserVoteItem;
+import com.hollykunge.model.VoteItem;
 import com.hollykunge.service.ItemService;
 import com.hollykunge.service.UserVoteItemService;
 import com.hollykunge.service.VoteItemService;
@@ -15,11 +17,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -84,6 +85,13 @@ public class UserVoteController {
                 userVoteItemService.add(userVoteItem);
             }
             Item item = itemService.findById(id);
+            //否同规则校验
+            if(Objects.equals(item.getRules(),VoteConstants.ITEM_RULE_AGER)){
+                if(userVoteItemlist.size()>Integer.parseInt(item.getAgreeMax())||
+                        userVoteItemlist.size()<Integer.parseInt(item.getAgreeMin())){
+                    return"投票数量低于投票轮设置的最低数量或高于最高数量...";
+                }
+            }
             Long memgerNum = userVoteItemService.countIpByItem(item);
             item.setMemberNum(Integer.parseInt(String.valueOf(memgerNum)));
             itemService.save(item);
