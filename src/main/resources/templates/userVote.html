@@ -118,14 +118,21 @@
     const $table = $('#voteTable') // 当前页面表格
     let titleConfig = [[${item.vote.excelHeader}]] // excelHeader
     // 表头 column title
-    if (titleConfig) {
-        titleConfig = titleConfig
-            .replace(/\{|\}/g, '')
-            .split(',')
+    if(titleConfig) {
+        titleObj = JSON.parse(titleConfig)
+        console.log(Object.keys(titleObj))
+        titleConfig = Object.keys(titleObj)
+            .sort(function (a,b) {
+                console.log(a)
+                return SortRules(a, b)
+            })
             .map(function (item) {
-                    return item.split(':')[1].replace(/\"/g, '')
+                return {
+                    title:titleObj[item],
+                    field: item
                 }
-            )
+            })
+
     }
 
     $(function () {
@@ -177,6 +184,10 @@
                 columnOperation(data, $(e.target).val(), delOrder, allOrder, currentVal)
                 currentVal = ''
             }
+        }
+        // 已提交
+        if(hasVotes) {
+            $('#voteDone').attr('disabled', 'disabled')
         }
         initTable({
             rules: voteOption.rules,

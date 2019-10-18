@@ -124,29 +124,24 @@ function showModel(id) {
     $(id).modal('show');
 }
 
-function columnConfig(columnsArr, rules) {
-    // 格式 column option
-    let columnsOption = Object.keys(columnsArr || [])
+function columnConfig( rules) {
+    // 格式
+    let columnsOption = rules.titleConfig
         .map(function (item, index) {
-
-                return {
-                    title: rules.titleConfig[index],
-                    field: rules.isRead ?  'voteItem.' + item :item,
-                    align: 'center',
-                    valign: 'middle'
-                }
+            return {
+                ...item,
+                align: 'center',
+                valign: 'middle'
             }
-        )
-        .filter(function (item) {
-            if (item.title && item.title.indexOf(rules.hideKeys.join('|')) !== -1
-            ) {
+        })
+        .filter(function (item, index) {
+            if(index >= 6) {
                 return false
             }
             return item
         })
     // ## 是否是编辑页面
     if (window.location.href.indexOf('editItem') === -1) {
-
         switch (rules.rules) {
             case '1':
                 $._voteArr = []
@@ -233,14 +228,25 @@ function initTable(options) {
         idField: 'id',
         sidePagination: 'server',
         // 列操作栏
-        columns: columnConfig(options.data[0], {
-            isRead: options.hasData && options.hasData.length > 0 ? true : false,
-            rules: options.rules,
-            hideKeys: ['item'],
-            titleConfig: options.titleConfig,
-            checkbox: options.checkbox
+        columns: columnConfig({
+                isRead: options.hasData && options.hasData.length > 0 ? true : false,
+                rules: options.rules,
+                hideKeys: ['item'],
+                titleConfig: options.titleConfig,
+                checkbox: options.checkbox
         }),
-        data: options.hasData && options.hasData.length > 0 ? options.hasData : options.data
+        data: options.hasData && options.hasData.length > 0 ? options.hasData : options.data,
+        detailView: true,
+        detailViewIcon: true,
+        detailViewByClick: '',
+        detailFormatter: function (index, row, element) {
+            var html = []
+
+            $.each(row, function (key, value) {
+                html.push('<p><b>' + key + ':</b> ' + value + '</p>')
+            })
+            return html.join('')
+        }
     })
 }
 
@@ -338,6 +344,10 @@ function request(obj) {
             if (success.responseText === 'success') {
                 // window.location.href = '/vote/2'
                 alert('投票成功')
+                setTimeout(function () {
+                    window.location.reload()
+                }, 3000)
+
             }
             //请求完成的处理
             console.log(success)
@@ -350,3 +360,8 @@ function request(obj) {
 
 
 }
+
+function sortRules (a,b) {
+        console.log(a)
+        return a.replace('attr', '') *1 < b.replace('attr', '') *1
+    }
