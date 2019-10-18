@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class ItemUploadData {
     @ExcelProperty(index = 0)
-    private String name;
+    private String attr0;
     @ExcelProperty(index = 1)
     private String attr1;
     @ExcelProperty(index = 2)
