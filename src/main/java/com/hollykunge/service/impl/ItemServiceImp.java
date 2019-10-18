@@ -3,7 +3,6 @@ package com.hollykunge.service.impl;
 import com.hollykunge.constants.VoteConstants;
 import com.hollykunge.exception.BaseException;
 import com.hollykunge.model.Item;
-import com.hollykunge.model.Vote;
 import com.hollykunge.repository.ItemRepository;
 import com.hollykunge.service.ItemService;
 import com.hollykunge.util.UUIDUtils;
@@ -14,7 +13,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
+
 import java.util.Optional;
 @Transactional(rollbackFor = Exception.class)
 @Service
@@ -56,7 +55,9 @@ public class ItemServiceImp implements ItemService {
             }
         }
         //设置随机码，防止用户窜改地址
-        item.setCode(UUIDUtils.getUUID());
+        if (StringUtils.isEmpty(item.getCode())){
+            item.setCode(UUIDUtils.getUUID());
+        }
         return itemRepository.saveAndFlush(item);
     }
 
