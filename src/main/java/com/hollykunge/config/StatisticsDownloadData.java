@@ -1,6 +1,5 @@
 package com.hollykunge.config;
 
-import com.alibaba.excel.annotation.ExcelProperty;
 import lombok.Data;
 
 @Data
@@ -9,7 +8,7 @@ public class StatisticsDownloadData {
     /**
      * 被投票项目名称
      */
-    private String name;
+    private String attr0;
     /**
      * 扩展字段1
      */

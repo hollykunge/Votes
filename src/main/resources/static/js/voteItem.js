@@ -1,42 +1,44 @@
+// 弹窗显示
+function showImportModel() {
+    $('#importModel').modal('show');
+}
 
-    // 弹窗显示
-    function showImportModel() {
-        $('#importModel').modal('show');
+// 导入提示
+function showAddModel() {
+    if (titleConfig == null) {
+        alert('请先操作导入')
+        return;
     }
-    function showAddModel() {
-        if (titleConfig == null) {
-            alert('请先操作导入')
-            return;
-        }
-        $('#addModel').modal('show');
-        var inputdiv = "";
-        for (var i=0;i<titleConfig.length;i++) {
-            inputdiv = inputdiv + "<div class='form-group col-md-6'>";
-            inputdiv  = inputdiv + "<label>"+titleConfig[i]+"</label><input class='form-control'/>";
-            inputdiv = inputdiv + "</div>";
-        }
-        $('#formRow').append(inputdiv);
+    $('#addModel').modal('show');
+    var inputdiv = "";
+    for (var i = 0; i < titleConfig.length; i++) {
+        inputdiv = inputdiv + "<div class='form-group col-md-6'>";
+        inputdiv = inputdiv + "<label>" + titleConfig[i] + "</label><input class='form-control'/>";
+        inputdiv = inputdiv + "</div>";
     }
-    //定义按钮事件
-    function excelImport(voteId) {
-        var fileObj = document.getElementById("file").files[0]; // js 获取文件对象
-        var url = window.location.origin + "/item/import"; // 接收上传文件的后台地址
-        var form = new FormData(); // FormData 对象
-        if (form) {
-            form.append("file", fileObj); // 文件对象
-        }
-        xhr = new XMLHttpRequest(); // XMLHttpRequest 对象
-        xhr.open("post", url, false); //post方式，url为服务器请求地址，true 该参数规定请求是否异步处理。
-        xhr.onload = uploadComplete; //请求完成
-        xhr.onerror = uploadFailed; //请求失败
-        xhr.upload.onprogress = progressFunction; //【上传进度调用方法实现】
-        xhr.upload.onloadstart = function () { //上传开始执行方法
-            ot = new Date().getTime(); //设置上传开始时间
-            oloaded = 0; //设置上传开始时，以上传的文件大小为0
-        };
-        xhr.setRequestHeader("itemId", voteId);
-        xhr.send(form); //开始上传，发送form数据
+    $('#formRow').append(inputdiv);
+}
+
+//定义按钮事件
+function excelImport(voteId) {
+    var fileObj = document.getElementById("file").files[0]; // js 获取文件对象
+    var url = window.location.origin + "/item/import"; // 接收上传文件的后台地址
+    var form = new FormData(); // FormData 对象
+    if (form) {
+        form.append("file", fileObj); // 文件对象
     }
+    xhr = new XMLHttpRequest(); // XMLHttpRequest 对象
+    xhr.open("post", url, false); //post方式，url为服务器请求地址，true 该参数规定请求是否异步处理。
+    xhr.onload = uploadComplete; //请求完成
+    xhr.onerror = uploadFailed; //请求失败
+    xhr.upload.onprogress = progressFunction; //【上传进度调用方法实现】
+    xhr.upload.onloadstart = function () { //上传开始执行方法
+        ot = new Date().getTime(); //设置上传开始时间
+        oloaded = 0; //设置上传开始时，以上传的文件大小为0
+    };
+    xhr.setRequestHeader("itemId", voteId);
+    xhr.send(form); //开始上传，发送form数据
+}
 
 function showAddModel() {
     $('#addModel').modal('show');
@@ -113,44 +115,60 @@ function progressFunction(evt) {
     if (bspeed == 0) time.innerHTML = '上传已取消';
 }
 
-// 表格方法
-function getIdSelections() {
-    return $.map($table.bootstrapTable('getSelections'), function (row) {
-        return row.id
-    })
-}
-
 function showModel(id) {
     $(id).modal('show');
 }
 
-function columnConfig(columnsArr, rules) {
-    // 格式 column option
-    let columnsOption = Object.keys(columnsArr || [])
+/**
+ * columnConfig
+ * @param rules { Object } 格式化后的excelHeader
+ * @returns {*}
+ */
+function columnConfig(rules, callback) {
+    // 根据 excelHeader 修改头部格式
+    let columnsOption = rules.titleConfig
         .map(function (item, index) {
-
-                return {
-                    title: rules.titleConfig[index],
-                    field: rules.isRead ?  'voteItem.' + item :item,
+            if(rules.isRead){
+                console.log()
+            }
+            return Object.assign(
+                {},
+                item,
+                {
+                    // field: rules.isRead ? 'voteItem.' + item.field : item.field,
                     align: 'center',
                     valign: 'middle'
                 }
-            }
-        )
-        .filter(function (item) {
-            if (item.title && item.title.indexOf(rules.hideKeys.join('|')) !== -1
-            ) {
+            )
+
+        })
+        .filter(function (item, index) {
+            if (index >= 6) {
                 return false
             }
             return item
         })
-    // ## 是否是编辑页面
-    if (window.location.href.indexOf('editItem') === -1) {
+    // 添加 序号 表头与 voteItemId 关联
+    columnsOption.unshift({
+        title: '序号',
+        field: "voteItemId",
+        align: 'center',
+        valign: 'middle'
+    })
+    callback(rules, columnsOption)
 
+    columnsOption.unshift({checkbox: rules.checkbox})
+
+
+    return columnsOption
+}
+
+function configOperation(rules, columnsOption) {
+    // 是否是编辑页面
+    if (window.location.href.indexOf('userVote') !== -1) {
         switch (rules.rules) {
             case '1':
                 $._voteArr = []
-
                 columnsOption.push({
                     title: '投票',
                     field: rules.isRead ? "agreeFlag" : "total",
@@ -160,8 +178,8 @@ function columnConfig(columnsArr, rules) {
                     formatter: function (value, row, index) {
 
                         return [
-                            `<a class="${rules.isRead ? '' :'castVote'}" href="javascript:void(0)" title="vote">`,
-                            rules.isRead && row.agreeFlag === '1'? '已投' :'投票',
+                            `<a class="${rules.isRead ? '' : 'castVote'}" href="javascript:void(0)" title="vote">`,
+                            rules.isRead && row.agreeFlag === '1' ? '已投' : '投票',
                             '</a>'
                         ].join('')
                     }
@@ -175,8 +193,8 @@ function columnConfig(columnsArr, rules) {
                     valign: 'middle',
                     events: window.operateEvents,
                     formatter: function (value, row, index) {
-                        if(rules.isRead) {
-                            return '<a>' + row.order +'</a>'
+                        if (rules.isRead) {
+                            return '<a>' + row.order + '</a>'
                         }
                         return [
                             '<select class="form-control selectpicker selectVote" data-live-search="true" name="orgid" >',
@@ -189,14 +207,13 @@ function columnConfig(columnsArr, rules) {
             default:
                 $._fraction = []
                 columnsOption.push({
-
                     title: '分数',
                     field: "SerialNumber",
                     align: 'center',
                     valign: 'middle',
                     events: window.operateEvents,
                     formatter: function (value, row, index) {
-                        if(rules.isRead) {
+                        if (rules.isRead) {
                             return [
                                 `<input class="form-control voteInput" readonly value="${row.score}" data-live-search="true" name="orgid" >`,
                             ].join('')
@@ -210,37 +227,38 @@ function columnConfig(columnsArr, rules) {
         }
     }
 
-    // columns 添加序号表头
-    columnsOption.unshift({
-        title: '序号',
-        field: "voteItemId",
-        align: 'center',
-        valign: 'middle'
-    })
-    columnsOption.unshift({checkbox: rules.checkbox})
-    return columnsOption
 }
-
 /**
- * 初始化表格
+ *
+ * @param options { Object }
  */
 function initTable(options) {
-    //hasData
     $table.bootstrapTable('destroy').bootstrapTable({
-        height: 550, // 初始高度
-        clickToSelect: true,
+        // height: 550, // 初始高度
+        clickToSelect: options.clickToSelect,
         minimumCountColumns: 2,
         idField: 'id',
         sidePagination: 'server',
         // 列操作栏
-        columns: columnConfig(options.data[0], {
+        columns: columnConfig({
             isRead: options.hasData && options.hasData.length > 0 ? true : false,
             rules: options.rules,
-            hideKeys: ['item'],
             titleConfig: options.titleConfig,
             checkbox: options.checkbox
-        }),
-        data: options.hasData && options.hasData.length > 0 ? options.hasData : options.data
+        }, configOperation),
+        data: options.hasData && options.hasData.length > 0 ? options.hasData.map(function (item) {
+            return Object.assign({}, item.voteItem, {order: item.order})
+        }) : options.data,
+        detailView: true,
+        detailViewIcon: true,
+        detailFormatter: function (index, row, element) {
+            var html = []
+
+            $.each(row, function (key, value) {
+                html.push('<p><b>' + key + ':</b> ' + value + '</p>')
+            })
+            return html.join('')
+        }
     })
 }
 
@@ -284,23 +302,28 @@ function columnOperation(data, val, delOrder, allOrder, preValue) {
             return item.SerialNumber
         })
 
-        if (val == '') {
+    if (val == '') {
+        allOrder.push(Number(preValue))
+        return
+    } else {
+        if (allOrder.indexOf(Number(preValue)) === -1 && Number(preValue) !== 0) {
             allOrder.push(Number(preValue))
-            return
-        } else {
-            if(allOrder.indexOf(Number(preValue)) === -1 && Number(preValue) !== 0) {
-                allOrder.push(Number(preValue))
-            }
-            allOrder.splice(allOrder.indexOf(Number(val)), 1)
-            return;
         }
-
         allOrder.splice(allOrder.indexOf(Number(val)), 1)
+        return;
+    }
+
+    allOrder.splice(allOrder.indexOf(Number(val)), 1)
 }
 
+/**
+ * 格式化data 的 item 值
+ * @param item
+ * @param type
+ */
 function initDataItem(item, type) {
     let obj = {}
-    if(type === 'castVote') {
+    if (type === 'castVote') {
         obj.agreeFlag = '1'
     }
     console.log(item)
@@ -316,7 +339,6 @@ function initDataItem(item, type) {
 }
 
 function request(obj) {
-
     $.ajax({
         url: obj.url, //     //请求的url地址
         headers: {
@@ -338,6 +360,10 @@ function request(obj) {
             if (success.responseText === 'success') {
                 // window.location.href = '/vote/2'
                 alert('投票成功')
+                setTimeout(function () {
+                    window.location.reload()
+                }, 3000)
+
             }
             //请求完成的处理
             console.log(success)
@@ -349,4 +375,46 @@ function request(obj) {
     });
 
 
+}
+
+function sorts(arr, callback, callbackFun) {
+    arr = callback(arr)
+    for (let i = 0; i < arr.length; i++) {
+        for (let j = 0; j < arr.length; j++) {
+            if (arr[i] < arr[j]) {
+                let temp = arr[j]
+                arr[j] = arr[i]
+                arr[i] = temp
+            }
+        }
+    }
+
+    if (callbackFun) {
+        return callbackFun(arr)
+    }
+    return arr
+}
+
+function initTitleConfig(titleConfig) {
+    let titleObj = JSON.parse(titleConfig)
+    titleConfig = sorts(
+        Object.keys(titleObj),
+        function (arr) {
+            return arr.map(function (item) {
+                return item.replace('attr', '') * 1
+            })
+        },
+        function (arr) {
+            return arr.map(function (item) {
+                return 'attr' + item
+            })
+        }
+    )
+        .map(function (item) {
+            return {
+                title: titleObj[item],
+                field: item
+            }
+        })
+    return titleConfig
 }
