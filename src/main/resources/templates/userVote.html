@@ -118,24 +118,14 @@
     const $table = $('#voteTable') // 当前页面表格
     let titleConfig = [[${item.vote.excelHeader}]] // excelHeader
     // 表头 column title
-    if(titleConfig) {
-        titleObj = JSON.parse(titleConfig)
-        console.log(Object.keys(titleObj))
-        titleConfig = Object.keys(titleObj)
-            .sort(function (a,b) {
-                console.log(a)
-                return SortRules(a, b)
-            })
-            .map(function (item) {
-                return {
-                    title:titleObj[item],
-                    field: item
-                }
-            })
-
-    }
 
     $(function () {
+        if(titleConfig) {
+            titleConfig = initTitleConfig(titleConfig)
+        } else {
+            // null.map不存在的错误
+            titleConfig = []
+        }
         let allOrder = data
                 .map(function (item, index) {
                     return index * 1 + 1
@@ -186,14 +176,15 @@
             }
         }
         // 已提交
-        if(hasVotes) {
+        if(hasVotes.length > 0) {
             $('#voteDone').attr('disabled', 'disabled')
         }
         initTable({
             rules: voteOption.rules,
             titleConfig: titleConfig,
             data: data,
-            hasData: hasVotes
+            hasData: hasVotes,
+            clickToSelect: false
         })
 
         $('#voteDone').on('click', function (e) {

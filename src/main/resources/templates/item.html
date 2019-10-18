@@ -105,33 +105,23 @@
     let rules = [[${item.rules}]] // 规则范围 1否同 2排序 3打分
     let agree_rule = [[${item.agreeRule}]] // 规则范围 1否同 2排序 3打分
     let titleConfig =  [[${item.vote.excelHeader}]]
-    if(titleConfig) {
-        // titleConfig = titleConfig
-        // .replace(/\{|\}/g, '')
-        // .split(',')
-        // .map(item => {
-        //     return item.split(':')[1].replace(/\"/g, '')
-        // })
-        titleObj = JSON.parse(titleConfig)
-        console.log(sortRules)
-        titleConfig = Object.keys(titleObj)
-            .sort(sortRules(a, b))
-            .map(function (item) {
-                return {
-                    title:titleObj[item],
-                    field: item
-                }
-            })
 
-    }
     $(function () {
+        if(titleConfig) {
+            titleConfig = initTitleConfig(titleConfig)
+        } else {
+            // null.map不存在的错误
+            titleConfig = []
+        }
         // 添加checkbox列
         initTable({
             rules: rules,
             data: data,
             titleConfig: titleConfig,
-            checkbox: true
+            checkbox: true,
+            clickToSelect: true
         })
+
         // 清空 file 值
         $('#importModel').on('hide.bs.modal', function (a,b,c) {
             if(a.type === 'hide') {
