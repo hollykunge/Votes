@@ -94,20 +94,58 @@
     var titleConfig = item.user.votes[0].excelHeader;
     var data = statistics.voteItems;
     var $table = $('#table') // 当前页面表格
+    var resultName = '';
+    var colorMap = new Map();
+    if(item.rules == '1'){
+        resultName = "statisticsNum";
+    }else if(item.rules == '2'){
+        resultName = "statisticsOrderScore";
+    }else{
+        resultName = "statisticsToalScore";
+    }
     if(titleConfig) {
-        titleConfig = titleConfig
-            .replace(/\{|\}/g, '')
-            .split(',')
-            .map(item => {
-            return item.split(':')[1].replace(/\"/g, '')
-        })
+        titleConfig = initTitleConfig(titleConfig);
+        titleConfig = titleConfig.slice(0,5);
+        titleConfig.push({'title':'结果','field': resultName});
+    } else {
+        // null.map不存在的错误
+        titleConfig = []
     }
     $(function () {
+        // 筛选重复值
+        handleRepeatData();
         initTable({
-                rules: null,
-                titleConfig: titleConfig,
-                data: data
-            });
+            rules: null,
+            data: data,
+            titleConfig: titleConfig,
+            checkbox: false,
+            clickToSelect: false,
+            rowStyle: rowStyle
+        })
+        /**
+         * 对重复投票结果做标记
+         */
+        function handleRepeatData() {
+            var randowColor = ['#ffeb3b', '#FF6056', '#98FF55', '#FFBDF4', '#4E97FF', '#78FDFF', '#FFB981', '#24FF80', '#AEFDFF', '#FFA2A8'];
+            var tempdata = -1;
+
+            for(var i=0;data.length>i; i++){
+                if (data[i][resultName] === tempdata) {
+                    colorMap.set(data[i][resultName],randowColor[Math.floor(Math.random()*10)])
+                }
+                tempdata = data[i][resultName];
+            }
+            console.log('colorMap', colorMap)
+        }
+        // 设置相同结果的行样式
+        function rowStyle(row, index) {
+            if (colorMap.get(row[resultName])){
+                return {css:{color:colorMap.get(row[resultName])}}
+            }
+            return {}
+        }
+
+
     })
 </script>
 
