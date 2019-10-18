@@ -168,12 +168,13 @@
         $('#saveAddBtn').click(function () {
             var voteItems = JSON.parse([[${voteItems}]] || '[]');
             var voteItem = voteItems[0];
-            voteItem.attr1 = $("form input:eq(0)").val();
-            voteItem.attr2 = $("form input:eq(1)").val();
-            voteItem.attr3 = $("form input:eq(2)").val();
-            voteItem.attr4 = $("form input:eq(3)").val();
-            voteItem.attr5 = $("form input:eq(4)").val();
-            voteItem.attr6 = $("form input:eq(5)").val();
+            voteItem.attr0 = $("form input:eq(0)").val();
+            voteItem.attr1 = $("form input:eq(1)").val();
+            voteItem.attr2 = $("form input:eq(2)").val();
+            voteItem.attr3 = $("form input:eq(3)").val();
+            voteItem.attr4 = $("form input:eq(4)").val();
+            voteItem.attr5 = $("form input:eq(5)").val();
+            voteItem.attr6 = $("form input:eq(6)").val();
             voteItem.voteItemId = "";
             $.ajax({
                 url:"/addVoteItem",

@@ -10,10 +10,11 @@ function showAddModel() {
         return;
     }
     $('#addModel').modal('show');
+    $('#formRow').empty();
     var inputdiv = "";
     for (var i = 0; i < titleConfig.length; i++) {
         inputdiv = inputdiv + "<div class='form-group col-md-6'>";
-        inputdiv = inputdiv + "<label>" + titleConfig[i] + "</label><input class='form-control'/>";
+        inputdiv = inputdiv + "<label>" + titleConfig[i].title + "</label><input class='form-control'/>";
         inputdiv = inputdiv + "</div>";
     }
     $('#formRow').append(inputdiv);
@@ -38,10 +39,6 @@ function excelImport(voteId) {
     };
     xhr.setRequestHeader("itemId", voteId);
     xhr.send(form); //开始上传，发送form数据
-}
-
-function showAddModel() {
-    $('#addModel').modal('show');
 }
 
 //定义按钮事件
@@ -156,10 +153,9 @@ function columnConfig(rules, callback) {
         valign: 'middle'
     })
     callback(rules, columnsOption)
-
-    columnsOption.unshift({checkbox: rules.checkbox})
-
-
+    if (rules.checkbox){
+        columnsOption.unshift({checkbox: rules.checkbox})
+    }
     return columnsOption
 }
 
@@ -240,6 +236,7 @@ function initTable(options) {
         minimumCountColumns: 2,
         idField: 'id',
         sidePagination: 'server',
+        rowStyle:options.rowStyle,
         // 列操作栏
         columns: columnConfig({
             isRead: options.hasData && options.hasData.length > 0 ? true : false,
