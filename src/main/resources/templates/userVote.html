@@ -11,6 +11,12 @@
 </nav>
 
 <div class="container">
+    <div class="jumbotron jumbotron-fluid mb-3">
+        <div class="container">
+            <h1 class="display-5" th:text="${item.getVote().title}">无标题</h1>
+            <p class="lead" th:text="${item.getVote().body}">无描述</p>
+        </div>
+    </div>
     <div class="card-deck mb-3 text-center">
         <div class="card border-dark mb-3 shadow-sm">
             <div class="card-header">
@@ -73,7 +79,6 @@
         </div>
         <div class="card-body text-primary card-nopadding">
             <table id="voteTable"
-                   data-virtual-scroll="true"
             ></table>
         </div>
     </div>
