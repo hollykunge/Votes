@@ -128,7 +128,7 @@ function columnConfig(rules, callback) {
     // 根据 excelHeader 修改头部格式
     let columnsOption = rules.titleConfig
         .map(function (item, index) {
-            if(rules.isRead){
+            if (rules.isRead) {
                 console.log()
             }
             return Object.assign(
@@ -228,6 +228,7 @@ function configOperation(rules, columnsOption) {
     }
 
 }
+
 /**
  *
  * @param options { Object }
@@ -252,11 +253,25 @@ function initTable(options) {
         detailView: true,
         detailViewIcon: true,
         detailFormatter: function (index, row, element) {
-            var html = []
+            var html = [
+                '<div class="card">',
+                '<div class="card-body">',
+            ]
 
             $.each(row, function (key, value) {
-                html.push('<p><b>' + key + ':</b> ' + value + '</p>')
+                let title = options.titleConfig.filter(function (item) {
+                    return item.field === key
+                })[0]
+                if(title) {
+                    html.push('<p><b style="display: inline-block; margin-right: 10px;">' + title.title + ':</b> ' + value + '</p>')
+                }
+
+
             })
+            html.concat([
+                '</div>',
+                '</div>'
+            ])
             return html.join('')
         }
     })
