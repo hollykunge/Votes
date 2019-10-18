@@ -128,9 +128,10 @@ function columnConfig(columnsArr, rules) {
     // 格式 column option
     let columnsOption = Object.keys(columnsArr || [])
         .map(function (item, index) {
+
                 return {
                     title: rules.titleConfig[index],
-                    field: item,
+                    field: rules.isRead ?  'voteItem.' + item :item,
                     align: 'center',
                     valign: 'middle'
                 }
@@ -148,16 +149,19 @@ function columnConfig(columnsArr, rules) {
 
         switch (rules.rules) {
             case '1':
+                $._voteArr = []
+
                 columnsOption.push({
                     title: '投票',
-                    field: "total",
+                    field: rules.isRead ? "agreeFlag" : "total",
                     align: 'center',
                     valign: 'middle',
                     events: window.operateEvents,
                     formatter: function (value, row, index) {
+
                         return [
-                            '<a class="remove" href="javascript:void(0)" title="vote">',
-                            '投票',
+                            `<a class="${rules.isRead ? '' :'castVote'}" href="javascript:void(0)" title="vote">`,
+                            rules.isRead && row.agreeFlag === '1'? '已投' :'投票',
                             '</a>'
                         ].join('')
                     }
@@ -171,6 +175,9 @@ function columnConfig(columnsArr, rules) {
                     valign: 'middle',
                     events: window.operateEvents,
                     formatter: function (value, row, index) {
+                        if(rules.isRead) {
+                            return '<a>' + row.order +'</a>'
+                        }
                         return [
                             '<select class="form-control selectpicker selectVote" data-live-search="true" name="orgid" >',
                             '<option value="">请选择</option>',
@@ -180,6 +187,25 @@ function columnConfig(columnsArr, rules) {
                 })
                 break;
             default:
+                $._fraction = []
+                columnsOption.push({
+
+                    title: '分数',
+                    field: "SerialNumber",
+                    align: 'center',
+                    valign: 'middle',
+                    events: window.operateEvents,
+                    formatter: function (value, row, index) {
+                        if(rules.isRead) {
+                            return [
+                                `<input class="form-control voteInput" readonly value="${row.score}" data-live-search="true" name="orgid" >`,
+                            ].join('')
+                        }
+                        return [
+                            '<input class="form-control voteInput" data-live-search="true" name="orgid" >',
+                        ].join('')
+                    }
+                })
                 ;
         }
     }
@@ -199,6 +225,7 @@ function columnConfig(columnsArr, rules) {
  * 初始化表格
  */
 function initTable(options) {
+    //hasData
     $table.bootstrapTable('destroy').bootstrapTable({
         height: 550, // 初始高度
         clickToSelect: true,
@@ -207,12 +234,13 @@ function initTable(options) {
         sidePagination: 'server',
         // 列操作栏
         columns: columnConfig(options.data[0], {
+            isRead: options.hasData && options.hasData.length > 0 ? true : false,
             rules: options.rules,
             hideKeys: ['item'],
             titleConfig: options.titleConfig,
             checkbox: options.checkbox
         }),
-        data: options.data
+        data: options.hasData && options.hasData.length > 0 ? options.hasData : options.data
     })
 }
 
@@ -268,4 +296,57 @@ function columnOperation(data, val, delOrder, allOrder, preValue) {
         }
 
         allOrder.splice(allOrder.indexOf(Number(val)), 1)
+}
+
+function initDataItem(item, type) {
+    let obj = {}
+    if(type === 'castVote') {
+        obj.agreeFlag = '1'
+    }
+    console.log(item)
+    obj.score = item.score ? item.score : ''
+    obj.order = item.SerialNumber
+    obj.voteItem = {}
+    for (let key in item) {
+        obj.voteItem[key] = item[key]
+    }
+    obj.item = item.item
+    obj.order = item.SerialNumber
+    return obj
+}
+
+function request(obj) {
+
+    $.ajax({
+        url: obj.url, //     //请求的url地址
+        headers: {
+            'Content-Type': 'application/json;charset=utf8'
+        },
+        // dataType:"json",   //返回格式为json
+        async: true,//请求是否异步，默认为异步，这也是ajax重要特性
+        data: obj.data,    //参数值
+        type: "POST",   //请求方式
+        beforeSend: function () {
+            //请求前的处理
+            // xhr.setRequestHeader("content-Type:'1333333333'");
+        },
+        success: function (req) {
+            //请求成功时处理
+
+        },
+        complete: function (success) {
+            if (success.responseText === 'success') {
+                // window.location.href = '/vote/2'
+                alert('投票成功')
+            }
+            //请求完成的处理
+            console.log(success)
+        },
+        error: function (error) {
+            //请求出错处理
+            console.log(error)
+        }
+    });
+
+
 }

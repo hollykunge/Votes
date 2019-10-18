@@ -1,14 +1,9 @@
 package com.hollykunge.model;
 
-import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Collection;
-import java.util.Date;
 /**
  * @deprecation 被投票项
  * @author zhhongyu
@@ -23,11 +18,12 @@ public class VoteItem {
     @Column(name = "id")
     private Long voteItemId;
     /**
+     * 为了映射excel表头，统一约定字段
      * 被投票项目名称
      */
-    @Column(name = "name", nullable = false)
+    @Column(name = "attr0", nullable = false)
     @NotEmpty(message = "请输入被投票项名称")
-    private String name;
+    private String attr0;
     /**
      * 所在轮数
      */
@@ -111,12 +107,12 @@ public class VoteItem {
         this.voteItemId = voteItemId;
     }
 
-    public String getName() {
-        return name;
+    public String getAttr0() {
+        return attr0;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setAttr0(String attr0) {
+        this.attr0 = attr0;
     }
 
     public String getTurnNum() {

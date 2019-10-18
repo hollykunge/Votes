@@ -6,16 +6,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.hollykunge.model.Item;
 import com.hollykunge.model.Vote;
-import com.hollykunge.model.VoteItem;
 import com.hollykunge.service.ItemService;
-import com.hollykunge.service.VoteItemService;
 import com.hollykunge.service.VoteService;
 import com.hollykunge.util.ExceptionCommonUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -49,13 +45,21 @@ public class UploadHeaderDataListener extends AnalysisEventListener<ItemUploadDa
         try {
             Item itemtemp = itemService.findById(item.getId());
             vote = itemtemp.getVote();
-            vote.setExcelHeader(JSON.toJSONString(headMap));
+            vote.setExcelHeader(setHeaderToString(headMap));
             voteService.updateById(vote);
             log.info("更新vote中的excel头成功！");
         } catch (Exception e) {
             log.error("更新vote数据库失败！");
             log.error(ExceptionCommonUtil.getExceptionMessage(e));
         }
+    }
+
+    private String setHeaderToString(Map<Integer, String> headMap){
+        Map<String,String> map = new HashMap<String,String>();
+        headMap.forEach((key,value)->{
+            map.put("attr"+key,value);
+        });
+        return JSONObject.toJSONString(map);
     }
 
     @Override

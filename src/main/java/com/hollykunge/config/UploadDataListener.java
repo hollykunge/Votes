@@ -100,5 +100,9 @@ public class UploadDataListener extends AnalysisEventListener<ItemUploadData> {
             attr6 += itemUploadData.getAttr12();
         }
         voteItem.setAttr6(attr6);
+        if("".equals(attr6)){
+            voteItem.setAttr6(null);
+            return;
+        }
     }
 }
