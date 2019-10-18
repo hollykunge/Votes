@@ -62,7 +62,7 @@ public class UploadDataListener extends AnalysisEventListener<ItemUploadData> {
         log.info("{}条数据，开始存储数据库！", list.size());
         data.stream().forEach(item -> {
             VoteItem voteItem = JSONObject.parseObject(JSONObject.toJSONString(item), VoteItem.class);
-            //所在轮数为第一轮
+            //所在轮数为第一轮 TODO:导入不一定是第一轮
             voteItem.setTurnNum("1");
             voteItem.setItem(this.item);
             setAttr6(voteItem,item);
@@ -78,26 +78,34 @@ public class UploadDataListener extends AnalysisEventListener<ItemUploadData> {
 
     private void setAttr6(VoteItem voteItem, ItemUploadData itemUploadData) {
         String attr6 = "";
+        String comma = ",";
         if (!StringUtils.isEmpty(itemUploadData.getAttr6())) {
             attr6 += itemUploadData.getAttr6();
+            attr6 += comma;
         }
         if (!StringUtils.isEmpty(itemUploadData.getAttr7())) {
             attr6 += itemUploadData.getAttr7();
+            attr6 += comma;
         }
         if (!StringUtils.isEmpty(itemUploadData.getAttr8())) {
             attr6 += itemUploadData.getAttr8();
+            attr6 += comma;
         }
         if (!StringUtils.isEmpty(itemUploadData.getAttr9())) {
             attr6 += itemUploadData.getAttr9();
+            attr6 += comma;
         }
         if (!StringUtils.isEmpty(itemUploadData.getAttr10())) {
             attr6 += itemUploadData.getAttr10();
+            attr6 += comma;
         }
         if (!StringUtils.isEmpty(itemUploadData.getAttr11())) {
             attr6 += itemUploadData.getAttr11();
+            attr6 += comma;
         }
         if (!StringUtils.isEmpty(itemUploadData.getAttr12())) {
             attr6 += itemUploadData.getAttr12();
+            attr6 += comma;
         }
         voteItem.setAttr6(attr6);
         if("".equals(attr6)){
