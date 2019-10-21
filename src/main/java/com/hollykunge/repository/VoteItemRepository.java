@@ -15,4 +15,5 @@ import java.util.Optional;
 public interface VoteItemRepository extends JpaRepository<VoteItem, Long> {
 //    Optional<List<VoteItem>> findByVote(Vote vote);
     Optional<List<VoteItem>> findByItem(Item item);
+    int deleteByItem(Item item);
 }
