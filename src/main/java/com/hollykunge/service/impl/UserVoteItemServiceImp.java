@@ -71,7 +71,7 @@ public class UserVoteItemServiceImp implements UserVoteItemService {
         //否同
         if (Objects.equals(item.getRules(), VoteConstants.ITEM_RULE_AGER)) {
             List<Object[]> objects = userVoteItemRepository.agreeRule(item.getId());
-            result.put("voteItems", this.getRuleList(objects, VoteConstants.ITEM_RULE_AGER));
+            result.put("voteItems", this.getRuleList(item,objects, VoteConstants.ITEM_RULE_AGER));
             return result;
         }
         //排序
@@ -82,13 +82,17 @@ public class UserVoteItemServiceImp implements UserVoteItemService {
         //打分规则
         if (Objects.equals(item.getRules(), VoteConstants.ITEM_RULE_SCORE)) {
             List<Object[]> objects = userVoteItemRepository.scoreRule(item.getId());
-            result.put("voteItems", this.getRuleList(objects, VoteConstants.ITEM_RULE_SCORE));
+            result.put("voteItems", this.getRuleList(item,objects, VoteConstants.ITEM_RULE_SCORE));
             return result;
         }
         return result;
     }
 
-    private List<VoteItem> getRuleList(List<Object[]> projections, String flag) {
+    private List<VoteItem> getRuleList(Item item,List<Object[]> projections, String flag) {
+        List<VoteItem> itemData = voteItemRepository.findByItem(item).get();
+        if(itemData.size()==0){
+            throw new BaseException("没有投票项...");
+        }
         List<VoteItem> voteItems = new ArrayList<>();
         for (Object[] objects :
                 projections) {
@@ -101,7 +105,16 @@ public class UserVoteItemServiceImp implements UserVoteItemService {
             }
             voteItems.add(one);
         }
-        return voteItems;
+
+        Map<Long, String> numIndex = voteItems.stream().collect(HashMap::new, (m,v)->
+                m.put(v.getVoteItemId(), v.getStatisticsNum()),HashMap::putAll);
+        Map<Long, String> totalIndex = voteItems.stream().collect(HashMap::new, (m,v)->
+                m.put(v.getVoteItemId(), v.getStatisticsToalScore()),HashMap::putAll);
+        itemData.forEach(o1 ->{
+            o1.setStatisticsNum(numIndex.get(o1.getVoteItemId()));
+            o1.setStatisticsToalScore(totalIndex.get(o1.getVoteItemId()));
+        });
+        return itemData;
     }
 
     /**
