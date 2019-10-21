@@ -49,9 +49,9 @@ public class ItemServiceImp implements ItemService {
                 }).get();
                 item.setPreviousId(String.valueOf(maxItem.getId()));
             }
-            //上轮投票是否是已发布状态
+            //上轮投票是否是已结束状态
             if(!itemSending(maxItem)){
-                throw new BaseException("上一轮没有发布成功，不能再创建投票轮");
+                throw new BaseException("上一轮没有结束，不能再创建投票轮");
             }
         }
         //设置随机码，防止用户窜改地址
