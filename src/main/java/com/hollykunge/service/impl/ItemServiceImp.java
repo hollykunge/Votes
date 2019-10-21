@@ -62,7 +62,7 @@ public class ItemServiceImp implements ItemService {
     }
 
     private boolean itemSending(Item item){
-        if(item == null||VoteConstants.ITEM_SEND_STATUS.equals(item.getStatus())){
+        if(item == null||VoteConstants.ITEM_FINAL_STATUS.equals(item.getStatus())){
             return true;
         }
         return false;
