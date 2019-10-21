@@ -11,7 +11,7 @@ import com.hollykunge.service.VoteService;
 import com.hollykunge.util.ExceptionCommonUtil;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -55,7 +55,7 @@ public class UploadHeaderDataListener extends AnalysisEventListener<ItemUploadDa
     }
 
     private String setHeaderToString(Map<Integer, String> headMap){
-        Map<String,String> map = new HashMap<String,String>();
+        Map<String,String> map = new LinkedHashMap<String,String>();
         headMap.forEach((key,value)->{
             map.put("attr"+key,value);
         });
