@@ -418,6 +418,43 @@ public class ItemController {
         }
     }
 
+    /**
+     * 使用上一轮投票项
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/useParentItem/{id}", method = RequestMethod.GET)
+    public String itemToNext (@PathVariable Long id,
+                                                  Model model)throws Exception{
+        try {
+            Item dataItem = itemService.findById(id);
+            String previousId = dataItem.getPreviousId();
+            if(StringUtils.isEmpty(previousId)){
+                throw new BaseException("第一轮投票不能使用上一轮投票项");
+            }
+            Item item = getItem(Long.valueOf(previousId));
+            Optional<List<VoteItem>> byItem = voteItemService.findByItem(item);
+            if(!byItem.isPresent()||byItem.get().size() == 0){
+                throw new BaseException("上一轮没有投票项...");
+            }
+            for (VoteItem vote : byItem.get()) {
+                this.resetVoteItem(vote);
+                vote.setItem(dataItem);
+                voteItemService.add(vote);
+            }
+            return "redirect:/editItem/"+id;
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+    private void resetVoteItem(VoteItem voteItem){
+        voteItem.setVoteItemId(null);
+        voteItem.setStatisticsOrderScore(0);
+        voteItem.setStatisticsToalScore(null);
+        voteItem.setStatisticsNum(null);
+    }
+
     private List<List<String>> head(String header) {
         try{
             JSONObject jsonObject = JSON.parseObject(header);
