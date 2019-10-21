@@ -5,9 +5,7 @@ import com.hollykunge.model.UserVoteItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author: zhhongyu
@@ -23,7 +21,7 @@ public interface UserVoteItemRepository extends JpaRepository<UserVoteItem, Long
     @Query(value = "SELECT count(1)  num,vote_item_id voteItemId " +
             " FROM USER_VOTE_ITEM " +
             " group by vote_item_id,item_id " +
-            " having item_id = ?1 "+
+            " having item_id = ?1 and agree_flag = '1' "+
             " order by num desc", nativeQuery = true)
     List<Object[]> agreeRule(Long itemId);
 

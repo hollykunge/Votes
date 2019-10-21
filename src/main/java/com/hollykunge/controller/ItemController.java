@@ -397,8 +397,8 @@ public class ItemController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/statistics/import/{id}", method = RequestMethod.GET)
-    public @ResponseBody String statisticsImport (@PathVariable Long id,
+    @RequestMapping(value = "/statistics/export/{id}", method = RequestMethod.GET)
+    public @ResponseBody String statisticsExport (@PathVariable Long id,
                                 HttpServletResponse response)throws Exception{
         try {
             Item item = this.getItem(id);
