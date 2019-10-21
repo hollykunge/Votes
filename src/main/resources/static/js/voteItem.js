@@ -153,7 +153,7 @@ function columnConfig(rules, callback) {
         valign: 'middle'
     })
     callback(rules, columnsOption)
-    if (rules.checkbox){
+    if (rules.checkbox) {
         columnsOption.unshift({checkbox: rules.checkbox})
     }
     return columnsOption
@@ -172,10 +172,9 @@ function configOperation(rules, columnsOption) {
                     valign: 'middle',
                     events: window.operateEvents,
                     formatter: function (value, row, index) {
-                        console.log(row)
                         return [
                             `<a class="${rules.isRead ? '' : 'castVote'}" href="javascript:void(0)" title="vote">`,
-                            rules.isRead  ? '已投' : '投票',
+                            rules.isRead ? (row.agreeFlag == '1' ? '已投' : '未投') : '投票',
                             '</a>'
                         ].join('')
                     }
@@ -236,7 +235,7 @@ function initTable(options) {
         minimumCountColumns: 2,
         idField: 'id',
         sidePagination: 'server',
-        rowStyle:options.rowStyle,
+        rowStyle: options.rowStyle,
         // 列操作栏
         columns: columnConfig({
             isRead: options.hasData && options.hasData.length > 0 ? true : false,
@@ -245,10 +244,10 @@ function initTable(options) {
             checkbox: options.checkbox
         }, configOperation),
         data: options.hasData && options.hasData.length > 0 ? options.hasData.map(function (item) {
-            return Object.assign({},item, item.voteItem, {order: item.order, item: item.item })
+            return Object.assign({}, item, item.voteItem, {order: item.order, item: item.item})
         }) : options.data.map(function (item) {
 
-            return Object.assign({}, item, { item: options.data[0].item})
+            return Object.assign({}, item, {item: options.data[0].item})
         }),
         detailView: true,
         detailViewIcon: true,
@@ -262,7 +261,7 @@ function initTable(options) {
                 let title = options.titleConfig.filter(function (item) {
                     return item.field === key
                 })[0]
-                if(title) {
+                if (title) {
                     html.push('<p><b style="display: inline-block; margin-right: 10px;">' + title.title + ':</b> ' + value + '</p>')
                 }
 
@@ -368,7 +367,7 @@ function request(obj) {
         },
         success: function (req) {
             //请求成功时处理
-            if(req === 'success') {
+            if (req === 'success') {
                 alert('投票成功')
                 setTimeout(function () {
                     window.location.reload()
@@ -433,9 +432,27 @@ function initTitleConfig(titleConfig) {
 }
 
 function isPass(val, min, max) {
-    if(max*1 >= val*1 && val*1 >= min*1) {
+    if (max * 1 >= val * 1 && val * 1 >= min * 1) {
         return true
     }
-    alert('分数必须在 ' + min + ' 与 '+ max +' 之间。')
+    alert('分数必须在 ' + min + ' 与 ' + max + ' 之间。')
     return false
+}
+
+function delHasItem(data, hasItemIndex, keys) {
+    let arr = [].concat(data)
+    let hasArr = []
+    for (var i = 0; i < hasItemIndex.length; i++) {
+        arr = arr.filter(function (item) {
+            return item.voteItemId !== hasItemIndex[i]
+        })
+    }
+    return arr.map(function (el) {
+        if(keys == 'score') {
+            return Object.assign({}, initDataItem(el), { [keys]: '0'})
+        } else {
+            return Object.assign({}, initDataItem(el, 'castVote'), { [keys]: '0'})
+        }
+        // return initDataItem(el, 'castVote', '0')
+    })
 }
