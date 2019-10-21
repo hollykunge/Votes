@@ -22,6 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * @author lark
@@ -85,10 +87,19 @@ public class UserVoteController {
                 userVoteItemService.add(userVoteItem);
             }
             Item item = itemService.findById(id);
+            List<UserVoteItem> collect = userVoteItemlist.stream().filter(new Predicate<UserVoteItem>() {
+                @Override
+                public boolean test(UserVoteItem userVoteItem) {
+                    if (Objects.equals(userVoteItem.getAgreeFlag(), "1")) {
+                        return true;
+                    }
+                    return false;
+                }
+            }).collect(Collectors.toList());
             //否同规则校验
             if(Objects.equals(item.getRules(),VoteConstants.ITEM_RULE_AGER)){
-                if(userVoteItemlist.size()>Integer.parseInt(item.getAgreeMax())||
-                        userVoteItemlist.size()<Integer.parseInt(item.getAgreeMin())){
+                if(collect.size()>Integer.parseInt(item.getAgreeMax())||
+                        collect.size()<Integer.parseInt(item.getAgreeMin())){
                     return"投票数量低于投票轮设置的最低数量或高于最高数量...";
                 }
             }
