@@ -26,4 +26,6 @@ public interface VoteItemService {
     Optional<List<VoteItem>> findByItem(Item item);
 
     void deleteVoteItem(List<String> ids)throws Exception;
+
+    void deleteByItem(Item item)throws Exception;
 }
