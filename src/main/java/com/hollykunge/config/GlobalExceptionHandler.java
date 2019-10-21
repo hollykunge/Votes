@@ -10,6 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 /**
  * 全局异常处理
+ *
  * @author lark
  */
 @ControllerAdvice

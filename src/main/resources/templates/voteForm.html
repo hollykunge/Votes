@@ -37,7 +37,7 @@
                 <input type="hidden" th:field="*{user}"/>
                 <input type="hidden" th:field="*{id}"/>
 
-                <input type="submit" class="btn btn-success btn-block" value="保存"/>
+                <input type="submit" class="btn btn-primary btn-block" value="保存"/>
             </form>
             <div class="col-md-5" th:if="${vote.id}" style="marginTop: 8px;width: 100%;max-width: 420px;margin: auto;">
                 <form action="#" th:action="@{'/vote/{id}'(id=${vote.id})}" th:method="delete"

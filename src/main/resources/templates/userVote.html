@@ -10,7 +10,8 @@
     </div>
 </nav>
 
-<div class="container">
+
+<div class="container" th:if="${item.status}==2">
     <div class="jumbotron jumbotron-fluid mb-3">
         <div class="container">
             <h1 class="display-5" th:text="${item.getVote().title}">无标题</h1>
@@ -73,7 +74,8 @@
             </div>
         </div>
     </div>
-    <div class="card border-dark mb-3">
+<!--    <div class="alert alert-danger" th:if="${showAlertMessage}" th:utext="${showAlertMessage}"></div>-->
+    <div class="card border-primary mb-3">
         <div class="card-header">
             <span>投票项</span>
         </div>
@@ -85,7 +87,7 @@
     <hr class="mb-4"/>
     <div class="row">
         <div class="col-md-12 mb-3">
-            <button id="voteDone" type="submit" class="btn btn-success btn-block">提交</button>
+            <button id="voteDone" type="submit" class="btn btn-primary btn-block">提交</button>
         </div>
     </div>
 </div>
@@ -140,8 +142,11 @@
         let currentValue = ''
         window.operateEvents = {
             'change .voteInput': function (e, value, row, index) {
+                if(!isPass($(e.target).val(), row.item.minScore, row.item.maxScore)) {
+                    return
+                }
 
-                console.log($(e.target).val())
+                //
                 row.score = $(e.target).val()
                 $._fraction.push(initDataItem(row))
             },
@@ -174,8 +179,10 @@
             },
             // 排序选择事件回调
             'change .selectVote': function (e, value, row, index) {
+
                 currentValue = ''
                 row.SerialNumber = $(e.target).val()
+                data[index] = row
                 columnOperation(data, $(e.target).val(), delOrder, allOrder, currentVal)
                 currentVal = ''
             }
@@ -183,6 +190,7 @@
         // 已提交
         if(hasVotes.length > 0) {
             $('#voteDone').attr('disabled', 'disabled')
+            $('#voteDone').text("已提交")
         }
         initTable({
             rules: voteOption.rules,
@@ -214,8 +222,7 @@
                     //     data: JSON.stringify($._voteArr)
                     // })
                 }
-            }
-            if ($._fraction) {
+            } else if ($._fraction) {
                 if ($._fraction.length > 0) {
                     requestBody = $._fraction
                     // request({
@@ -223,10 +230,11 @@
                     //     data: JSON.stringify($._fraction)
                     // })
                 }
+            } else {
+                requestBody = data.map(function (item, index) {
+                    return initDataItem(item)
+                })
             }
-            requestBody = data.map(function (item, index) {
-                return initDataItem(item)
-            })
             request({
                 url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),
                 data: JSON.stringify(requestBody)
