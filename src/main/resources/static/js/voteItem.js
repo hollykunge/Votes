@@ -126,7 +126,7 @@ function columnConfig(rules, callback) {
     let columnsOption = rules.titleConfig
         .map(function (item, index) {
             if (rules.isRead) {
-                console.log()
+                // ...
             }
             return Object.assign(
                 {},
@@ -172,10 +172,10 @@ function configOperation(rules, columnsOption) {
                     valign: 'middle',
                     events: window.operateEvents,
                     formatter: function (value, row, index) {
-
+                        console.log(row)
                         return [
                             `<a class="${rules.isRead ? '' : 'castVote'}" href="javascript:void(0)" title="vote">`,
-                            rules.isRead && row.agreeFlag === '1' ? '已投' : '投票',
+                            rules.isRead  ? '已投' : '投票',
                             '</a>'
                         ].join('')
                     }
@@ -245,8 +245,11 @@ function initTable(options) {
             checkbox: options.checkbox
         }, configOperation),
         data: options.hasData && options.hasData.length > 0 ? options.hasData.map(function (item) {
-            return Object.assign({}, item.voteItem, {order: item.order})
-        }) : options.data,
+            return Object.assign({},item, item.voteItem, {order: item.order, item: item.item })
+        }) : options.data.map(function (item) {
+
+            return Object.assign({}, item, { item: options.data[0].item})
+        }),
         detailView: true,
         detailViewIcon: true,
         detailFormatter: function (index, row, element) {
@@ -338,7 +341,6 @@ function initDataItem(item, type) {
     if (type === 'castVote') {
         obj.agreeFlag = '1'
     }
-    console.log(item)
     obj.score = item.score ? item.score : ''
     obj.order = item.SerialNumber
     obj.voteItem = {}
@@ -366,19 +368,17 @@ function request(obj) {
         },
         success: function (req) {
             //请求成功时处理
-
-        },
-        complete: function (success) {
-            if (success.responseText === 'success') {
-                // window.location.href = '/vote/2'
+            if(req === 'success') {
                 alert('投票成功')
                 setTimeout(function () {
                     window.location.reload()
                 }, 3000)
-
             }
+
+
+        },
+        complete: function (success) {
             //请求完成的处理
-            console.log(success)
         },
         error: function (error) {
             //请求出错处理
@@ -428,5 +428,14 @@ function initTitleConfig(titleConfig) {
                 field: item
             }
         })
+
     return titleConfig
+}
+
+function isPass(val, min, max) {
+    if(max*1 >= val*1 && val*1 >= min*1) {
+        return true
+    }
+    alert('分数必须在 ' + min + ' 与 '+ max +' 之间。')
+    return false
 }
