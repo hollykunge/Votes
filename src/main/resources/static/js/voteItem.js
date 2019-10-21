@@ -176,7 +176,7 @@ function configOperation(rules, columnsOption) {
                     events: window.operateEvents,
                     formatter: function (value, row, index) {
                         return [
-                            `<a class="${rules.isRead ? '' : 'castVote'}" href="javascript:void(0)" title="vote">`,
+                            `<a class="${rules.isRead ? (row.agreeFlag == '1' ? '' : 'normal') : 'castVote'}" href="javascript:void(0)" title="vote">`,
                             rules.isRead ? (row.agreeFlag == '1' ? '已投' : '未投') : '投票',
                             '</a>'
                         ].join('')
