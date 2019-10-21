@@ -41,7 +41,7 @@
             <!--如果有权限-->
             <div sec:authorize="isAuthenticated()" style="float: right">
                 <a th:href="@{'/voteVote/{voteId}/{itemId}'(voteId=${vote.id},itemId=0)}" class="col-md-2">
-                    <button type="button" class="btn btn-warning btn-sm">
+                    <button type="button" class="btn btn-primary btn-sm">
                         添加
                     </button>
                 </a>
@@ -119,7 +119,7 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
-                                    <button type="button" class="btn btn-warning copyCode" id="copyCode"
+                                    <button type="button" class="btn btn-primary copyCode" id="copyCode"
                                             data-clipboard-action="copy" data-clipboard-target="#code">复制
                                     </button>
                                 </div>
