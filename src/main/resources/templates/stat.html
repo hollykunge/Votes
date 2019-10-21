@@ -74,9 +74,17 @@
             </div>
         </div>
     </div>
+    <div style="float: right">
+
+    </div>
     <div class="card border-dark mb-3 shadow-sm">
         <div class="card-header">
-            <h4 class="my-0 font-weight-normal">投票结果</h4>
+            投票结果
+            <div style="float: right">
+                <a th:href="@{'/statistics/export/{itemId}'(itemId=${item.id})}" class="col-md-2">
+                    <button type="button" class="btn btn-secondary btn-sm">导出</button>
+                </a>
+            </div>
         </div>
         <div class="card-body card-nopadding">
             <table id="table"
