@@ -105,10 +105,8 @@
     }
     if(titleConfig) {
         titleConfig = initTitleConfig(titleConfig);
-        titleConfig = titleConfig.slice(0,5);
-        titleConfig.push({'title':'结果','field': resultName});
+        titleConfig.splice(5,0,{'title':'结果','field': resultName})
     } else {
-        // null.map不存在的错误
         titleConfig = []
     }
     $(function () {
@@ -128,19 +126,20 @@
         function handleRepeatData() {
             var randowColor = ['#ffeb3b', '#FF6056', '#98FF55', '#FFBDF4', '#4E97FF', '#78FDFF', '#FFB981', '#24FF80', '#AEFDFF', '#FFA2A8'];
             var tempdata = -1;
-
             for(var i=0;data.length>i; i++){
                 if (data[i][resultName] === tempdata) {
-                    colorMap.set(data[i][resultName],randowColor[Math.floor(Math.random()*10)])
+                    var score = data[i][resultName];
+                    // 分数个位
+                    var fix = parseInt(score%10);
+                    colorMap.set(score,randowColor[fix])
                 }
                 tempdata = data[i][resultName];
             }
-            console.log('colorMap', colorMap)
         }
         // 设置相同结果的行样式
         function rowStyle(row, index) {
             if (colorMap.get(row[resultName])){
-                return {css:{color:colorMap.get(row[resultName])}}
+                return {css:{'background-color':colorMap.get(row[resultName])}}
             }
             return {}
         }
