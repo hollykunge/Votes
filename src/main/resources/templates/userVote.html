@@ -74,7 +74,8 @@
             </div>
         </div>
     </div>
-    <div class="card border-dark mb-3">
+<!--    <div class="alert alert-danger" th:if="${showAlertMessage}" th:utext="${showAlertMessage}"></div>-->
+    <div class="card border-primary mb-3">
         <div class="card-header">
             <span>投票项</span>
         </div>
@@ -189,6 +190,7 @@
         // 已提交
         if(hasVotes.length > 0) {
             $('#voteDone').attr('disabled', 'disabled')
+            $('#voteDone').text("已提交")
         }
         initTable({
             rules: voteOption.rules,
