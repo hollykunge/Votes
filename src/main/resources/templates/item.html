@@ -25,7 +25,7 @@
             <div style="float: right">
                 <a href="/item/export" class="btn btn-link">下载模板</a>
 
-                <button type="button" class="btn btn-primary btn-sm" id="importExcel" th:onclick="|showImportModel()|">导入</button>
+                <button type="button" class="btn btn-warning btn-sm" id="importExcel" th:onclick="|showImportModel()|">导入</button>
 <!--                <button type="button" class="btn btn-secondary btn-sm" th:onclick="'javascript:getPreVoteItems('+${item.id}+')'">使用上一轮投票项</button>-->
                 <a th:href="@{'/useParentItem/{itemId}'(itemId=${item.id})}" class="col-md-2">
                     <button type="button" class="btn btn-secondary btn-sm">使用上一轮投票项</button>
@@ -90,7 +90,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
-                    <button type="button" class="btn btn-primary copy-code" id="saveAddBtn">
+                    <button type="button" class="btn btn-warning copy-code" id="saveAddBtn">
                         保存
                     </button>
                 </div>
