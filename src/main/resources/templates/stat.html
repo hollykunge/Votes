@@ -132,15 +132,17 @@
          * 对重复投票结果做标记
          */
         function handleRepeatData() {
-            var randowColor = ['#ffeb3b', '#FF6056', '#98FF55', '#FFBDF4', '#4E97FF', '#78FDFF', '#FFB981', '#24FF80', '#AEFDFF', '#FFA2A8'];
+            var randowColor = ['#f99a9a96', '#fd91d896', '#e691fd96', '#af99f796', '#99b7f796', '#99f7b996', '#cbf79996', '#eaf79996', '#f7dd9996', '#f7999996'];
             var tempdata = -1;
             for(var i=0;data.length>i; i++){
-                if (data[i][resultName] === tempdata) {
+                /*<![CDATA[*/
+                if (data[i][resultName] === tempdata || data[i][resultName]!=='0') {
                     var score = data[i][resultName];
                     // 分数个位
                     var fix = parseInt(score%10);
                     colorMap.set(score,randowColor[fix])
                 }
+                /*]]>*/
                 tempdata = data[i][resultName];
             }
         }
