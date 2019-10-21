@@ -62,5 +62,14 @@ public class VoteItemServiceImp implements VoteItemService {
             log.error(ExceptionCommonUtil.getExceptionMessage(e));
         }
     }
+    @Override
+    public void deleteByItem(Item item)throws Exception{
+        try {
+            voteItemRepository.deleteByItem(item);
+        }catch (Exception e){
+            log.error(ExceptionCommonUtil.getExceptionMessage(e));
+            throw e;
+        }
+    }
 
 }
