@@ -438,7 +438,8 @@ public class ItemController {
             if(!byItem.isPresent()||byItem.get().size() == 0){
                 throw new BaseException("上一轮没有投票项...");
             }
-            for (VoteItem vote : byItem.get()) {
+            List<VoteItem> tempData = JSONArray.parseArray(JSONObject.toJSONString(byItem.get()),VoteItem.class);
+            for (VoteItem vote : tempData) {
                 this.resetVoteItem(vote);
                 vote.setItem(dataItem);
                 voteItemService.add(vote);
