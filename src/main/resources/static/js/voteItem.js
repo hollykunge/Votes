@@ -65,7 +65,10 @@ function excelImport(voteId) {
 //上传成功响应
 function uploadComplete(evt) {
     if (evt.target.status) {
-        window.location.reload();
+        setInterval(function () {
+            window.location.reload();
+        }, 1000)
+
     } else {
         alert("上传失败！");
     }
@@ -392,7 +395,9 @@ function request(obj) {
 }
 
 function sorts(arr, callback, callbackFun) {
-    arr = callback(arr)
+    if(callback) {
+        arr = [].concat(callback(arr))
+    }
     for (let i = 0; i < arr.length; i++) {
         for (let j = 0; j < arr.length; j++) {
             if (arr[i] < arr[j]) {
