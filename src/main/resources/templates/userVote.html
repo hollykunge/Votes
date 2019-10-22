@@ -157,6 +157,9 @@
                 $._fraction.push(initDataItem(row))
             },
             'click .castVote': function (e, value, row, index) {
+                if($(e.target).attr('class') === '') {
+                    return
+                }
                 $(e.target).text('已投').removeClass('castVote')
                 $._voteArr.push(initDataItem(row, 'castVote', '1'))
             },
