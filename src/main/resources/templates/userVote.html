@@ -3,6 +3,12 @@
 <body class="bg-light">
 <head>
     <div th:replace="/fragments/header :: header-css"/>
+    <style>
+        .normal{
+            color: #000000;
+
+        }
+    </style>
 </head>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary" style="margin-bottom: 16px">
     <div class="container">
@@ -74,7 +80,7 @@
             </div>
         </div>
     </div>
-<!--    <div class="alert alert-danger" th:if="${showAlertMessage}" th:utext="${showAlertMessage}"></div>-->
+    <!--    <div class="alert alert-danger" th:if="${showAlertMessage}" th:utext="${showAlertMessage}"></div>-->
     <div class="card border-primary mb-3">
         <div class="card-header">
             <span>投票项</span>
@@ -127,7 +133,7 @@
     // 表头 column title
 
     $(function () {
-        if(titleConfig) {
+        if (titleConfig) {
             titleConfig = initTitleConfig(titleConfig)
         } else {
             // null.map不存在的错误
@@ -142,7 +148,7 @@
         let currentValue = ''
         window.operateEvents = {
             'change .voteInput': function (e, value, row, index) {
-                if(!isPass($(e.target).val(), row.item.minScore, row.item.maxScore)) {
+                if (!isPass($(e.target).val(), row.item.minScore, row.item.maxScore)) {
                     return
                 }
 
@@ -152,7 +158,7 @@
             },
             'click .castVote': function (e, value, row, index) {
                 $(e.target).text('已投').removeClass('castVote')
-                $._voteArr.push(initDataItem(row, 'castVote'))
+                $._voteArr.push(initDataItem(row, 'castVote', '1'))
             },
             // 排序点击事件回调
             'mousedown .selectVote': function (e, value, row, index) {
@@ -188,7 +194,7 @@
             }
         }
         // 已提交
-        if(hasVotes.length > 0) {
+        if (hasVotes.length > 0) {
             $('#voteDone').attr('disabled', 'disabled')
             $('#voteDone').text("已提交")
         }
@@ -216,19 +222,27 @@
 
             if ($._voteArr) {
                 if ($._voteArr.length > 0) {
-                    requestBody = $._voteArr
-                    // request({
-                    //     url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),
-                    //     data: JSON.stringify($._voteArr)
-                    // })
+                    requestBody = $._voteArr.concat(
+                        delHasItem(
+                            data,
+                            $._voteArr.map(function (item) {
+                                return item.voteItem.voteItemId
+                            }),
+                            'agreeFlag'
+                        )
+                    )
                 }
             } else if ($._fraction) {
                 if ($._fraction.length > 0) {
-                    requestBody = $._fraction
-                    // request({
-                    //     url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),
-                    //     data: JSON.stringify($._fraction)
-                    // })
+                    requestBody = $._fraction.concat(
+                        delHasItem(
+                            data,
+                            $._fraction.map(function (item) {
+                                return item.voteItem.voteItemId
+                            }),
+                            'score'
+                        )
+                    )
                 }
             } else {
                 requestBody = data.map(function (item, index) {

@@ -459,7 +459,7 @@ public class ItemController {
 
     private List<List<String>> head(String header) {
         try{
-            JSONObject jsonObject = JSON.parseObject(header);
+            LinkedHashMap jsonObject = JSON.parseObject(header,LinkedHashMap.class);
             List<List<String>> list = new ArrayList<List<String>>();
             List<String> one = new ArrayList<>();
             one.add("序号");
