@@ -355,6 +355,7 @@ function initDataItem(item, type) {
 }
 
 function request(obj) {
+    $('#loadingModal').modal('show')
     $.ajax({
         url: obj.url, //     //请求的url地址
         headers: {
@@ -369,15 +370,15 @@ function request(obj) {
             // xhr.setRequestHeader("content-Type:'1333333333'");
         },
         success: function (req) {
+            console.log('req', req)
             //请求成功时处理
             if (req === 'success') {
+                $('#loadingModal').modal('hide')
                 alert('投票成功')
                 setTimeout(function () {
                     window.location.reload()
                 }, 3000)
             }
-
-
         },
         complete: function (success) {
             //请求完成的处理
@@ -385,6 +386,7 @@ function request(obj) {
         error: function (error) {
             //请求出错处理
             console.log(error)
+            $('#loadingModal').modal('hide')
         }
     });
 

@@ -90,6 +90,7 @@
             ></table>
         </div>
     </div>
+    <div style="text-align: end"><span th:if="${item.rules} == '1'" id="votedStatus"></span></div>
     <hr class="mb-4"/>
     <div class="row">
         <div class="col-md-12 mb-3">
@@ -109,10 +110,6 @@
     </div>
     <div class="col-md-4"></div>
 </div>
-<!-- <div class="row" th:if="${item.status}==2">
-    投票项列表
-</div> -->
-
 
 <div th:replace="/fragments/footer :: footer"/>
 </body>
@@ -131,8 +128,11 @@
     const $table = $('#voteTable') // 当前页面表格
     let titleConfig = [[${item.vote.excelHeader}]] // excelHeader
     // 表头 column title
+    // 已投票数
+    let votedCount = 0
 
     $(function () {
+
         if (titleConfig) {
             titleConfig = initTitleConfig(titleConfig)
         } else {
@@ -157,6 +157,10 @@
                 $._fraction.push(initDataItem(row))
             },
             'click .castVote': function (e, value, row, index) {
+                if($(e.target).text() == '投票'){
+                    votedCount++;
+                    $('#votedStatus').text("已投票数："+votedCount+"/"+data.length)
+                }
                 $(e.target).text('已投').removeClass('castVote')
                 $._voteArr.push(initDataItem(row, 'castVote', '1'))
             },
