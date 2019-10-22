@@ -30,7 +30,7 @@
                 <a th:href="@{'/useParentItem/{itemId}'(itemId=${item.id})}" class="col-md-2" th:if="${item.turnNum != 1}">
                     <button type="button" class="btn btn-secondary btn-sm">使用上一轮投票项</button>
                 </a>
-                <button type="button" class="btn btn-secondary btn-sm" th:onclick="|showAddModel()|">新增</button>
+<!--                <button type="button" class="btn btn-secondary btn-sm" th:onclick="|showAddModel()|">新增</button>-->
             </div>
         </div>
         <div class="card-body text-primary card-nopadding">
@@ -97,6 +97,26 @@
             </div>
         </div>
     </div>
+
+    <!--删除确认框-->
+    <div class="modal fade" id="delModel" tabindex="-1" role="dialog" aria-labelledby="addTitle" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">提示</h5>
+                </div>
+                <div class="modal-body">
+                    <h6 class="modal-title">请确认是否删除？</h6>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary copy-code" id="saveDelBtn">
+                        确认删除
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div th:replace="/fragments/footer :: footer" />
@@ -148,8 +168,12 @@
                 }
             }
         })
-        // 删除
+        // 删除确认框
         $('#delBtn').click(function () {
+            $('#delModel').modal('show');
+        })
+        // 删除
+        $('#saveDelBtn').click(function () {
             var selectItems = $table.bootstrapTable('getSelections')
             var ids = '';
             selectItems.forEach(item => {
