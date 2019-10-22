@@ -36,4 +36,6 @@ public class VoteConstants {
      * 打分
      */
     public static final String ITEM_RULE_SCORE = "3";
+
+    public static final String EXTAPIHEAD = "extapihead";
 }
