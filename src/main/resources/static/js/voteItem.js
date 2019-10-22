@@ -403,6 +403,7 @@ function request(obj) {
                     message: '上传成功',
                     type: 'success'
                 })
+        //        $('#loadingModal').modal('show');
                 setTimeout(function () {
                     window.location.reload()
                 }, 3000)
