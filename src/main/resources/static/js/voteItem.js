@@ -150,7 +150,10 @@ function columnConfig(rules, callback) {
         title: '序号',
         field: "voteItemId",
         align: 'center',
-        valign: 'middle'
+        valign: 'middle',
+        formatter: function (value, row, index) {
+            return index+1;
+        }
     })
     callback(rules, columnsOption)
     if (rules.checkbox) {
