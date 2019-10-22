@@ -110,4 +110,8 @@ public class ItemServiceImp implements ItemService {
         itemRepository.delete(id);
         return one;
     }
+    @Override
+    public List<Item> findByPrevious(String previous){
+       return itemRepository.findByPreviousId(previous);
+    }
 }
