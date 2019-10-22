@@ -89,6 +89,7 @@
             ></table>
         </div>
     </div>
+    <div style="text-align: end"><span th:if="${item.rules} == '1'" id="votedStatus"></span></div>
     <hr class="mb-4"/>
     <div class="row">
         <div class="col-md-12 mb-3">
@@ -107,6 +108,15 @@
         </div>
     </div>
     <div class="col-md-4"></div>
+</div>
+<div class="modal fade" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop='static'>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                提交成功！正在跳转，请稍等<span id="result"></span>
+            </div>
+        </div>
+    </div>
 </div>
 <!-- <div class="row" th:if="${item.status}==2">
     投票项列表
@@ -130,6 +140,8 @@
     const $table = $('#voteTable') // 当前页面表格
     let titleConfig = [[${item.vote.excelHeader}]] // excelHeader
     // 表头 column title
+    // 已投票数
+    let votedCount = 0
 
     $(function () {
         if (titleConfig) {
@@ -158,9 +170,13 @@
             },
             // 投票
             'click .castVote': function (e, value, row, index) {
+
                 if ($(e.target).attr('class') === '') {
                     return
+
                 }
+                                      votedCount++;
+                    $('#votedStatus').text("已投票数："+votedCount+"/"+data.length)
                 $(e.target).text('已投').removeClass('castVote')
                 $._voteArr.push(initDataItem(row, 'castVote', '1'))
             },
