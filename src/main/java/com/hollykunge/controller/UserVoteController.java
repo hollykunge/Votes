@@ -113,12 +113,6 @@ public class UserVoteController {
         try{
             String clientIp = getClientIp(request);
             List<UserVoteItem> userVoteItemlist = JSONArray.parseArray(userVoteItems, UserVoteItem.class);
-            for (UserVoteItem userVoteItem:
-                    userVoteItemlist) {
-                userVoteItem.setIp(clientIp);
-                userVoteItemService.add(userVoteItem);
-            }
-            Item item = itemService.findById(id);
             List<UserVoteItem> collect = userVoteItemlist.stream().filter(new Predicate<UserVoteItem>() {
                 @Override
                 public boolean test(UserVoteItem userVoteItem) {
@@ -128,12 +122,18 @@ public class UserVoteController {
                     return false;
                 }
             }).collect(Collectors.toList());
+            Item item = itemService.findById(id);
             //否同规则校验
             if(Objects.equals(item.getRules(),VoteConstants.ITEM_RULE_AGER)){
                 if(collect.size()>Integer.parseInt(item.getAgreeMax())||
                         collect.size()<Integer.parseInt(item.getAgreeMin())){
                     return"投票数量低于投票轮设置的最低数量或高于最高数量...";
                 }
+            }
+            for (UserVoteItem userVoteItem:
+                    userVoteItemlist) {
+                userVoteItem.setIp(clientIp);
+                userVoteItemService.add(userVoteItem);
             }
             Long memgerNum = userVoteItemService.countIpByItem(item);
             item.setMemberNum(Integer.parseInt(String.valueOf(memgerNum)));
