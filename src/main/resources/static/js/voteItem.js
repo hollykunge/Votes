@@ -400,10 +400,9 @@ function request(obj) {
             //请求成功时处理
             if (req === 'success') {
                 $('body').message({
-                    message: '上传成功',
+                    message: '提交成功！正在跳转，请稍等',
                     type: 'success'
                 })
-        //        $('#loadingModal').modal('show');
                 setTimeout(function () {
                     window.location.reload()
                 }, 3000)
