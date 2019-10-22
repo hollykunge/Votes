@@ -4,7 +4,7 @@
 <head>
     <div th:replace="/fragments/header :: header-css"/>
     <style>
-        .normal{
+        .normal {
             color: #000000;
 
         }
@@ -15,7 +15,6 @@
         <a class="navbar-brand" style="color: #ffffff;">二部投票系统</a>
     </div>
 </nav>
-
 
 <div class="container" th:if="${item.status}==2">
     <div class="jumbotron jumbotron-fluid mb-3">
@@ -147,6 +146,7 @@
         let currentVal = '';
         let currentValue = ''
         window.operateEvents = {
+            // 打分
             'change .voteInput': function (e, value, row, index) {
                 if (!isPass($(e.target).val(), row.item.minScore, row.item.maxScore)) {
                     return
@@ -156,8 +156,9 @@
                 row.score = $(e.target).val()
                 $._fraction.push(initDataItem(row))
             },
+            // 投票
             'click .castVote': function (e, value, row, index) {
-                if($(e.target).attr('class') === '') {
+                if ($(e.target).attr('class') === '') {
                     return
                 }
                 $(e.target).text('已投').removeClass('castVote')
@@ -166,25 +167,32 @@
             // 排序点击事件回调
             'mousedown .selectVote': function (e, value, row, index) {
                 // 点击排序时, 绘制option
+                let html = ''
                 allOrder = [...new
                 Set(allOrder)
             ]
                 if (value) {
                     currentVal = value;
                     currentValue = '<option selected="true" value="' + value + '">' + value + '</option>'
+                } else {
+                    // # 146 排序下拉问题
+                    // 未清空html模板值
+                    currentVal = '';
+                    currentValue = ''
                 }
-                $(e.target).html(
-                    [
-                        '<option value="">请选择</option>',
-                        currentValue
-                    ]
-                        .concat(allOrder
-                            .sort()
-                            .map(function (item) {
-                                return '<option value="' + item + '">' + item + '</option>'
-                            }))
-                        .join('')
-                )
+                html = [
+                    '<option value="">请选择</option>',
+                    currentValue
+                ].concat(
+                        sorts(allOrder)
+                            .map(
+                                function (item) {
+                                    return '<option value="' + item + '">' + item + '</option>'
+                                }
+                            )
+                    )
+                    .join('')
+                $(e.target).html(html)
             },
             // 排序选择事件回调
             'change .selectVote': function (e, value, row, index) {
