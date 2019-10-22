@@ -371,7 +371,7 @@ function request(obj) {
         success: function (req) {
             //请求成功时处理
             if (req === 'success') {
-                alert('投票成功')
+                $('#loadingModal').modal('show');
                 setTimeout(function () {
                     window.location.reload()
                 }, 3000)
