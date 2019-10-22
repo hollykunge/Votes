@@ -33,6 +33,12 @@ public class Vote {
     @Column(name = "excel_header")
     private String excelHeader;
 
+    @Column(columnDefinition = "int(6) COMMENT '预计投票人数'")
+    private String memberSize;
+
+    @Column(columnDefinition = "int(6) COMMENT '投票人数'")
+    private Integer memberNum;
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "create_date", nullable = false, updatable = false)
     @CreationTimestamp
@@ -99,6 +105,21 @@ public class Vote {
         this.excelHeader = excelHeader;
     }
 
+    public String getMemberSize() {
+        return memberSize;
+    }
+
+    public void setMemberSize(String memberSize) {
+        this.memberSize = memberSize;
+    }
+
+    public Integer getMemberNum() {
+        return memberNum;
+    }
+
+    public void setMemberNum(Integer memberNum) {
+        this.memberNum = memberNum;
+    }
     @OneToMany(mappedBy = "vote", cascade = CascadeType.REMOVE)
     private Collection<Item> items;
 }
