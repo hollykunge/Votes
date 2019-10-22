@@ -63,7 +63,7 @@ public class ExtTokenServiceImp implements ExtTokenService {
     public void testTasks() {
         Date end = new Date();
         Date start = getDate(end);
-        List<ExtToken> byCreateDateBetween = extTokenRepository.findByCreateDateBetween(start, end);
+        List<ExtToken> byCreateDateBetween = extTokenRepository.findByCreateDateBefore(start);
         byCreateDateBetween.forEach(extToken -> {
             extTokenRepository.delete(extToken);
             log.info("ip地址中的{},没用token已经删除..",extToken.getIp());

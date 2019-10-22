@@ -14,5 +14,5 @@ import java.util.List;
 public interface ExtTokenRepository extends JpaRepository<ExtToken,Long> {
     List<ExtToken> findByToken(String token);
     List<ExtToken> findByIp(String ip);
-    List<ExtToken> findByCreateDateBetween(Date start,Date end);
+    List<ExtToken> findByCreateDateBefore(Date start);
 }

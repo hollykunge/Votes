@@ -11,6 +11,7 @@ import com.hollykunge.model.Item;
 import com.hollykunge.model.User;
 import com.hollykunge.model.Vote;
 import com.hollykunge.model.VoteItem;
+import com.hollykunge.reflection.ReflectionUtils;
 import com.hollykunge.service.*;
 import com.hollykunge.util.Base64Utils;
 import com.hollykunge.util.ExceptionCommonUtil;
@@ -29,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.security.Principal;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -407,9 +409,27 @@ public class ItemController {
             List<StatisticsDownloadData> statisticsDownloadData = JSONArray.parseArray(JSONObject.toJSONString(voteItems), StatisticsDownloadData.class);
             response.setContentType("application/vnd.ms-excel");
             response.setCharacterEncoding("utf-8");
-            response.setHeader("Content-disposition", "attachment;filename=itemResult.xlsx");
+            String fileName = "投票结果统计";
+            if(item != null){
+                String voteName = item.getVote().getTitle();
+                String trun = item.getTurnNum()+"";
+                fileName = voteName+"第"+trun+fileName;
+            }
+            fileName = URLEncoder.encode(fileName, "UTF-8");
+            fileName = new String(fileName.getBytes("utf-8"),"ISO-8859-1");
+            response.setHeader("Content-disposition", "attachment;filename="+fileName+".xlsx");
+            String excelHeader = item.getVote().getExcelHeader();
+            LinkedHashMap jsonObject = JSON.parseObject(excelHeader,LinkedHashMap.class);
+            //清洗一遍数据，excelhead中对应的值为null的给默认值无
+            statisticsDownloadData.forEach(data ->{
+                jsonObject.forEach((key,value)->{
+                    if(StringUtils.isEmpty(ReflectionUtils.getFieldValue(data, (String) key))){
+                        ReflectionUtils.setFieldValue(data,(String) key,"无");
+                    }
+                });
+            });
             EasyExcel.write(response.getOutputStream())
-                    .head(head(item.getVote().getExcelHeader()))
+                    .head(head(jsonObject))
                     .sheet("统计情况")
                     .doWrite(statisticsDownloadData);
             return "success";
@@ -457,9 +477,8 @@ public class ItemController {
         voteItem.setStatisticsNum(null);
     }
 
-    private List<List<String>> head(String header) {
+    private List<List<String>> head(LinkedHashMap jsonObject) {
         try{
-            LinkedHashMap jsonObject = JSON.parseObject(header,LinkedHashMap.class);
             List<List<String>> list = new ArrayList<List<String>>();
             List<String> one = new ArrayList<>();
             one.add("序号");
@@ -476,7 +495,7 @@ public class ItemController {
                 list.add(head);
             });
             List<String> fina = new ArrayList<>();
-            fina.add("统计结果");
+            fina.add("结果");
             list.add(fina);
             return list;
         }catch (Exception e){
