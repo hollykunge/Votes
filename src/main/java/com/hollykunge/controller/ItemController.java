@@ -305,6 +305,12 @@ public class ItemController {
                 redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("第"+itemTemp.getTurnNum()+"轮，没有投票项不能发起投票"));
                 return "redirect:/vote/"+itemTemp.getVote().getId();
             }
+            if(Objects.equals(itemTemp.getRules(),"1")){
+                if(voteItems.get().size() < Integer.parseInt(itemTemp.getAgreeMin())){
+                    redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("第"+itemTemp.getTurnNum()+"轮，投票项小于了限制的最小投票数"));
+                    return "redirect:/vote/"+itemTemp.getVote().getId();
+                }
+            }
         }
         if(Objects.equals(VoteConstants.ITEM_FINAL_STATUS,status)){
             Item itemTemp = itemService.findById(id);
