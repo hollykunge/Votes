@@ -6,7 +6,10 @@ function showImportModel() {
 // 导入提示
 function showAddModel() {
     if (titleConfig == null) {
-        alert('请先操作导入')
+        $('body').message({
+            message: '请先操作导入',
+            type: 'warning'
+        })
         return;
     }
     $('#addModel').modal('show');
@@ -70,14 +73,20 @@ function uploadComplete(evt) {
         }, 1000)
 
     } else {
-        alert("上传失败！");
+        $('body').message({
+            message: '上传失败',
+            type: 'danger'
+        })
     }
 
 }
 
 //上传失败
 function uploadFailed(evt) {
-    alert("上传失败！");
+    $('body').message({
+        message: '上传失败',
+        type: 'danger'
+    })
 }
 
 //上传进度实现方法，上传过程中会频繁调用该方法
@@ -115,6 +124,10 @@ function progressFunction(evt) {
     if (bspeed == 0) time.innerHTML = '上传已取消';
 }
 
+/**
+ * showModel
+ * @param id
+ */
 function showModel(id) {
     $(id).modal('show');
 }
@@ -165,6 +178,11 @@ function columnConfig(rules, callback) {
     return columnsOption
 }
 
+/**
+ * 配置table column参数
+ * @param rules
+ * @param columnsOption
+ */
 function configOperation(rules, columnsOption) {
     // 是否是编辑页面
     if (window.location.href.indexOf('userVote') !== -1) {
@@ -231,7 +249,7 @@ function configOperation(rules, columnsOption) {
 }
 
 /**
- *
+ * 初始化table
  * @param options { Object }
  */
 function initTable(options) {
@@ -284,6 +302,9 @@ function initTable(options) {
 
 /**
  * 格式化 data 数据
+ * @param data
+ * @param ruleOption
+ * @returns {*}
  */
 function resetData(data, ruleOption) {
 
@@ -357,6 +378,10 @@ function initDataItem(item, type) {
     return obj
 }
 
+/**
+ * 请求
+ * @param obj
+ */
 function request(obj) {
     $.ajax({
         url: obj.url, //     //请求的url地址
@@ -374,7 +399,11 @@ function request(obj) {
         success: function (req) {
             //请求成功时处理
             if (req === 'success') {
-                $('#loadingModal').modal('show');
+                $('body').message({
+                    message: '上传成功',
+                    type: 'success'
+                })
+        //        $('#loadingModal').modal('show');
                 setTimeout(function () {
                     window.location.reload()
                 }, 3000)
@@ -394,6 +423,13 @@ function request(obj) {
 
 }
 
+/**
+ * 数组排序
+ * @param arr
+ * @param callback
+ * @param callbackFun
+ * @returns {*}
+ */
 function sorts(arr, callback, callbackFun) {
     if(callback) {
         arr = [].concat(callback(arr))
@@ -414,6 +450,11 @@ function sorts(arr, callback, callbackFun) {
     return arr
 }
 
+/**
+ * 设置table标题
+ * @param titleConfig
+ * @returns {*}
+ */
 function initTitleConfig(titleConfig) {
     let titleObj = JSON.parse(titleConfig)
     titleConfig = sorts(
@@ -439,14 +480,32 @@ function initTitleConfig(titleConfig) {
     return titleConfig
 }
 
+/**
+ * 是否满足提交条件
+ * @param val
+ * @param min
+ * @param max
+ * @returns {boolean}
+ */
 function isPass(val, min, max) {
     if (max * 1 >= val * 1 && val * 1 >= min * 1) {
         return true
     }
-    alert('分数必须在 ' + min + ' 与 ' + max + ' 之间。')
+    $('body').message({
+        message:'分数必须在 ' + min + ' 与 ' + max + ' 之间。',
+        type: 'danger'
+    })
+
     return false
 }
 
+/**
+ * 过滤已存在的对象
+ * @param data
+ * @param hasItemIndex
+ * @param keys
+ * @returns {any[]}
+ */
 function delHasItem(data, hasItemIndex, keys) {
     let arr = [].concat(data)
     let hasArr = []
@@ -464,3 +523,38 @@ function delHasItem(data, hasItemIndex, keys) {
         // return initDataItem(el, 'castVote', '0')
     })
 }
+
+/**
+ * 弹窗
+ * @param object
+ */
+let seed = 1
+$.fn.message = function (options) {
+    options = options || {};
+    if (typeof options === 'string') {
+        options = {
+            message: options,
+            type: options.type || 'success'
+        };
+    }
+
+    let userOnClose = options.onClose;
+    let id = 'message_' + seed ++
+    $('<div id="' + id + '" class="alert alert-' + (options.type || 'success') + ' position_alert fade-in-linear-enter">' + options.message+ '</div>').appendTo($('body'))
+    let timerTag, timerAddTag, timerRemoveTag;
+    timerTag = setTimeout(function () {
+        $('.alert').removeClass('fade-in-linear-enter')
+        timerAddTag = setTimeout(function () {
+            $('#' + id).addClass('alert_message_fade_leave_active')
+            timerRemoveTag = setTimeout(function () {
+                $('.alert_message_fade_leave_active').remove()
+            }, 1000)
+        }, 1000)
+    }, 500)
+    timerTag = null
+    timerAddTag = null
+    timerRemoveTag = null
+
+//      lihai
+}
+

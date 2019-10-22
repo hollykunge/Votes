@@ -8,6 +8,7 @@
             color: #000000;
 
         }
+
     </style>
 </head>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary" style="margin-bottom: 16px">
@@ -171,12 +172,14 @@
             // 投票
             'click .castVote': function (e, value, row, index) {
 
+
                 if ($(e.target).attr('class') === '') {
                     return
 
                 }
                                       votedCount++;
                     $('#votedStatus').text("已投票数："+votedCount+"/"+data.length)
+
                 $(e.target).text('已投').removeClass('castVote')
                 $._voteArr.push(initDataItem(row, 'castVote', '1'))
             },
@@ -242,7 +245,10 @@
                         return item
                     }
                 }).length > 0) {
-                    alert('排序填写不完整');
+                    $('body').message({
+                        message: '排序填写不完整',
+                        type: 'danger'
+                    })
                     return;
                 }
             }
