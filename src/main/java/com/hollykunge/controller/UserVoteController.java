@@ -13,12 +13,14 @@ import com.hollykunge.model.VoteItem;
 import com.hollykunge.service.ItemService;
 import com.hollykunge.service.UserVoteItemService;
 import com.hollykunge.service.VoteItemService;
+import com.hollykunge.util.Base64Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -45,7 +47,8 @@ public class UserVoteController {
     public String inviteCodeView(@PathVariable Long id,
                                  @PathVariable String code,
                                  Model model,
-                                 HttpServletRequest request) throws Exception {
+                                 HttpServletRequest request,
+                                 @ModelAttribute("redirect") String redirect) throws Exception {
         try{
             Optional<Item> itemTemp = itemService.findByIdAndCode(id,code);
             if(!itemTemp.isPresent()){
@@ -61,10 +64,36 @@ public class UserVoteController {
             List<UserVoteItem> userVoteItems = userVoteItemService.findByItemAndIp(itemTemp.get(), clientIp);
             //用户投完票项目，前台展示可采用如果userVoteItems没有数据，则为第一次投票列表使用voteItems
             model.addAttribute("userVoteItems",JSONObject.toJSONString(userVoteItems));
+            if(!StringUtils.isEmpty(redirect)){
+                model.addAttribute("showAlertMessage", Base64Utils.decryption(redirect));
+            }
             return "/userVote";
         }catch (Exception e){
             throw e;
         }
+    }
+
+    /**
+     * 用户投票点击下一轮接口（地址：/userVote/nextTurn/{id}/{code}）
+     * @param id
+     * @param code
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = VoteConstants.INVITECODE_RPC+"nextTurn/"+"{id}/{code}", method = RequestMethod.GET)
+    public String nextTurnItem(@PathVariable Long id,
+                               @PathVariable String code,
+                               RedirectAttributes redirectAttributes)throws Exception{
+        Optional<Item> itemTemp = itemService.findByIdAndCode(id,code);
+        if(!itemTemp.isPresent()){
+            throw new BaseException("无效地址...");
+        }
+        List<Item> byPrevious = itemService.findByPrevious(String.valueOf(id));
+        if(byPrevious.size() == 0){
+            redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("没有下一轮投票！"));
+        }
+        Item item = byPrevious.get(0);
+        return "redirect:"+VoteConstants.INVITECODE_RPC+item.getId()+"/"+item.getCode();
     }
 
     /**
@@ -84,12 +113,6 @@ public class UserVoteController {
         try{
             String clientIp = getClientIp(request);
             List<UserVoteItem> userVoteItemlist = JSONArray.parseArray(userVoteItems, UserVoteItem.class);
-            for (UserVoteItem userVoteItem:
-                    userVoteItemlist) {
-                userVoteItem.setIp(clientIp);
-                userVoteItemService.add(userVoteItem);
-            }
-            Item item = itemService.findById(id);
             List<UserVoteItem> collect = userVoteItemlist.stream().filter(new Predicate<UserVoteItem>() {
                 @Override
                 public boolean test(UserVoteItem userVoteItem) {
@@ -99,12 +122,18 @@ public class UserVoteController {
                     return false;
                 }
             }).collect(Collectors.toList());
+            Item item = itemService.findById(id);
             //否同规则校验
             if(Objects.equals(item.getRules(),VoteConstants.ITEM_RULE_AGER)){
                 if(collect.size()>Integer.parseInt(item.getAgreeMax())||
                         collect.size()<Integer.parseInt(item.getAgreeMin())){
                     return"投票数量低于投票轮设置的最低数量或高于最高数量...";
                 }
+            }
+            for (UserVoteItem userVoteItem:
+                    userVoteItemlist) {
+                userVoteItem.setIp(clientIp);
+                userVoteItemService.add(userVoteItem);
             }
             Long memgerNum = userVoteItemService.countIpByItem(item);
             item.setMemberNum(Integer.parseInt(String.valueOf(memgerNum)));
