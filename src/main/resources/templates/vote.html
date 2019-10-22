@@ -120,7 +120,7 @@
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
                                     <button type="button" class="btn btn-primary copyCode" id="copyCode"
-                                            data-clipboard-action="copy" data-clipboard-target="#code">复制
+                                            data-clipboard-target="#code">复制
                                     </button>
                                 </div>
                             </div>
@@ -167,6 +167,7 @@
     });
 
     $('.code-model').on('hidden.bs.modal', function () {
+        $('#copyCode').text('复制');
         $(this).removeData("bs.modal");
     })
 </script>

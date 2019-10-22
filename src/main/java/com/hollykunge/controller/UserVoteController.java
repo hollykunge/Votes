@@ -2,6 +2,8 @@ package com.hollykunge.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.hollykunge.annotation.ExtApiIdempotent;
+import com.hollykunge.annotation.ExtApiToken;
 import com.hollykunge.config.ItemStatusConfig;
 import com.hollykunge.constants.VoteConstants;
 import com.hollykunge.exception.BaseException;
@@ -38,7 +40,7 @@ public class UserVoteController {
     @Autowired
     private UserVoteItemService userVoteItemService;
 
-
+    @ExtApiToken
     @RequestMapping(value = VoteConstants.INVITECODE_RPC+"{id}/{code}", method = RequestMethod.GET)
     public String inviteCodeView(@PathVariable Long id,
                                  @PathVariable String code,
@@ -71,6 +73,7 @@ public class UserVoteController {
      * @return
      * @throws Exception
      */
+    @ExtApiIdempotent(VoteConstants.EXTAPIHEAD)
     @RequestMapping(value = VoteConstants.INVITECODE_RPC+"add/{id}/{code}", method = RequestMethod.POST)
     @ResponseBody
     public String add(@PathVariable Long id,
