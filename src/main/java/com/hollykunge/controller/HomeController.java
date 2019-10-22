@@ -34,4 +34,9 @@ public class HomeController {
 
         return "/home";
     }
+
+    @GetMapping("/")
+    public String index(Model model) {
+        return "/home";
+    }
 }
