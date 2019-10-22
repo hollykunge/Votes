@@ -18,7 +18,7 @@
 
 
 <div class="container" th:if="${item.status}==2">
-    <div class="jumbotron jumbtotron-fluid mb-3">
+    <div class="jumbotron jumbotron-fluid mb-3">
         <div class="container">
             <h1 class="display-5" th:text="${item.getVote().title}">无标题</h1>
             <p class="lead" th:text="${item.getVote().body}">无描述</p>
@@ -157,6 +157,9 @@
                 $._fraction.push(initDataItem(row))
             },
             'click .castVote': function (e, value, row, index) {
+                if($(e.target).attr('class') === '') {
+                    return
+                }
                 $(e.target).text('已投').removeClass('castVote')
                 $._voteArr.push(initDataItem(row, 'castVote', '1'))
             },
