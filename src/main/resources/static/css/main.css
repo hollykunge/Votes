@@ -108,11 +108,61 @@ a:hover, a:focus, a:active {
     background: #f0f0f0 !important;
 }
 
-.bg-customer{
+.bg-customer {
     background: linear-gradient(to right, rgb(133, 133, 133), white);
     margin-top: 24px;
 }
 
-.tips-hide{
+.tips-hide {
     display: none;
 }
+
+.position_alert {
+    min-width: 380px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    border: 1px solid #ebeef5;
+    position: fixed;
+    left: 50%;
+    top: 20px;
+    transform: translateX(-50%);
+    background-color: #edf2fc;
+    transition: opacity .3s, transform .4s, top .4s;
+    overflow: hidden;
+    padding: 15px 15px 15px 20px;
+    display: flex;
+    align-items: center
+}
+
+.alert_message_fade_enter, .alert_message_fade_leave_active {
+    opacity: 0;
+    transform: translate(-50%, -100%)
+}
+.fade-in-linear-enter, .fade-in-linear-leave, .fade-in-linear-leave-active {
+    opacity: 0
+}
+
+.alert-success {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
+
+.alert-info {
+    color: #31708f;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+}
+
+.alert-warning {
+    color: #8a6d3b;
+    background-color: #fcf8e3;
+    border-color: #faebcc;
+}
+
+.alert-danger {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
+
