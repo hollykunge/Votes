@@ -68,6 +68,28 @@ public class UserVoteController {
     }
 
     /**
+     * 用户投票点击下一轮接口（地址：/userVote/nextTurn/{id}/{code}）
+     * @param id
+     * @param code
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = VoteConstants.INVITECODE_RPC+"nextTurn/"+"{id}/{code}", method = RequestMethod.GET)
+    public String nextTurnItem(@PathVariable Long id,
+                               @PathVariable String code)throws Exception{
+        Optional<Item> itemTemp = itemService.findByIdAndCode(id,code);
+        if(!itemTemp.isPresent()){
+            throw new BaseException("无效地址...");
+        }
+        List<Item> byPrevious = itemService.findByPrevious(String.valueOf(id));
+        if(byPrevious.size() == 0){
+            throw new BaseException("不存在下一轮...");
+        }
+        Item item = byPrevious.get(0);
+        return "redirect:"+VoteConstants.INVITECODE_RPC+item.getId()+"/"+item.getCode();
+    }
+
+    /**
      * 用户开始投票的保存
      * @param userVoteItems
      * @return

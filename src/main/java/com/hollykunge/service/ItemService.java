@@ -13,5 +13,7 @@ public interface ItemService {
     Optional<Item> findByIdAndCode(Long id,String code);
     Item setItemStatus(Long id,String status) throws Exception;
     Item deleteItem (Long id)throws Exception;
+
+    List<Item> findByPrevious(String previous);
 //    List<Item> findItemsByVote(Vote vote);
 }
