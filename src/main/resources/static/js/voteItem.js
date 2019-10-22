@@ -168,7 +168,7 @@ function columnConfig(rules, callback) {
         align: 'center',
         valign: 'middle',
         formatter: function (value, row, index) {
-            return index+1;
+            return index + 1;
         }
     })
     callback(rules, columnsOption)
@@ -394,19 +394,25 @@ function request(obj) {
         type: "POST",   //请求方式
         beforeSend: function () {
             //请求前的处理
-            // xhr.setRequestHeader("content-Type:'1333333333'");
+            $('#loading').modal('show');
         },
         success: function (req) {
+            $('#loading').modal('hide');
             //请求成功时处理
-            if (req === 'success') {
+            if (req == 'success') {
                 $('body').message({
                     message: '提交成功！正在跳转，请稍等',
                     type: 'success'
                 })
                 setTimeout(function () {
                     window.location.reload()
-                }, 3000)
+                }, 1000)
+                return
             }
+            $('body').message({
+                message: req,
+                type: 'danger'
+            })
 
 
         },
@@ -430,7 +436,7 @@ function request(obj) {
  * @returns {*}
  */
 function sorts(arr, callback, callbackFun) {
-    if(callback) {
+    if (callback) {
         arr = [].concat(callback(arr))
     }
     for (let i = 0; i < arr.length; i++) {
@@ -487,11 +493,12 @@ function initTitleConfig(titleConfig) {
  * @returns {boolean}
  */
 function isPass(val, min, max) {
+    console.log(arguments)
     if (max * 1 >= val * 1 && val * 1 >= min * 1) {
         return true
     }
     $('body').message({
-        message:'分数必须在 ' + min + ' 与 ' + max + ' 之间。',
+        message: '分数必须在 ' + min + ' 与 ' + max + ' 之间。',
         type: 'danger'
     })
 
@@ -514,10 +521,10 @@ function delHasItem(data, hasItemIndex, keys) {
         })
     }
     return arr.map(function (el) {
-        if(keys == 'score') {
-            return Object.assign({}, initDataItem(el), { [keys]: '0'})
+        if (keys == 'score') {
+            return Object.assign({}, initDataItem(el), {[keys]: '0'})
         } else {
-            return Object.assign({}, initDataItem(el, 'castVote'), { [keys]: '0'})
+            return Object.assign({}, initDataItem(el, 'castVote'), {[keys]: '0'})
         }
         // return initDataItem(el, 'castVote', '0')
     })
@@ -538,8 +545,8 @@ $.fn.message = function (options) {
     }
 
     let userOnClose = options.onClose;
-    let id = 'message_' + seed ++
-    $('<div id="' + id + '" class="alert alert-' + (options.type || 'success') + ' position_alert fade-in-linear-enter">' + options.message+ '</div>').appendTo($('body'))
+    let id = 'message_' + seed++
+    $('<div id="' + id + '" class="alert alert-' + (options.type || 'success') + ' position_alert fade-in-linear-enter">' + options.message + '</div>').appendTo($('body'))
     let timerTag, timerAddTag, timerRemoveTag;
     timerTag = setTimeout(function () {
         $('.alert').removeClass('fade-in-linear-enter')
@@ -549,7 +556,7 @@ $.fn.message = function (options) {
                 $('.alert_message_fade_leave_active').remove()
             }, 1000)
         }, 1000)
-    }, 500)
+    }, 100)
     timerTag = null
     timerAddTag = null
     timerRemoveTag = null
@@ -557,3 +564,39 @@ $.fn.message = function (options) {
 //      lihai
 }
 
+function PassRules(option, minOrMax) {
+    if (minOrMax === 'max') {
+        // 最大票数已经用完
+        if (option.max * 1 - (option.currentVotes * 1 + 1) <= -1) {
+            return false
+        }
+    }
+    if (minOrMax === 'min') {
+        // 未达到最小票数
+        if (option.currentVotes - option.min < 0) {
+            $('body').message({
+                message: ['最少投 ', $._voteArr[0].item.agreeMin, ' 票.'].join(''),
+                type: 'danger'
+            })
+            return false
+        }
+
+        return true
+    }
+    $('body').message({
+        message: [
+            '最少可以投',
+            option.min,
+            '票，',
+            '最多可投',
+            option.max,
+            '票，',
+            '还剩',
+            option.max * 1 - (option.currentVotes * 1 + 1),
+            '票'
+        ].join('')
+    })
+
+    return 'maxPass'
+
+}

@@ -3,20 +3,17 @@
 <body class="bg-light">
 <head>
     <div th:replace="/fragments/header :: header-css"/>
-    <style>
-        .normal {
-            color: #000000;
 
-        }
-    /*test*/
-    </style>
 </head>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary" style="margin-bottom: 16px">
     <div class="container">
         <a class="navbar-brand" style="color: #ffffff;">二部投票系统</a>
     </div>
 </nav>
-
+<div>
+    123123123
+    <i class="glyphicon glyphicon-ok" style="color: #00a0ea;"></i>
+</div>
 <div class="container" th:if="${item.status}==2">
     <div class="jumbotron jumbotron-fluid mb-3">
         <div class="container">
@@ -116,6 +113,18 @@
 
 
 <div th:replace="/fragments/footer :: footer"/>
+<!-- loading -->
+<div class="modal" id="loading" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop='static'>
+    <div class="modal-dialog" role="document">
+        <div class="loading">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</div>
 </body>
 <script type="text/javascript" th:inline="javascript">
     const voteOption = {
@@ -155,24 +164,42 @@
                 if (!isPass($(e.target).val(), row.item.minScore, row.item.maxScore)) {
                     return
                 }
-
-                //
                 row.score = $(e.target).val()
                 $._fraction.push(initDataItem(row))
             },
             // 投票
             'click .castVote': function (e, value, row, index) {
-
-
+                let maxPass = PassRules({
+                    currentVotes: $._voteArr.length,
+                    max: row.item.agreeMax,
+                    min: row.item.agreeMin
+                }, 'max')
+                // 票数用尽
+                if (!maxPass) {
+                    $('body').message({
+                        message: [
+                            '票数已用尽'
+                        ].join(''),
+                        type: 'danger'
+                    })
+                    return
+                }
                 if ($(e.target).attr('class') === '') {
                     return
-
                 }
-                                      votedCount++;
-                    $('#votedStatus').text("已投票数："+votedCount+"/"+data.length)
+                votedCount++;
+                // ------ start
+                // 投票按钮切换
 
+
+
+
+
+
+                $('#votedStatus').text("已投票数：" + votedCount + "/" + data.length)
                 $(e.target).text('已投').removeClass('castVote')
                 $._voteArr.push(initDataItem(row, 'castVote', '1'))
+
             },
             // 排序点击事件回调
             'mousedown .selectVote': function (e, value, row, index) {
@@ -194,13 +221,13 @@
                     '<option value="">请选择</option>',
                     currentValue
                 ].concat(
-                        sorts(allOrder)
-                            .map(
-                                function (item) {
-                                    return '<option value="' + item + '">' + item + '</option>'
-                                }
-                            )
-                    )
+                    sorts(allOrder)
+                        .map(
+                            function (item) {
+                                return '<option value="' + item + '">' + item + '</option>'
+                            }
+                        )
+                )
                     .join('')
                 $(e.target).html(html)
             },
@@ -246,6 +273,15 @@
 
             if ($._voteArr) {
                 if ($._voteArr.length > 0) {
+                    // passMin
+                    let passMin = PassRules({
+                        currentVotes: $._voteArr.length,
+                        max: $._voteArr[0].item.agreeMax,
+                        min: $._voteArr[0].item.agreeMin
+                    }, 'min')
+                    if (!passMin) {
+                        return
+                    }
                     requestBody = $._voteArr.concat(
                         delHasItem(
                             data,
@@ -273,10 +309,11 @@
                     return initDataItem(item)
                 })
             }
-            request({
-                url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),
-                data: JSON.stringify(requestBody)
-            })
+            console.log($._voteArr)
+            // request({
+            //     url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),
+            //     data: JSON.stringify(requestBody)
+            // })
 
         })
     })
