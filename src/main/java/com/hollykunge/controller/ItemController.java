@@ -51,7 +51,7 @@ public class ItemController {
 
     @Autowired
     public ItemController(VoteService voteService, UserService userService,
-                          ItemService itemService, VoteItemService voteItemService,UserVoteItemService userVoteItemService) {
+                          ItemService itemService, VoteItemService voteItemService, UserVoteItemService userVoteItemService) {
         this.voteService = voteService;
         this.userService = userService;
         this.itemService = itemService;
@@ -68,62 +68,63 @@ public class ItemController {
      */
     @RequestMapping(value = "/createTurn", method = RequestMethod.POST)
     public String createNewVote(@Valid Item item,
-                                BindingResult bindingResult) throws Exception{
-        String view = "redirect:/voteVote/"+item.getVote().getId()+"/";
+                                BindingResult bindingResult) throws Exception {
+        String view = "redirect:/voteVote/" + item.getVote().getId() + "/";
         //如果为null为增加页面，使用0
-        if(StringUtils.isEmpty(item.getId())){
-            view+="0";
-        }else{
-            view+=item.getId();
+        if (StringUtils.isEmpty(item.getId())) {
+            view += "0";
+        } else {
+            view += item.getId();
         }
-        try{
-            if(!StringUtils.isEmpty(item.getAgreeMin())){
+        try {
+            if (!StringUtils.isEmpty(item.getAgreeMin())) {
                 Integer.parseInt(item.getAgreeMin());
             }
-            if(!StringUtils.isEmpty(item.getAgreeMax())){
+            if (!StringUtils.isEmpty(item.getAgreeMax())) {
                 Integer.parseInt(item.getAgreeMax());
             }
-            if(!StringUtils.isEmpty(item.getMemberSize())){
+            if (!StringUtils.isEmpty(item.getMemberSize())) {
                 item.getMemberSize();
             }
-            if(!StringUtils.isEmpty(item.getMaxScore())){
+            if (!StringUtils.isEmpty(item.getMaxScore())) {
                 Integer.parseInt(item.getMaxScore());
             }
-            if(!StringUtils.isEmpty(item.getMinScore())){
+            if (!StringUtils.isEmpty(item.getMinScore())) {
                 Integer.parseInt(item.getMinScore());
             }
-        }catch (NumberFormatException e){
-             error(bindingResult,"memberSize","error.memberSize","限制投票人数,范围（最大）, \n" +
-                     "范围（最小）,打分项请输入数值字段");
-             return frashItemView(item);
+        } catch (NumberFormatException e) {
+            error(bindingResult, "memberSize", "error.memberSize", "限制投票人数,范围（最大）, \n" +
+                    "范围（最小）,打分项请输入数值字段");
+            return frashItemView(item);
         }
         if (bindingResult.hasErrors()) {
             List<ObjectError> allErrors = bindingResult.getAllErrors();
-            allErrors.stream().forEach(error->{
+            allErrors.stream().forEach(error -> {
                 log.error(error.getDefaultMessage());
             });
             return frashItemView(item);
         } else {
-            try{
+            try {
                 Long voteId = item.getVote().getId();
                 itemService.save(item);
                 return "redirect:/vote/" + voteId;
-            }catch (BaseException e){
-                error(bindingResult,"memberSize","error.memberSize",e.getMessage());
+            } catch (BaseException e) {
+                error(bindingResult, "memberSize", "error.memberSize", e.getMessage());
                 return frashItemView(item);
             }
         }
     }
 
-    public String frashItemView(@Valid Item item)throws Exception {
-            return "/turnForm";
+    public String frashItemView(@Valid Item item) throws Exception {
+        return "/turnForm";
     }
 
-    private void error(BindingResult bindingResult,String s,String s1,String s2){
+    private void error(BindingResult bindingResult, String s, String s1, String s2) {
         bindingResult
                 .rejectValue(s, s1, s2);
     }
-    private void success(BindingResult bindingResult,String s,String s1,String s2){
+
+    private void success(BindingResult bindingResult, String s, String s1, String s2) {
         bindingResult
                 .rejectValue(s, s1, s2);
     }
@@ -132,8 +133,8 @@ public class ItemController {
     /**
      * 获取投票轮编辑页
      *
-     * @param voteId 投票id
-     * @param itemId 投票轮id
+     * @param voteId    投票id
+     * @param itemId    投票轮id
      * @param principal
      * @param model
      * @return
@@ -142,23 +143,25 @@ public class ItemController {
     public String voteVoteWithId(@PathVariable Long voteId,
                                  @PathVariable Long itemId,
                                  Principal principal,
-                                 Model model)throws Exception {
-        try{
+                                 Model model) throws Exception {
+        try {
             Item item = itemService.findById(itemId);
             //为添加
-            if(item == null){
+            if (item == null) {
                 item = new Item();
                 Optional<User> user = userService.findByUsername(principal.getName());
                 Optional<Vote> vote = voteService.findForId(voteId);
                 item.setUser(user.get());
-
                 item.setVote(vote.get());
                 //添加页面时默认选择否同
                 item.setRules("1");
             }
+            if (item.getMemberSize() == null){
+                item.setMemberSize(item.getVote().getMemberSize());
+            }
             model.addAttribute("item", item);
             return "/turnForm";
-        }catch (Exception e){
+        } catch (Exception e) {
             throw e;
         }
 //        Optional<Vote> vote = voteService.findForId(id);
@@ -187,18 +190,18 @@ public class ItemController {
      */
     @RequestMapping(value = "/editItem/{id}", method = RequestMethod.GET)
     public String editItem(@PathVariable Long id,
-                           Model model)throws Exception {
+                           Model model) throws Exception {
         try {
             Item item = itemService.findById(id);
             Optional<List<VoteItem>> voteItems = voteItemService.findByItem(item);
             model.addAttribute("item", item);
-            model.addAttribute("vote",item.getVote());
+            model.addAttribute("vote", item.getVote());
             model.addAttribute("voteItems", null);
-            if(voteItems.get().size()>0){
+            if (voteItems.get().size() > 0) {
                 model.addAttribute("voteItems", JSONObject.toJSONString(voteItems.get()));
             }
             return "/item";
-        }catch (Exception e){
+        } catch (Exception e) {
             throw e;
         }
     }
@@ -213,11 +216,11 @@ public class ItemController {
     @RequestMapping(value = "/stat/{id}", method = RequestMethod.GET)
     public String statItem(@PathVariable Long id,
                            Model model) {
-        try{
+        try {
             Item item = itemService.findById(id);
             model.addAttribute("item", item);
             return "/stat";
-        }catch (Exception e){
+        } catch (Exception e) {
             throw e;
         }
     }
@@ -231,10 +234,10 @@ public class ItemController {
      */
     @RequestMapping(value = "/editItem", method = RequestMethod.POST)
     public String editVoteWithId(@Valid Item item,
-                                 BindingResult bindingResult) throws Exception{
+                                 BindingResult bindingResult) throws Exception {
         if (bindingResult.hasErrors()) {
             List<ObjectError> allErrors = bindingResult.getAllErrors();
-            allErrors.stream().forEach(error->{
+            allErrors.stream().forEach(error -> {
                 log.error(error.getDefaultMessage());
             });
             return "/turnForm";
@@ -247,6 +250,7 @@ public class ItemController {
 
     /**
      * 导入投票轮数据
+     *
      * @param file
      * @param request
      * @return
@@ -262,7 +266,7 @@ public class ItemController {
             Item item = new Item();
             item.setId(Long.parseLong(itemIdTemp));
             EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadDataListener(item, voteItemService)).sheet().doRead();
-            EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadHeaderDataListener(item,voteService,itemService)).sheet().doRead();
+            EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadHeaderDataListener(item, voteService, itemService)).sheet().doRead();
             return "redirect:/editItem/" + itemIdTemp;
         } catch (Exception e) {
             return "redirect:/error";
@@ -271,6 +275,7 @@ public class ItemController {
 
     /**
      * 导出模板
+     *
      * @param response
      * @return
      * @throws IOException
@@ -287,6 +292,7 @@ public class ItemController {
 
     /**
      * 设置投票轮状态
+     *
      * @return
      * @throws Exception
      */
@@ -296,29 +302,30 @@ public class ItemController {
                                 RedirectAttributes redirectAttributes) throws Exception {
         //投票轮发布的时候，判断是否有投票项，没有不能发起投票
         Optional<List<VoteItem>> voteItems;
-        if(Objects.equals(VoteConstants.ITEM_SEND_STATUS,status)){
+        if (Objects.equals(VoteConstants.ITEM_SEND_STATUS, status)) {
             Item item = new Item();
             item.setId(id);
             voteItems = voteItemService.findByItem(item);
             Item itemTemp = itemService.findById(id);
-            if(voteItems.get().size()==0){
-                redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("第"+itemTemp.getTurnNum()+"轮，没有投票项不能发起投票"));
-                return "redirect:/vote/"+itemTemp.getVote().getId();
+            if (voteItems.get().size() == 0) {
+                redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("第" + itemTemp.getTurnNum() + "轮，没有投票项不能发起投票"));
+                return "redirect:/vote/" + itemTemp.getVote().getId();
             }
         }
-        if(Objects.equals(VoteConstants.ITEM_FINAL_STATUS,status)){
+        if (Objects.equals(VoteConstants.ITEM_FINAL_STATUS, status)) {
             Item itemTemp = itemService.findById(id);
-            if(itemTemp.getMemberNum() == 0){
+            if (itemTemp.getMemberNum() == 0) {
                 redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("暂无投票，不能结束本轮投票！"));
-                return "redirect:/vote/"+itemTemp.getVote().getId();
+                return "redirect:/vote/" + itemTemp.getVote().getId();
             }
         }
         Item item = itemService.setItemStatus(id, status);
-        return "redirect:/vote/"+item.getVote().getId();
+        return "redirect:/vote/" + item.getVote().getId();
     }
 
     /**
      * 删除投票轮
+     *
      * @param id
      * @return
      * @throws Exception
@@ -326,11 +333,12 @@ public class ItemController {
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
     public String deleteItem(@PathVariable Long id) throws Exception {
         Item item = itemService.deleteItem(id);
-        return "redirect:/vote/"+item.getVote().getId();
+        return "redirect:/vote/" + item.getVote().getId();
     }
 
     /**
      * 删除投票项
+     *
      * @param itemId
      * @param ids
      * @return
@@ -338,10 +346,10 @@ public class ItemController {
      */
     @RequestMapping(value = "/deleteVoteItem/{itemId}/{ids}", method = RequestMethod.GET)
     public String deleteVoteItems(@PathVariable String itemId,
-                                  @PathVariable String ids)throws Exception{
+                                  @PathVariable String ids) throws Exception {
         try {
             voteItemService.deleteVoteItem(Arrays.asList(ids.split(",")));
-            return "redirect:/editItem/"+itemId;
+            return "redirect:/editItem/" + itemId;
         } catch (Exception e) {
             throw e;
         }
@@ -349,15 +357,16 @@ public class ItemController {
 
     /**
      * 添加一个投票项
+     *
      * @param voteItem
      * @return
      * @throws Exception
      */
     @RequestMapping(value = "/addVoteItem", method = RequestMethod.POST)
-    public String addVoteItem(@RequestBody VoteItem voteItem)throws Exception{
+    public String addVoteItem(@RequestBody VoteItem voteItem) throws Exception {
         try {
             voteItemService.add(voteItem);
-            return "redirect:/editItem/"+voteItem.getItem().getId();
+            return "redirect:/editItem/" + voteItem.getItem().getId();
         } catch (Exception e) {
             throw e;
         }
@@ -365,29 +374,30 @@ public class ItemController {
 
     /**
      * 统计接口
+     *
      * @param model
      * @return
      * @throws Exception
      */
     @RequestMapping(value = "/statistics/{id}", method = RequestMethod.GET)
     public String getStatistics(@PathVariable Long id,
-                                Model model)throws Exception{
+                                Model model) throws Exception {
         try {
             Item item = getItem(id);
             Map<String, Object> statistics = userVoteItemService.getStatistics(item);
-            model.addAttribute("statistics",JSONObject.toJSONString(statistics));
-            model.addAttribute("item",item);
-            model.addAttribute("itemObj",JSONObject.toJSONString(item));
+            model.addAttribute("statistics", JSONObject.toJSONString(statistics));
+            model.addAttribute("item", item);
+            model.addAttribute("itemObj", JSONObject.toJSONString(item));
             return "/stat";
         } catch (Exception e) {
             throw e;
         }
     }
 
-    private Item getItem(Long id){
+    private Item getItem(Long id) {
         Item item = null;
         item = itemService.findById(id);
-        if(item == null){
+        if (item == null) {
             throw new BaseException("错误的投票轮..");
         }
         return item;
@@ -395,13 +405,15 @@ public class ItemController {
 
     /**
      * 统计结果excel导出
+     *
      * @param id(item的id)
      * @return
      * @throws Exception
      */
     @RequestMapping(value = "/statistics/export/{id}", method = RequestMethod.GET)
-    public @ResponseBody String statisticsExport (@PathVariable Long id,
-                                HttpServletResponse response)throws Exception{
+    public @ResponseBody
+    String statisticsExport(@PathVariable Long id,
+                            HttpServletResponse response) throws Exception {
         try {
             Item item = this.getItem(id);
             Map<String, Object> statistics = userVoteItemService.getStatistics(item);
@@ -410,21 +422,21 @@ public class ItemController {
             response.setContentType("application/vnd.ms-excel");
             response.setCharacterEncoding("utf-8");
             String fileName = "投票结果统计";
-            if(item != null){
+            if (item != null) {
                 String voteName = item.getVote().getTitle();
-                String trun = item.getTurnNum()+"";
-                fileName = voteName+"第"+trun+fileName;
+                String trun = item.getTurnNum() + "";
+                fileName = voteName + "第" + trun + fileName;
             }
             fileName = URLEncoder.encode(fileName, "UTF-8");
-            fileName = new String(fileName.getBytes("utf-8"),"ISO-8859-1");
-            response.setHeader("Content-disposition", "attachment;filename="+fileName+".xlsx");
+            fileName = new String(fileName.getBytes("utf-8"), "ISO-8859-1");
+            response.setHeader("Content-disposition", "attachment;filename=" + fileName + ".xlsx");
             String excelHeader = item.getVote().getExcelHeader();
-            LinkedHashMap jsonObject = JSON.parseObject(excelHeader,LinkedHashMap.class);
+            LinkedHashMap jsonObject = JSON.parseObject(excelHeader, LinkedHashMap.class);
             //清洗一遍数据，excelhead中对应的值为null的给默认值无
-            statisticsDownloadData.forEach(data ->{
-                jsonObject.forEach((key,value)->{
-                    if(StringUtils.isEmpty(ReflectionUtils.getFieldValue(data, (String) key))){
-                        ReflectionUtils.setFieldValue(data,(String) key,"无");
+            statisticsDownloadData.forEach(data -> {
+                jsonObject.forEach((key, value) -> {
+                    if (StringUtils.isEmpty(ReflectionUtils.getFieldValue(data, (String) key))) {
+                        ReflectionUtils.setFieldValue(data, (String) key, "无");
                     }
                 });
             });
@@ -440,37 +452,39 @@ public class ItemController {
 
     /**
      * 使用上一轮投票项
+     *
      * @param id
      * @return
      * @throws Exception
      */
     @RequestMapping(value = "/useParentItem/{id}", method = RequestMethod.GET)
-    public String itemToNext (@PathVariable Long id,
-                                                  Model model)throws Exception{
+    public String itemToNext(@PathVariable Long id,
+                             Model model) throws Exception {
         try {
             Item dataItem = itemService.findById(id);
             String previousId = dataItem.getPreviousId();
-            if(StringUtils.isEmpty(previousId)){
+            if (StringUtils.isEmpty(previousId)) {
                 throw new BaseException("第一轮投票不能使用上一轮投票项");
             }
             Item item = getItem(Long.valueOf(previousId));
             Optional<List<VoteItem>> byItem = voteItemService.findByItem(item);
-            if(!byItem.isPresent()||byItem.get().size() == 0){
+            if (!byItem.isPresent() || byItem.get().size() == 0) {
                 throw new BaseException("上一轮没有投票项...");
             }
             voteItemService.deleteByItem(dataItem);
-            List<VoteItem> tempData = JSONArray.parseArray(JSONObject.toJSONString(byItem.get()),VoteItem.class);
+            List<VoteItem> tempData = JSONArray.parseArray(JSONObject.toJSONString(byItem.get()), VoteItem.class);
             for (VoteItem vote : tempData) {
                 this.resetVoteItem(vote);
                 vote.setItem(dataItem);
                 voteItemService.add(vote);
             }
-            return "redirect:/editItem/"+id;
+            return "redirect:/editItem/" + id;
         } catch (Exception e) {
             throw e;
         }
     }
-    private void resetVoteItem(VoteItem voteItem){
+
+    private void resetVoteItem(VoteItem voteItem) {
         voteItem.setVoteItemId(null);
         voteItem.setStatisticsOrderScore(0);
         voteItem.setStatisticsToalScore(null);
@@ -478,16 +492,16 @@ public class ItemController {
     }
 
     private List<List<String>> head(LinkedHashMap jsonObject) {
-        try{
+        try {
             List<List<String>> list = new ArrayList<List<String>>();
             List<String> one = new ArrayList<>();
             one.add("序号");
             list.add(one);
             Collection<Object> values = jsonObject.values();
             AtomicInteger index = new AtomicInteger();
-            values.forEach((Object ob) ->{
+            values.forEach((Object ob) -> {
                 index.getAndIncrement();
-                if(index.intValue() > 7){
+                if (index.intValue() > 7) {
                     return;
                 }
                 List<String> head = new ArrayList<String>();
@@ -498,7 +512,7 @@ public class ItemController {
             fina.add("结果");
             list.add(fina);
             return list;
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error(ExceptionCommonUtil.getExceptionMessage(e));
             throw e;
         }
