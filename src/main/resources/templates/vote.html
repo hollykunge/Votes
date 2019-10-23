@@ -77,7 +77,7 @@
                             <button type="button" class="btn btn-outline-primary btn-sm d-inline">编辑</button>
                         </a>
                         <a th:if="${item.status == '1'}"
-                           th:href="@{'/editItem/{id}'(id=${item.id})}">
+                           th:href="@{'/voteItemsView/{id}'(id=${item.id})}">
                             <button type="button" class="btn btn-outline-info btn-sm d-inline">投票项</button>
                         </a>
                         <a th:if="${item.status == '1'}"
