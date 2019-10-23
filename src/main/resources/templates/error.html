@@ -9,9 +9,9 @@
 
 <div class="container">
 
-    <h1 th:if="${errorMessage}" th:utext="${errorMessage}">Error java.lang.NullPointerException</h1>
-    <h1 th:if="!${errorMessage}">404 - Page does not exist</h1>
-    <a href="index.html" th:href="@{/home}">Back to Home Page</a>
+    <h1 th:if="${errorMessage}" th:utext="${errorMessage}">错误 java.lang.NullPointerException</h1>
+    <h1 th:if="!${errorMessage}">404 - 未找到当前页</h1>
+    <a href="index.html" class="btn btn-primary" th:href="@{/home}">返回到主页</a>
 
 </div>
 
