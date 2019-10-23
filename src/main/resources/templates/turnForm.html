@@ -27,10 +27,11 @@
                 <label th:if="${#fields.hasErrors('memberSize')}" th:errors="*{memberSize}"
                        class="alert alert-danger" style="width: 100%"></label>
                 <h3 class="text-center">编辑一轮投票</h3>
+                <div id="alertMsg"></div>
                 <h6 class="p-1 mb-2 bg-customer text-white">投票人数</h6>
                 <div class="row">
                     <div class="col-md-12">
-                        <input type="text" class="form-control" id="memberSize" placeholder=""
+                        <input type="number" class="form-control" id="memberSize" placeholder=""
                                required="" th:field="*{memberSize}"/>
                     </div>
                 </div>
@@ -71,7 +72,7 @@
                     </div>
                     <div class="col-md-4 mb-3">
                         <label for="max">范围（最大）</label>
-                        <input type="text" class="form-control" id="max" placeholder=""
+                        <input type="number" class="form-control" id="max" placeholder=""
                                th:field="*{agreeMax}"/>
                         <div class="invalid-feedback">
                             填写最大数量
@@ -79,7 +80,7 @@
                     </div>
                     <div class="col-md-4 mb-3">
                         <label for="min">范围（最小）</label>
-                        <input type="text" class="form-control" id="min" placeholder=""
+                        <input type="number" class="form-control" id="min" placeholder=""
                                th:field="*{agreeMin}"/>
                         <div class="invalid-feedback">
                             填写最小数量
@@ -89,12 +90,12 @@
                 <div id="sortDiv" class="row">
                     <div class="col-md-6 mb-3">
                         <label for="max">分数（最高）</label>
-                        <input type="text" class="form-control" id="maxSort" placeholder=""
+                        <input type="number" class="form-control" id="maxSort" placeholder=""
                                th:field="*{maxScore}"/>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="min">分数（最低）</label>
-                        <input type="text" class="form-control" id="minSort" placeholder=""
+                        <input type="number" class="form-control" id="minSort" placeholder=""
                                th:field="*{minScore}"/>
                     </div>
                 </div>
@@ -123,17 +124,9 @@
                 <hr class="mb-4"/>
                 <div class="row">
                     <div class="col-md-12 mb-3">
-                        <button type="submit" class="btn btn-primary btn-block">保存</button>
+                        <button type="submit" class="btn btn-primary btn-block" onclick="return saveVoteItem()">保存</button>
                     </div>
                 </div>
-                <!--                    <div class="row">-->
-                <!--                        <div class="col-md-12 mb-3">-->
-                <!--                            <div class="btn-group" role="group" aria-label="Basic example" style="width: 100%;">-->
-                <!--                                <button class="btn btn-light" th:href="@{'/vote/' + ${item.vote.id}}">取消</button>-->
-                <!--                                <button type="submit" class="btn btn-primary">保存</button>-->
-                <!--                            </div>-->
-                <!--                        </div>-->
-                <!--                    </div>-->
             </form>
         </div>
     </div>
@@ -147,14 +140,13 @@
     $(document).ready(function () {
         showRuleDiv();
     });
-
+    var rule = 0;
     /**
      * 根据规则范围的选择
      * 显示对应的规则项
      */
     function showRuleDiv() {
-        var rule = $('input[type=radio]:checked').val();
-        console.log(rule)
+        rule = $('input[type=radio]:checked').val();
         if (rule === '1') {
             $("#isNotDiv").attr("style", "visibility:visible;");
             $("#sortDiv").attr("style", "display:none;");
@@ -169,14 +161,13 @@
             $("#countDiv").attr("style", "display:none;");
         }
         setRequired(rule)
-    };
-
+    }
     /**
      * 根据规则范围的选择
      * 必填项限制调整
      */
     function setRequired(rule) {
-        if (rule === '1' || rule == undefined) {
+        if (rule === '1' || rule === undefined) {
             $("#agreeRule").attr("required", true);
             $("#max").attr("required", true);
             $("#min").attr("required", true);
@@ -195,7 +186,41 @@
             $("#maxSort").attr("required", true);
             $("#minSort").attr("required", true);
         }
-    };
+    }
+    function showInfo (info){
+        var innerDiv = '<div class="alert alert-danger">'+ info +'</div>';
+        $("#alertMsg").html(innerDiv)
+    }
+    function hideInfo(){
+        $("#alertMsg").html('<div></div>')
+    }
+    function saveVoteItem(){
+        var rule = rule = $('input[type=radio]:checked').val();
+        if (rule === '1') {
+            console.log(2)
+            /*<![CDATA[*/
+            if ($("#max").val() < $("#min").val()){
+                showInfo("最大范围应大于最小范围");
+                return false;
+            }else{
+                hideInfo();
+                return true;
+            }
+            /*]]>*/
+        } else if (rule === '3') {
+            console.log(3)
+            /*<![CDATA[*/
+            if ($("#maxSort").val() < $("#minSort").val()){
+                showInfo("最大分数应大于最小分数");
+                return false;
+            }else{
+                hideInfo();
+                return true;
+            }
+            /*]]>*/
+        }
+    }
+
 </script>
 </body>
 </html>
