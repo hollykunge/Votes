@@ -162,6 +162,9 @@ public class ItemController {
             if (item.getMemberSize() == null){
                 item.setMemberSize(item.getVote().getMemberSize());
             }
+            if (item.getBody() == null){
+                item.setBody(item.getVote().getBody());
+            }
             model.addAttribute("item", item);
             return "/turnForm";
         } catch (Exception e) {
