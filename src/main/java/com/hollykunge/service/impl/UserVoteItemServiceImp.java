@@ -127,7 +127,7 @@ public class UserVoteItemServiceImp implements UserVoteItemService {
         if (byItem.isPresent() && byItem.get().size() > 0) {
             for (VoteItem voteItem:
                  byItem.get()) {
-                List<Integer> integers = userVoteItemRepository.orderRule(item.getId(), voteItem.getVoteItemId());
+                List<String> integers = userVoteItemRepository.orderRule(item.getId(), voteItem.getVoteItemId());
                 Integer max = userVoteItemRepository.orderRuleMaxScore(item.getId(), voteItem.getVoteItemId());
                 voteItem.setStatisticsOrderScore(calculate(max, integers));
             }
@@ -142,8 +142,8 @@ public class UserVoteItemServiceImp implements UserVoteItemService {
         return byItem.get();
     }
 
-    private Integer calculate (Integer max,List<Integer> list){
-        int i = list.stream().mapToInt(integer -> integer*(max + 1 - integer)).sum();
+    private Integer calculate (Integer max,List<String> list){
+        int i = list.stream().mapToInt(integer -> Integer.parseInt(integer)*(max + 1 - Integer.parseInt(integer))).sum();
         return i;
     }
 }

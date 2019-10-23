@@ -16,11 +16,12 @@ import java.util.Date;
 public class Item {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "item_seq")
+    @SequenceGenerator(name = "item_seq",sequenceName = "ITEM_SEQ",initialValue = 2,allocationSize = 1)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "body", columnDefinition = "TEXT")
+    @Column(name = "body", columnDefinition = "varchar2(4000)")
     private String body;
 
     public Integer getTurnNum() {
@@ -31,23 +32,23 @@ public class Item {
         this.turnNum = turnNum;
     }
 
-    @Column(name = "turn_num", columnDefinition = "int(6) COMMENT '投票第几轮'")
-    private Integer turnNum;
+    @Column(name = "turn_num", columnDefinition = "number(6)")
+    private Integer turnNum;// COMMENT '投票第几轮'
 
-    @Column(columnDefinition = "int(6) COMMENT '预计投票人数'")
-    private Integer memberSize;
+    @Column(columnDefinition = "number(6)")
+    private Integer memberSize;// COMMENT '预计投票人数'
 
-    @Column(columnDefinition = "int(6) COMMENT '投票人数'")
-    private Integer memberNum;
+    @Column(columnDefinition = "number(6)")
+    private Integer memberNum;// COMMENT '投票人数'
 
-    @Column(columnDefinition = "varchar(11) COMMENT '上一轮id'")
-    private String previousId;
+    @Column(columnDefinition = "varchar2(11)")
+    private String previousId;// COMMENT '上一轮id'
 
-    @Column(columnDefinition = "varchar(32) COMMENT '邀请码'")
-    private String code;
+    @Column(columnDefinition = "varchar2(32)")
+    private String code;// COMMENT '邀请码'
 
-    @Column(columnDefinition = "text COMMENT '规则内容'")
-    private String content;
+    @Column(columnDefinition = "varchar2(4000)")
+    private String content;// COMMENT '规则内容's
     /**
      * 规则范围（1否同2排序3打分）
      */
@@ -76,7 +77,7 @@ public class Item {
     private String description;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "create_date", nullable = false, updatable = false)
+    @Column(name = "create_date", nullable = false, updatable = false, columnDefinition = "Date")
     @CreationTimestamp
     private Date createDate;
     /**

@@ -14,7 +14,8 @@ import javax.validation.constraints.NotNull;
 public class VoteItem {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "vote_item_seq")
+    @SequenceGenerator(name = "vote_item_seq",sequenceName = "VOTE_ITEM_SEQ",initialValue = 2,allocationSize = 1)
     @Column(name = "id")
     private Long voteItemId;
     /**

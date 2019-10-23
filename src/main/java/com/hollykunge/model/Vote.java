@@ -18,7 +18,8 @@ import java.util.Date;
 public class Vote {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "vote_seq")
+    @SequenceGenerator(name = "vote_seq",sequenceName = "VOTE_SEQ",initialValue = 2,allocationSize = 1)
     @Column(name = "vote_id")
     private Long id;
 
@@ -27,17 +28,17 @@ public class Vote {
     @NotEmpty(message = "请输入标题")
     private String title;
 
-    @Column(name = "body", columnDefinition = "TEXT")
+    @Column(name = "body", columnDefinition = "varchar2(4000)")
     private String body;
 
     @Column(name = "excel_header")
     private String excelHeader;
 
-    @Column(columnDefinition = "int(6) COMMENT '预计投票人数'")
-    private Integer memberSize;
+    @Column(columnDefinition = "number(6)")
+    private Integer memberSize;// COMMENT '预计投票人数'
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "create_date", nullable = false, updatable = false)
+    @Column(name = "create_date", nullable = false, updatable = false,columnDefinition = "Date")
     @CreationTimestamp
     private Date createDate;
 

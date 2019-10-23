@@ -12,11 +12,12 @@ import java.util.Collection;
  * @author dd
  */
 @Entity
-@Table(name = "user")
+@Table(name = "vote_user")
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "user_seq")
+    @SequenceGenerator(name = "user_seq",sequenceName = "USER_SEQ",initialValue = 2,allocationSize = 1)
     @Column(name = "user_id")
     private Long id;
 

@@ -20,7 +20,7 @@ public interface UserVoteItemRepository extends JpaRepository<UserVoteItem, Long
 
     @Query(value = "SELECT count(1)  num,vote_item_id voteItemId " +
             " FROM USER_VOTE_ITEM " +
-            " group by vote_item_id,item_id " +
+            " group by vote_item_id,item_id,agree_flag " +
             " having item_id = ?1 and agree_flag = '1' "+
             " order by num desc", nativeQuery = true)
     List<Object[]> agreeRule(Long itemId);
@@ -41,7 +41,7 @@ public interface UserVoteItemRepository extends JpaRepository<UserVoteItem, Long
             "                        having item_id = ?1" +
             "                        and u.vote_item_id = ?2" +
             "                        order by der desc", nativeQuery = true)
-    List<Integer> orderRule(Long itemId,Long voteItemId);
+    List<String> orderRule(Long itemId,Long voteItemId);
     @Query(value = "SELECT max(u.order_rule) " +
             "                        FROM USER_VOTE_ITEM u " +
             "                        group by" +

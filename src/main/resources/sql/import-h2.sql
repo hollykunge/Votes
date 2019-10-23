@@ -1,8 +1,8 @@
 ALTER TABLE VOTE
-  ALTER COLUMN create_date SET DEFAULT CURRENT_TIMESTAMP;
+  modify  create_date  DEFAULT sysdate;
 
 -- Users
-INSERT INTO USER (user_id, password, username, active)
+INSERT INTO VOTE_USER (user_id, password, username, active)
 VALUES
   (1, '$2a$06$OAPObzhRdRXBCbk7Hj/ot.jY3zPwR8n7/mfLtKIgTzdJa4.6TwsIm', 'user', 1);
 
@@ -21,14 +21,14 @@ VALUES (1, 2);
 -- Votes
 INSERT INTO VOTE (vote_id, user_id, title, body, create_date)
 VALUES (1, 1, '投票项1',
-        '"投票项1"',
-        {ts '2016-10-19 11:10:13.247'});
+        '投票项1',
+        to_timestamp('2016-10-19 11:10:13','yyyy-mm-dd hh24:mi:ss'));
 
 -- Items
-INSERT INTO ITEM (vote_id, user_id, body, create_date,rules,agree_rule,agree_max,agree_min)
-VALUES (1, 1,
-        '"第一轮投票"',
-        CURRENT_TIMESTAMP(),
+INSERT INTO ITEM (id,vote_id, user_id, body, create_date,rules,agree_rule,agree_max,agree_min)
+VALUES (1, 1, 1,
+        '第一轮投票',
+        sysdate,
         '1',
         '32',
         10,
