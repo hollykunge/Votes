@@ -397,7 +397,7 @@ public class ItemController {
     public String addVoteItem(@RequestBody VoteItem voteItem) throws Exception {
         try {
             voteItemService.add(voteItem);
-            return "redirect:/editItem/" + voteItem.getItem().getId();
+            return "redirect:/voteItemsView/" + voteItem.getItem().getId();
         } catch (Exception e) {
             throw e;
         }
@@ -509,7 +509,7 @@ public class ItemController {
                 vote.setItem(dataItem);
                 voteItemService.add(vote);
             }
-            return "redirect:/editItem/" + id;
+            return "redirect:/voteItemsView/" + id;
         } catch (Exception e) {
             throw e;
         }
