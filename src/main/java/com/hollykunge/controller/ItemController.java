@@ -376,14 +376,14 @@ public class ItemController {
      * @throws Exception
      */
     @RequestMapping(value = "/deleteVoteItem/{itemId}/{ids}", method = RequestMethod.GET)
-    public String deleteVoteItems(@PathVariable String itemId,
+    public @ResponseBody String deleteVoteItems(@PathVariable String itemId,
 
                                   @PathVariable String ids,
                                   Model model)throws Exception{
         try {
             voteItemService.deleteVoteItem(Arrays.asList(ids.split(",")));
             model.addAttribute("showMessage","删除成功！");
-            return this.voteItemsView(Long.valueOf(itemId),model);
+            return "success";
         } catch (Exception e) {
             throw e;
         }
@@ -400,7 +400,7 @@ public class ItemController {
     public String addVoteItem(@RequestBody VoteItem voteItem) throws Exception {
         try {
             voteItemService.add(voteItem);
-            return "redirect:/editItem/" + voteItem.getItem().getId();
+            return "redirect:/voteItemsView/" + voteItem.getItem().getId();
         } catch (Exception e) {
             throw e;
         }
@@ -512,7 +512,7 @@ public class ItemController {
                 vote.setItem(dataItem);
                 voteItemService.add(vote);
             }
-            return "redirect:/editItem/" + id;
+            return "redirect:/voteItemsView/" + id;
         } catch (Exception e) {
             throw e;
         }
