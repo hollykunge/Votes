@@ -4,6 +4,8 @@ import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.hollykunge.annotation.ExtApiIdempotent;
+import com.hollykunge.annotation.ExtApiToken;
 import com.hollykunge.config.*;
 import com.hollykunge.constants.VoteConstants;
 import com.hollykunge.exception.BaseException;
@@ -84,7 +86,7 @@ public class ItemController {
                 Integer.parseInt(item.getAgreeMax());
             }
             if(!StringUtils.isEmpty(item.getMemberSize())){
-                Integer.parseInt(item.getMemberSize());
+                item.getMemberSize();
             }
             if(!StringUtils.isEmpty(item.getMaxScore())){
                 Integer.parseInt(item.getMaxScore());
@@ -185,6 +187,7 @@ public class ItemController {
      * @param model
      * @return
      */
+    @ExtApiToken(interfaceAdress = "/item/import")
     @RequestMapping(value = "/editItem/{id}", method = RequestMethod.GET)
     public String editItem(@PathVariable Long id,
                            Model model)throws Exception {
@@ -253,7 +256,8 @@ public class ItemController {
      * @throws IOException
      */
     @RequestMapping(value = "/item/import", method = RequestMethod.POST)
-    public String excelImport(MultipartFile file, HttpServletRequest request) throws Exception {
+    @ExtApiIdempotent(value = VoteConstants.EXTAPIHEAD)
+    public String excelImport(MultipartFile file, HttpServletRequest request,Model model) throws Exception {
         try {
             String itemIdTemp = request.getHeader("itemId");
             if (StringUtils.isEmpty(itemIdTemp)) {
@@ -263,7 +267,8 @@ public class ItemController {
             item.setId(Long.parseLong(itemIdTemp));
             EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadDataListener(item, voteItemService)).sheet().doRead();
             EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadHeaderDataListener(item,voteService,itemService)).sheet().doRead();
-            return "redirect:/editItem/" + itemIdTemp;
+//            return "redirect:/editItem/" + itemIdTemp;
+            return this.editItem(Long.valueOf(itemIdTemp),model);
         } catch (Exception e) {
             return "redirect:/error";
         }
@@ -305,6 +310,12 @@ public class ItemController {
                 redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("第"+itemTemp.getTurnNum()+"轮，没有投票项不能发起投票"));
                 return "redirect:/vote/"+itemTemp.getVote().getId();
             }
+            if(Objects.equals(itemTemp.getRules(),"1")){
+                if(voteItems.get().size() < Integer.parseInt(itemTemp.getAgreeMin())){
+                    redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("第"+itemTemp.getTurnNum()+"轮，投票项小于了限制的最小投票数"));
+                    return "redirect:/vote/"+itemTemp.getVote().getId();
+                }
+            }
         }
         if(Objects.equals(VoteConstants.ITEM_FINAL_STATUS,status)){
             Item itemTemp = itemService.findById(id);
@@ -338,10 +349,12 @@ public class ItemController {
      */
     @RequestMapping(value = "/deleteVoteItem/{itemId}/{ids}", method = RequestMethod.GET)
     public String deleteVoteItems(@PathVariable String itemId,
-                                  @PathVariable String ids)throws Exception{
+                                  @PathVariable String ids,
+                                  Model model)throws Exception{
         try {
             voteItemService.deleteVoteItem(Arrays.asList(ids.split(",")));
-            return "redirect:/editItem/"+itemId;
+            model.addAttribute("showMessage","删除成功！");
+            return this.editItem(Long.valueOf(itemId),model);
         } catch (Exception e) {
             throw e;
         }
