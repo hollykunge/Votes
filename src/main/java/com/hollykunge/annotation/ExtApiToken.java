@@ -8,5 +8,6 @@ import java.lang.annotation.Target;
 @Target(value = ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ExtApiToken {
-
+    //选择映射的接口地址
+    String interfaceAdress();
 }

@@ -111,5 +111,6 @@ public class Vote {
     }
 
     @OneToMany(mappedBy = "vote", cascade = CascadeType.REMOVE)
+    @OrderBy("turn_num ASC")
     private Collection<Item> items;
 }
