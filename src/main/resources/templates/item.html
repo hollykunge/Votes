@@ -19,7 +19,7 @@
             <li class="breadcrumb-item active" aria-current="page" th:text="'第'+${item.turnNum}+'轮投票项'">新建一轮投票</li>
         </ol>
     </nav>
-    <div class="alert alert-info" th:if="${showMessage}" th:utext="${showMessage}"></div>
+    <div id="alertMsg"></div>
     <div class="card border-dark mb-3">
         <div class="card-header">
             <button class="btn btn-outline-danger btn-sm" id="delBtn">删除</button>
@@ -68,8 +68,10 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
-                    <button type="button" class="btn btn-primary copy-code" id="copyCode" th:onclick="'javascript:excelImport('+${item.id}+')'" data-clipboard-target="#code">
-                        上传
+                    <button type="button" class="btn btn-primary copy-code" id="copyCode" data-loading-text="Loading..."
+                            th:onclick="'javascript:excelImport('+${item.id}+')'">
+                        <span class="spinner-border spinner-border-sm hide" role="status" aria-hidden="true"></span>
+                        <span>上传</span>
                     </button>
                 </div>
             </div>
@@ -144,7 +146,8 @@
             data: data,
             titleConfig: titleConfig,
             checkbox: true,
-            clickToSelect: true
+            clickToSelect: true,
+            url:'/voteItems/'+ [[${item.id}]]
         })
 
         // 清空 file 值
@@ -181,7 +184,21 @@
                 ids = ids + item.voteItemId + ','
             })
             ids = ids.substring(0,ids.length-1)
-            self.location.href="/deleteVoteItem/"+[[${item.id}]]+"/"+ids;
+            $.ajax({
+                url:"/deleteVoteItem/"+[[${item.id}]]+"/"+ids,
+                async:true,
+                contentType:"application/json;charset=utf-8",
+                dataType: 'html',
+                cache: false,
+                type:"get",
+                success:function(res){
+                    $('#delModel').modal('hide');
+                    $table.bootstrapTable('refresh');
+                    showInfo("删除成功")
+                },error:function(result){
+                    alert("数据没有成功返回!")
+                }
+            });
         })
         // 新增
         $('#saveAddBtn').click(function () {
@@ -211,7 +228,10 @@
                 }
             });
         })
-
+        function showInfo (info){
+            var innerDiv = '<div class="alert alert-success">'+ info +'</div>';
+            $("#alertMsg").html(innerDiv)
+        }
 
     })
 </script>
