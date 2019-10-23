@@ -151,7 +151,7 @@
                 var score = data[i][resultName];
                 var count = countMap.get(score)
                 /*<![CDATA[*/
-                if (count > 1 && score!=='0') {
+                if (count > 1 && score!==0) {
                     // 分数个位
                     var fix = parseInt(score%10);
                     colorMap.set(score,randowColor[fix])
