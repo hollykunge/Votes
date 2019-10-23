@@ -365,7 +365,7 @@ public class ItemController {
     public String deleteItem(@PathVariable Long id,RedirectAttributes redirectAttributes) throws Exception {
         Item byId = itemService.findById(id);
         Optional<List<VoteItem>> byItem = voteItemService.findByItem(byId);
-        if(!byItem.isPresent() || byItem.get().size() == 0){
+        if(byItem.isPresent() && byItem.get().size() > 0){
             redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("包含投票项，不能删除该投票轮"));
             return "redirect:/vote/" + byId.getVote().getId();
         }
