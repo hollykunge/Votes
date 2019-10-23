@@ -20,8 +20,8 @@
                 <h5 class="text-center">编辑投票信息</h5>
 
                 <div class="form-label-group">
-                    <label th:if="${#fields.hasErrors('title')}" th:errors="*{title}"
-                           class="alert alert-danger"></label>
+                    <div class="alert alert-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+
                     <input type="text" th:field="*{title}" placeholder="输入投票标题" autofocus="autofocus"
                            th:value="${vote.title}"
                            class="form-control input-lg"/>
@@ -56,5 +56,8 @@
 
 <div th:replace="/fragments/footer :: footer"/>
 
+<script>
+
+</script>
 </body>
 </html>
