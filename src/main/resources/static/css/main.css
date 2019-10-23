@@ -166,3 +166,27 @@ a:hover, a:focus, a:active {
     border-color: #ebccd1;
 }
 
+.normal {
+    color: #000000;
+}
+
+.modal{
+    opacity: 1;
+    background: rgba(255,255,255, .6);
+}
+.spin-large{
+    width: 50px;
+    height: 50px;
+}
+.loading{
+    transform: translateY(-40%);
+    top: 40%;
+}
+
+.have-voted{
+    width: 120px;
+    display: inline-block;
+}
+.hide{
+    display: none;
+}
