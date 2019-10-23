@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
 <body class="bg-light">
+
 <head>
     <div th:replace="/fragments/header :: header-css"/>
 
@@ -11,8 +13,7 @@
     </div>
 </nav>
 <div>
-    123123123
-    <i class="glyphicon glyphicon-ok" style="color: #00a0ea;"></i>
+
 </div>
 <div class="container" th:if="${item.status}==2">
     <div class="jumbotron jumbotron-fluid mb-3">
@@ -77,21 +78,22 @@
             </div>
         </div>
     </div>
-    <!--    <div class="alert alert-danger" th:if="${showAlertMessage}" th:utext="${showAlertMessage}"></div>-->
     <div class="card border-primary mb-3">
         <div class="card-header">
             <span>投票项</span>
         </div>
         <div class="card-body text-primary card-nopadding">
-            <table id="voteTable"
-            ></table>
+            <table id="voteTable"></table>
         </div>
     </div>
     <div style="text-align: end"><span th:if="${item.rules} == '1'" id="votedStatus"></span></div>
     <hr class="mb-4"/>
     <div class="row">
         <div class="col-md-12 mb-3">
-            <button id="voteDone" type="submit" class="btn btn-primary btn-block">提交</button>
+            <button id="voteDone" type="submit" class="btn btn-primary btn-block">
+                <span class="spinner-border spinner-border-sm hide" role="status" aria-hidden="true"></span>
+                <span>提交</span>
+            </button>
         </div>
     </div>
 </div>
@@ -108,38 +110,36 @@
     <div class="col-md-4"></div>
 </div>
 <!-- <div class="row" th:if="${item.status}==2">
-    投票项列表
+投票项列表
 </div> -->
 
 
 <div th:replace="/fragments/footer :: footer"/>
 <!-- loading -->
 <div class="modal" id="loading" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop='static'>
-    <div class="modal-dialog" role="document">
-        <div class="loading">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
+    <div class="modal-dialog loading" role="document">
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary spin-large" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
         </div>
     </div>
 </div>
 </body>
 <script type="text/javascript" th:inline="javascript">
     const voteOption = {
-        rules: [[${item.rules}]], // 规则范围 1否同 2排序 3打分
-        agreeRule: [[${item.agreeRule}]], // 1为同意 0为否决
-        agreeMax: [[${item.agreeMax}]], // 否同最大范围
-        agreeMin: [[${item.agreeMin}]], // 否同最小范围
-        description: [[${item.description}]], // 说明
-        maxScore: [[${item.maxScore}]], // 最大分数
-        minScore: [[${item.minScore}]], // 最小分数
+        rules: [[${ item.rules }]], // 规则范围 1否同 2排序 3打分
+        agreeRule: [[${ item.agreeRule }]], // 1为同意 0为否决
+        agreeMax: [[${ item.agreeMax }]], // 否同最大范围
+        agreeMin: [[${ item.agreeMin }]], // 否同最小范围
+        description: [[${ item.description }]], // 说明
+        maxScore: [[${ item.maxScore }]], // 最大分数
+        minScore: [[${ item.minScore }]], // 最小分数
     }
-    const hasVotes = JSON.parse([[${userVoteItems}]] || '[]')
-    const data = JSON.parse([[${voteItems}]] || '[]') // voteItem
+    const hasVotes = JSON.parse([[${ userVoteItems }]] || '[]')
+    const data = JSON.parse([[${ voteItems }]] || '[]') // voteItem
     const $table = $('#voteTable') // 当前页面表格
-    let titleConfig = [[${item.vote.excelHeader}]] // excelHeader
+    let titleConfig = [[${ item.vote.excelHeader }]] // excelHeader
     // 表头 column title
     // 已投票数
     let votedCount = 0
@@ -169,36 +169,73 @@
             },
             // 投票
             'click .castVote': function (e, value, row, index) {
+                // 最大投票数是否超出
                 let maxPass = PassRules({
                     currentVotes: $._voteArr.length,
                     max: row.item.agreeMax,
                     min: row.item.agreeMin
                 }, 'max')
-                // 票数用尽
-                if (!maxPass) {
-                    $('body').message({
-                        message: [
-                            '票数已用尽'
-                        ].join(''),
-                        type: 'danger'
-                    })
-                    return
-                }
-                if ($(e.target).attr('class') === '') {
-                    return
-                }
+
                 votedCount++;
-                // ------ start
-                // 投票按钮切换
+
+                switch (e.target.nodeName) {
+                    case 'A':
+                        if (!maxPass) {
+                            // 票数用尽
+                            if ($(e.target).text() === '已投') {
+                                return
+                            }
+                            $('body').message({
+                                message: [
+                                    '票数已用尽'
+                                ].join(''),
+                                type: 'danger'
+                            })
+                            return
+                        }
+                        if ($(e.target).attr('class') === '') {
+                            return
+                        }
+                        $(e.target).html(templateOption.haveVoted).removeClass('castVote')
 
 
 
+                        // 通过验证 添加到数组
+                        $._voteArr.push(initDataItem(row, 'castVote', '1'))
+                        // message 提示
+                        $('body').message({
+                            message: [
+                                '最少可以投',
+                                row.item.agreeMin,
+                                '票，',
+                                '最多可投',
+                                row.item.agreeMax,
+                                '票，',
+                                '还剩',
+                                row.item.agreeMax * 1 - ($._voteArr.length * 1),
+                                '票'
+                            ].join('')
+                        })
+                        break;
+                    case 'I':
+                    case 'DIV':
+                        break;
+                    case 'SPAN':
+                        // 取消操作 删除已选值
+                        $._voteArr = $._voteArr.filter(function (el, index) {
+                            if (el.voteItem.voteItemId !== row.voteItemId) {
+                                return el
+                            }
+                            return false
 
+                        })
+                        $(e.target).parents('a').addClass('castVote').html('投票')
+                        ;
+                    default:
+                        ;
+                }
+                $('#votedStatus').text("已投票数：" + $._voteArr.length + "/" + data.length)
 
-
-                $('#votedStatus').text("已投票数：" + votedCount + "/" + data.length)
-                $(e.target).text('已投').removeClass('castVote')
-                $._voteArr.push(initDataItem(row, 'castVote', '1'))
 
             },
             // 排序点击事件回调
@@ -309,15 +346,16 @@
                     return initDataItem(item)
                 })
             }
-            console.log($._voteArr)
-            // request({
-            //     url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),
-            //     data: JSON.stringify(requestBody)
-            // })
+
+            request({
+                url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),
+                data: JSON.stringify(requestBody)
+            })
 
         })
     })
 
 </script>
 <script type="text/javascript" th:src="@{/js/voteItem.js}"></script>
+
 </html>

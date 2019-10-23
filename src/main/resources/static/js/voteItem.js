@@ -1,3 +1,20 @@
+const templateOption = {
+
+    haveVoted: [
+        '<div class="have-voted">',
+        '<span class="btn btn-link">',
+        '<span class="badge badge-info">已投</span>',
+        '</span>',
+        '<span class="btn btn-link">取消</span>',
+        '</div>'
+    ].join(''),
+    haveVotedRead: [
+        '<span class="badge badge-success">已投</span>',
+        '<span class="badge badge-secondary">未投</span>'
+    ]
+
+}
+
 // 弹窗显示
 function showImportModel() {
     $('#importModel').modal('show');
@@ -192,13 +209,14 @@ function configOperation(rules, columnsOption) {
                 columnsOption.push({
                     title: '投票',
                     field: rules.isRead ? "agreeFlag" : "total",
+                    width: 150,
                     align: 'center',
                     valign: 'middle',
                     events: window.operateEvents,
                     formatter: function (value, row, index) {
                         return [
                             `<a class="${rules.isRead ? (row.agreeFlag == '1' ? '' : 'normal') : 'castVote'}" href="javascript:void(0)" title="vote">`,
-                            rules.isRead ? (row.agreeFlag == '1' ? '已投' : '未投') : '投票',
+                            rules.isRead ? (row.agreeFlag == '1' ? templateOption.haveVotedRead[0] : templateOption.haveVotedRead[1]) : '投票',
                             '</a>'
                         ].join('')
                     }
@@ -270,7 +288,6 @@ function initTable(options) {
         data: options.hasData && options.hasData.length > 0 ? options.hasData.map(function (item) {
             return Object.assign({}, item, item.voteItem, {order: item.order, item: item.item})
         }) : options.data.map(function (item) {
-
             return Object.assign({}, item, {item: options.data[0].item})
         }),
         detailView: true,
@@ -394,10 +411,15 @@ function request(obj) {
         type: "POST",   //请求方式
         beforeSend: function () {
             //请求前的处理
+            // disabled="disabled"
+            $('button[type=submit]').attr('disabled', 'disabled');
+            $('button[type=submit]').find('.hide').removeClass('hide')
             $('#loading').modal('show');
         },
         success: function (req) {
-            $('#loading').modal('hide');
+            $('button[type=submit]').removeAttr('disabled');
+            $('button[type=submit]').find('.hide').addClass('hide')
+
             //请求成功时处理
             if (req == 'success') {
                 $('body').message({
@@ -418,6 +440,9 @@ function request(obj) {
         },
         complete: function (success) {
             //请求完成的处理
+            $('button[type=submit]').removeAttr('disabled');
+            $('button[type=submit]').find('.hide').addClass('hide')
+            $('#loading').modal('hide');
         },
         error: function (error) {
             //请求出错处理
@@ -571,6 +596,7 @@ function PassRules(option, minOrMax) {
             return false
         }
     }
+
     if (minOrMax === 'min') {
         // 未达到最小票数
         if (option.currentVotes - option.min < 0) {
@@ -583,20 +609,8 @@ function PassRules(option, minOrMax) {
 
         return true
     }
-    $('body').message({
-        message: [
-            '最少可以投',
-            option.min,
-            '票，',
-            '最多可投',
-            option.max,
-            '票，',
-            '还剩',
-            option.max * 1 - (option.currentVotes * 1 + 1),
-            '票'
-        ].join('')
-    })
-
     return 'maxPass'
 
 }
+
+
