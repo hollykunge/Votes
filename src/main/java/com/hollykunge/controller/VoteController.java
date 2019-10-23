@@ -1,18 +1,17 @@
 package com.hollykunge.controller;
 
-import com.hollykunge.model.Vote;
 import com.hollykunge.model.User;
-import com.hollykunge.service.VoteService;
+import com.hollykunge.model.Vote;
 import com.hollykunge.service.UserService;
+import com.hollykunge.service.VoteService;
+import com.hollykunge.util.Base64Utils;
 import com.hollykunge.util.Pager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -35,10 +34,13 @@ public class VoteController {
     @RequestMapping(value = "/votes/{username}", method = RequestMethod.GET)
     public String voteForUsername(@PathVariable String username,
                                   @RequestParam(defaultValue = "0") int page,
-                                  Model model) {
+                                  Model model,
+                                  @ModelAttribute("redirect") String redirect) {
 
         Optional<User> optionalUser = userService.findByUsername(username);
-
+        if(!StringUtils.isEmpty(redirect)){
+            model.addAttribute("showAlertMessage", Base64Utils.decryption(redirect));
+        }
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             Page<Vote> votes = voteService.findByUserOrderedByDatePageable(user, page);
