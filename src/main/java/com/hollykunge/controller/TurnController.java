@@ -140,12 +140,12 @@ public class TurnController {
             List<Item> itemsByVote = itemService.findItemsByVote(vote);
             if(itemsByVote.size() > 0){
                 redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("包含投票项不能进行删除操作"));
-                return "redirect:/votes"+ vote.getUser().getUsername();
+                return "redirect:/votes/"+ vote.getUser().getUsername();
             }
             if (isPrincipalOwnerOfVote(principal, vote)) {
                 voteService.delete(vote);
                 redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("删除成功"));
-                return "redirect:/votes"+ vote.getUser().getUsername();
+                return "redirect:/votes/"+ vote.getUser().getUsername();
             } else {
                 return "/403";
             }
