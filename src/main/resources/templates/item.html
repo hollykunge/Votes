@@ -19,6 +19,7 @@
             <li class="breadcrumb-item active" aria-current="page" th:text="'第'+${item.turnNum}+'轮投票项'">新建一轮投票</li>
         </ol>
     </nav>
+    <div class="alert alert-info" th:if="${showMessage}" th:utext="${showMessage}"></div>
     <div class="card border-dark mb-3">
         <div class="card-header">
             <button class="btn btn-outline-danger btn-sm" id="delBtn">删除</button>
@@ -180,16 +181,7 @@
                 ids = ids + item.voteItemId + ','
             })
             ids = ids.substring(0,ids.length-1)
-            // self.location.href="/deleteVoteItem/{itemId}/{ids}"
-            $.ajax({
-                url:"/deleteVoteItem/"+[[${item.id}]]+"/"+ ids,
-                async:true,
-                type:"get",
-                dataType: 'html',
-                success:function(){
-                    window.location.reload();
-                }
-            });
+            self.location.href="/deleteVoteItem/"+[[${item.id}]]+"/"+ids;
         })
         // 新增
         $('#saveAddBtn').click(function () {
