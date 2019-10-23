@@ -3,6 +3,7 @@
 </head>
 <body>
 <div th:fragment="votes">
+    <div class="alert alert-danger" th:if="${showAlertMessage}" th:utext="${showAlertMessage}"></div>
     <div class="card border-dark mb-3 shadow-sm">
         <div class="card-header bg-secondary text-white">我的投票</div>
         <div class="card-body card-nopadding">
@@ -26,9 +27,14 @@
                     <td th:text="${vote.getItems().size()}">-</td>
                     <td th:text="${vote.body}">-</td>
                     <td>
-                        <a class="btn btn-outline-primary btn-sm" th:href="@{'/vote/' + ${vote.id}}"
+                        <a class="btn btn-outline-primary btn-sm" style="float:left;" th:href="@{'/vote/' + ${vote.id}}"
                            role="button">进入</a>
-                        <a class="btn btn-outline-danger btn-sm" th:href="@{'/vote/' + ${vote.id}}" role="button">删除</a>
+                        <form action="#" th:action="@{'/vote/{id}'(id=${vote.id})}" th:method="delete"
+                              style="float:left;padding-left: 10px;height: 10px">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-outline-danger btn-sm" th:text="删除">删除</button>
+                            </div>
+                        </form>
                     </td>
                 </tr>
                 </tbody>
