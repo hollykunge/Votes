@@ -101,7 +101,6 @@
                                th:field="*{minScore}"/>
                     </div>
                 </div>
-
                 <div id="countDiv" class="row">
                     <div class="col-md-12">
                         <label for="description">说明</label>
@@ -109,24 +108,23 @@
                                   placeholder="" class="form-control" id="description"/>
                     </div>
                 </div>
+
                 <h6 class="p-1 mb-2 bg-customer text-white">注意事项</h6>
-                <div class="row">
-                    <div class="col-md-12">
-                            <textarea th:field="*{body}"
-                                      placeholder="" class="form-control" id="tips"/>
-                        <input type="hidden" th:field="*{vote}"/>
-                        <input type="hidden" th:field="*{user}"/>
-                        <input type="hidden" th:field="*{id}"/>
-                        <input type="hidden" th:field="*{code}"/>
-                        <input type="hidden" th:field="*{turnNum}"/>
-                        <input type="hidden" th:field="*{status}"/>
-                        <input type="hidden" th:field="*{memberNum}"/>
-                    </div>
-                </div>
+                <textarea th:field="*{body}"
+                          placeholder="" class="form-control" id="tips"/>
+                <input type="hidden" th:field="*{vote}"/>
+                <input type="hidden" th:field="*{user}"/>
+                <input type="hidden" th:field="*{id}"/>
+                <input type="hidden" th:field="*{code}"/>
+                <input type="hidden" th:field="*{turnNum}"/>
+                <input type="hidden" th:field="*{status}"/>
+                <input type="hidden" th:field="*{memberNum}"/>
+
                 <hr class="mb-4"/>
                 <div class="row">
                     <div class="col-md-12 mb-3">
-                        <button type="submit" class="btn btn-primary btn-block" onclick="return saveVoteItem()">保存</button>
+                        <button type="submit" class="btn btn-primary btn-block" onclick="return saveVoteItem()">保存
+                        </button>
                     </div>
                 </div>
             </form>
@@ -143,6 +141,7 @@
         showRuleDiv();
     });
     var rule = 0;
+
     /**
      * 根据规则范围的选择
      * 显示对应的规则项
@@ -164,6 +163,7 @@
         }
         setRequired(rule)
     }
+
     /**
      * 根据规则范围的选择
      * 必填项限制调整
@@ -189,31 +189,34 @@
             $("#minSort").attr("required", true);
         }
     }
-    function showInfo (info){
-        var innerDiv = '<div class="alert alert-danger">'+ info +'</div>';
+
+    function showInfo(info) {
+        var innerDiv = '<div class="alert alert-danger">' + info + '</div>';
         $("#alertMsg").html(innerDiv)
     }
-    function hideInfo(){
+
+    function hideInfo() {
         $("#alertMsg").html('<div></div>')
     }
-    function saveVoteItem(){
+
+    function saveVoteItem() {
         var rule = rule = $('input[type=radio]:checked').val();
         if (rule === '1') {
             /*<![CDATA[*/
-            if (parseInt($("#max").val()) < parseInt($("#min").val())){
+            if (parseInt($("#max").val()) < parseInt($("#min").val())) {
                 showInfo("最大范围应大于最小范围");
                 return false;
-            }else{
+            } else {
                 hideInfo();
                 return true;
             }
             /*]]>*/
         } else if (rule === '3') {
             /*<![CDATA[*/
-            if (parseInt($("#maxSort").val()) < parseInt($("#minSort").val())){
+            if (parseInt($("#maxSort").val()) < parseInt($("#minSort").val())) {
                 showInfo("最大分数应大于最小分数");
                 return false;
-            }else{
+            } else {
                 hideInfo();
                 return true;
             }

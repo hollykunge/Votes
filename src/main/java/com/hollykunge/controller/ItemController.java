@@ -162,6 +162,9 @@ public class ItemController {
             if (item.getMemberSize() == null){
                 item.setMemberSize(item.getVote().getMemberSize());
             }
+            if (item.getBody() == null){
+                item.setBody(item.getVote().getBody());
+            }
             model.addAttribute("item", item);
             return "/turnForm";
         } catch (Exception e) {
@@ -359,7 +362,13 @@ public class ItemController {
      * @throws Exception
      */
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
-    public String deleteItem(@PathVariable Long id) throws Exception {
+    public String deleteItem(@PathVariable Long id,RedirectAttributes redirectAttributes) throws Exception {
+        Item byId = itemService.findById(id);
+        Optional<List<VoteItem>> byItem = voteItemService.findByItem(byId);
+        if(!byItem.isPresent() || byItem.get().size() == 0){
+            redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("包含投票项，不能删除该投票轮"));
+            return "redirect:/vote/" + byId.getVote().getId();
+        }
         Item item = itemService.deleteItem(id);
         return "redirect:/vote/" + item.getVote().getId();
     }
