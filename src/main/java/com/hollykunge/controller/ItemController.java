@@ -17,6 +17,7 @@ import com.hollykunge.reflection.ReflectionUtils;
 import com.hollykunge.service.*;
 import com.hollykunge.util.Base64Utils;
 import com.hollykunge.util.ExceptionCommonUtil;
+import com.hollykunge.vo.VoteItemVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -191,7 +192,6 @@ public class ItemController {
      * @return
      */
     @ExtApiToken(interfaceAdress = "/item/import")
-
     @RequestMapping(value = "/voteItemsView/{id}", method = RequestMethod.GET)
     public String voteItemsView(@PathVariable Long id,
                            Model model)throws Exception {
@@ -213,11 +213,12 @@ public class ItemController {
      * @throws Exception
      */
     @RequestMapping(value = "/voteItems/{id}", method = RequestMethod.GET)
-    public @ResponseBody List<VoteItem> voteItems(@PathVariable Long id)throws Exception {
+    public @ResponseBody List<VoteItemVO> voteItems(@PathVariable Long id)throws Exception {
         try {
             Item item = itemService.findById(id);
             Optional<List<VoteItem>> voteItems = voteItemService.findByItem(item);
-            return voteItems.get();
+            List<VoteItemVO> result = JSONArray.parseArray(JSONObject.toJSONString(voteItems.get()),VoteItemVO.class);
+            return result;
         }catch (Exception e){
             throw e;
         }
