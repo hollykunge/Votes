@@ -35,7 +35,7 @@ public class Item {
     private Integer turnNum;
 
     @Column(columnDefinition = "int(6) COMMENT '预计投票人数'")
-    private String memberSize;
+    private Integer memberSize;
 
     @Column(columnDefinition = "int(6) COMMENT '投票人数'")
     private Integer memberNum;
@@ -169,11 +169,11 @@ public class Item {
     @NotNull
     private User user;
 
-    public String getMemberSize() {
+    public Integer getMemberSize() {
         return memberSize;
     }
 
-    public void setMemberSize(String memberSize) {
+    public void setMemberSize(Integer memberSize) {
         this.memberSize = memberSize;
     }
 
