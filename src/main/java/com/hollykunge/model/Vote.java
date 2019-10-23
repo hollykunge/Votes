@@ -23,7 +23,7 @@ public class Vote {
     private Long id;
 
     @Column(name = "title", nullable = false)
-    @Length(min = 2, message = "输入至少5个字符")
+    @Length(min = 2, message = "输入至少2个字符")
     @NotEmpty(message = "请输入标题")
     private String title;
 
@@ -34,10 +34,7 @@ public class Vote {
     private String excelHeader;
 
     @Column(columnDefinition = "int(6) COMMENT '预计投票人数'")
-    private String memberSize;
-
-    @Column(columnDefinition = "int(6) COMMENT '投票人数'")
-    private Integer memberNum;
+    private Integer memberSize;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "create_date", nullable = false, updatable = false)
@@ -105,21 +102,15 @@ public class Vote {
         this.excelHeader = excelHeader;
     }
 
-    public String getMemberSize() {
+    public Integer getMemberSize() {
         return memberSize;
     }
 
-    public void setMemberSize(String memberSize) {
+    public void setMemberSize(Integer memberSize) {
         this.memberSize = memberSize;
     }
 
-    public Integer getMemberNum() {
-        return memberNum;
-    }
-
-    public void setMemberNum(Integer memberNum) {
-        this.memberNum = memberNum;
-    }
     @OneToMany(mappedBy = "vote", cascade = CascadeType.REMOVE)
+    @OrderBy("turn_num ASC")
     private Collection<Item> items;
 }

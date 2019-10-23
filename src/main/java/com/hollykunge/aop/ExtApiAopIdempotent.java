@@ -42,7 +42,8 @@ public class ExtApiAopIdempotent {
 		if (extApiToken != null) {
 			HttpServletRequest request = getRequest();
 			String clientIp = getClientIp(request);
-			extApiToken(clientIp);
+			String interfaceAdress = extApiToken.interfaceAdress();
+			extApiToken(clientIp,interfaceAdress);
 		}
 	}
 
@@ -98,10 +99,10 @@ public class ExtApiAopIdempotent {
 		return proceed;
 	}
 
-	public void extApiToken(String clentIp) {
+	public void extApiToken(String clentIp,String interfaceAdress) {
 		String token = null;
 		try {
-			token = extTokenService.getToken(clentIp);
+			token = extTokenService.getToken(clentIp,interfaceAdress);
 		} catch (Exception e) {
 			log.error(ExceptionCommonUtil.getExceptionMessage(e));
 		}

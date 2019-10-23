@@ -18,15 +18,17 @@
                   th:object="${vote}" method="post"
                   role="form">
                 <h5 class="text-center">编辑投票信息</h5>
-
+                <div class="alert alert-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
                 <div class="form-label-group">
-                    <label th:if="${#fields.hasErrors('title')}" th:errors="*{title}"
-                           class="alert alert-danger"></label>
                     <input type="text" th:field="*{title}" placeholder="输入投票标题" autofocus="autofocus"
                            th:value="${vote.title}"
                            class="form-control input-lg"/>
                 </div>
-
+                <div class="form-label-group">
+                    <input type="text" th:field="*{memberSize}" placeholder="预计投票人数" autofocus="autofocus"
+                           th:value="${vote.memberSize}"
+                           class="form-control input-lg"/>
+                </div>
                 <div class="form-label-group">
                     <label th:if="${#fields.hasErrors('body')}" th:errors="*{body}"
                            class="alert alert-danger"></label>
@@ -56,5 +58,8 @@
 
 <div th:replace="/fragments/footer :: footer"/>
 
+<script>
+
+</script>
 </body>
 </html>

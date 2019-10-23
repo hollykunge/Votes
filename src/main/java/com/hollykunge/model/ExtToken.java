@@ -21,8 +21,11 @@ public class ExtToken {
     @Column(name = "token", unique = true)
     private String token;
 
-    @Column(name = "ip", unique = true)
+    @Column(name = "ip")
     private String ip;
+
+    @Column(name = "interface_address")
+    private String interfaceAddress;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "create_date", nullable = false, updatable = false)
@@ -59,5 +62,13 @@ public class ExtToken {
 
     public void setIp(String ip) {
         this.ip = ip;
+    }
+
+    public String getInterfaceAddress() {
+        return interfaceAddress;
+    }
+
+    public void setInterfaceAddress(String interfaceAddress) {
+        this.interfaceAddress = interfaceAddress;
     }
 }

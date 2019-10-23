@@ -13,6 +13,6 @@ import java.util.List;
  */
 public interface ExtTokenRepository extends JpaRepository<ExtToken,Long> {
     List<ExtToken> findByToken(String token);
-    List<ExtToken> findByIp(String ip);
+    List<ExtToken> findByIpAndInterfaceAddress(String ip,String interfaceAdress);
     List<ExtToken> findByCreateDateBefore(Date start);
 }
