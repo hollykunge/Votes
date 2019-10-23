@@ -84,7 +84,7 @@ public class ItemController {
                 Integer.parseInt(item.getAgreeMax());
             }
             if(!StringUtils.isEmpty(item.getMemberSize())){
-                Integer.parseInt(item.getMemberSize());
+                item.getMemberSize();
             }
             if(!StringUtils.isEmpty(item.getMaxScore())){
                 Integer.parseInt(item.getMaxScore());
