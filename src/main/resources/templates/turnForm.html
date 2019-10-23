@@ -197,9 +197,8 @@
     function saveVoteItem(){
         var rule = rule = $('input[type=radio]:checked').val();
         if (rule === '1') {
-            console.log(2)
             /*<![CDATA[*/
-            if ($("#max").val() < $("#min").val()){
+            if (parseInt($("#max").val()) < parseInt($("#min").val())){
                 showInfo("最大范围应大于最小范围");
                 return false;
             }else{
@@ -208,9 +207,8 @@
             }
             /*]]>*/
         } else if (rule === '3') {
-            console.log(3)
             /*<![CDATA[*/
-            if ($("#maxSort").val() < $("#minSort").val()){
+            if (parseInt($("#maxSort").val()) < parseInt($("#minSort").val())){
                 showInfo("最大分数应大于最小分数");
                 return false;
             }else{
