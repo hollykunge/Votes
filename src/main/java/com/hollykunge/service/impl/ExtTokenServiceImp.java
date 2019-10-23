@@ -30,13 +30,14 @@ public class ExtTokenServiceImp implements ExtTokenService {
     }
 
     @Override
-    public String getToken(String clentIp) throws Exception {
+    public String getToken(String clentIp,String interfaceAddress) throws Exception {
         String token = "vote_token_" + clentIp + System.currentTimeMillis();
         ExtToken extToken = new ExtToken();
         extToken.setToken(token);
         extToken.setIp(clentIp);
-        if (!StringUtils.isEmpty(clentIp)) {
-            List<ExtToken> byToken = extTokenRepository.findByIp(clentIp);
+        extToken.setInterfaceAddress(interfaceAddress);
+        if (!StringUtils.isEmpty(clentIp)&&!StringUtils.isEmpty(interfaceAddress)) {
+            List<ExtToken> byToken = extTokenRepository.findByIpAndInterfaceAddress(clentIp,interfaceAddress);
             if (byToken.size() > 0) {
                 return byToken.get(0).getToken();
             }

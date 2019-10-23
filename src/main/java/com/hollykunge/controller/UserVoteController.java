@@ -42,7 +42,7 @@ public class UserVoteController {
     @Autowired
     private UserVoteItemService userVoteItemService;
 
-    @ExtApiToken
+    @ExtApiToken(interfaceAdress = VoteConstants.INVITECODE_RPC+"add")
     @RequestMapping(value = VoteConstants.INVITECODE_RPC+"{id}/{code}", method = RequestMethod.GET)
     public String inviteCodeView(@PathVariable Long id,
                                  @PathVariable String code,
