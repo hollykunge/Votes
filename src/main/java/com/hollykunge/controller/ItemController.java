@@ -373,14 +373,14 @@ public class ItemController {
      * @throws Exception
      */
     @RequestMapping(value = "/deleteVoteItem/{itemId}/{ids}", method = RequestMethod.GET)
-    public String deleteVoteItems(@PathVariable String itemId,
+    public @ResponseBody String deleteVoteItems(@PathVariable String itemId,
 
                                   @PathVariable String ids,
                                   Model model)throws Exception{
         try {
             voteItemService.deleteVoteItem(Arrays.asList(ids.split(",")));
             model.addAttribute("showMessage","删除成功！");
-            return this.voteItemsView(Long.valueOf(itemId),model);
+            return "success";
         } catch (Exception e) {
             throw e;
         }
