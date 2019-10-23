@@ -188,19 +188,31 @@ public class ItemController {
      * @return
      */
     @ExtApiToken(interfaceAdress = "/item/import")
-    @RequestMapping(value = "/editItem/{id}", method = RequestMethod.GET)
-    public String editItem(@PathVariable Long id,
+    @RequestMapping(value = "/voteItemsView/{id}", method = RequestMethod.GET)
+    public String voteItemsView(@PathVariable Long id,
                            Model model)throws Exception {
         try {
             Item item = itemService.findById(id);
-            Optional<List<VoteItem>> voteItems = voteItemService.findByItem(item);
             model.addAttribute("item", item);
             model.addAttribute("vote",item.getVote());
-            model.addAttribute("voteItems", null);
-            if(voteItems.get().size()>0){
-                model.addAttribute("voteItems", JSONObject.toJSONString(voteItems.get()));
-            }
             return "/item";
+        }catch (Exception e){
+            throw e;
+        }
+    }
+
+    /**
+     * ajax加载表数据
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/voteItems/{id}", method = RequestMethod.GET)
+    public @ResponseBody List<VoteItem> voteItems(@PathVariable Long id)throws Exception {
+        try {
+            Item item = itemService.findById(id);
+            Optional<List<VoteItem>> voteItems = voteItemService.findByItem(item);
+            return voteItems.get();
         }catch (Exception e){
             throw e;
         }
@@ -268,7 +280,7 @@ public class ItemController {
             EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadDataListener(item, voteItemService)).sheet().doRead();
             EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadHeaderDataListener(item,voteService,itemService)).sheet().doRead();
 //            return "redirect:/editItem/" + itemIdTemp;
-            return this.editItem(Long.valueOf(itemIdTemp),model);
+            return this.voteItemsView(Long.valueOf(itemIdTemp),model);
         } catch (Exception e) {
             return "redirect:/error";
         }
@@ -354,7 +366,7 @@ public class ItemController {
         try {
             voteItemService.deleteVoteItem(Arrays.asList(ids.split(",")));
             model.addAttribute("showMessage","删除成功！");
-            return this.editItem(Long.valueOf(itemId),model);
+            return this.voteItemsView(Long.valueOf(itemId),model);
         } catch (Exception e) {
             throw e;
         }
