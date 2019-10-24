@@ -99,10 +99,10 @@ public class UserVoteItemServiceImp implements UserVoteItemService {
                 projections) {
             VoteItem one = voteItemRepository.findOne(Long.parseLong(String.valueOf(objects[1])));
             if (Objects.equals(flag, VoteConstants.ITEM_RULE_AGER)) {
-                one.setStatisticsNum(String.valueOf(objects[0]));
+                one.setCurrentStatisticsNum(String.valueOf(objects[0]));
             }
             if (Objects.equals(flag, VoteConstants.ITEM_RULE_SCORE)) {
-                one.setStatisticsToalScore(String.valueOf(objects[0]));
+                one.setCurrentStatisticsToalScore(String.valueOf(objects[0]));
             }
             voteItems.add(one);
         }
@@ -126,14 +126,13 @@ public class UserVoteItemServiceImp implements UserVoteItemService {
             for (VoteItem voteItem :
                     byItem.get()) {
                 List<Integer> integers = userVoteItemRepository.orderRule(item.getId(), voteItem.getVoteItemId());
-//                Integer max = userVoteItemRepository.orderRuleMaxScore(item.getId(), voteItem.getVoteItemId());
-                voteItem.setStatisticsOrderScore(calculate(byItem.get().size(), integers));
+                voteItem.setCurrentStatisticsOrderScore(calculate(byItem.get().size(), integers));
             }
             Collections.sort(byItem.get(), new Comparator<VoteItem>() {
                 @Override
                 public int compare(VoteItem o1, VoteItem o2) {
                     //倒序
-                    return o2.getStatisticsOrderScore().compareTo(o1.getStatisticsOrderScore());
+                    return o2.getCurrentStatisticsOrderScore().compareTo(o1.getCurrentStatisticsOrderScore());
                 }
             });
         }
