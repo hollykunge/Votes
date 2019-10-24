@@ -170,9 +170,6 @@ function columnConfig(rules, callback) {
         }
     })
     callback(rules, columnsOption)
-    if (rules.checkbox) {
-        columnsOption.unshift({checkbox: rules.checkbox})
-    }
     return columnsOption
 }
 
@@ -244,6 +241,16 @@ function configOperation(rules, columnsOption) {
                 ;
         }
     }
+    if (rules.operateCol){
+        columnsOption.push({
+            title: '操作',
+            field: "Button",
+            align: 'center',
+            valign: 'middle',
+            events: window.operateEvents,
+            formatter: rules.operateColFormat
+        })
+    }
 
 }
 
@@ -253,7 +260,6 @@ function configOperation(rules, columnsOption) {
  */
 function initTable(options) {
     $table.bootstrapTable('destroy').bootstrapTable({
-        //         // height: 550, // 初始高度
         url: options.url,
         clickToSelect: options.clickToSelect,
         minimumCountColumns: 2,
@@ -265,7 +271,8 @@ function initTable(options) {
             isRead: options.hasData && options.hasData.length > 0 ? true : false,
             rules: options.rules,
             titleConfig: options.titleConfig,
-            checkbox: options.checkbox
+            operateCol: options.operateCol,
+            operateColFormat: options.operateColFormat
         }, configOperation),
         data: options.hasData && options.hasData.length > 0 ? options.hasData.map(function (item) {
             return Object.assign({}, item, item.voteItem, {order: item.order, item: item.item})
@@ -279,7 +286,6 @@ function initTable(options) {
                 '<div class="card">',
                 '<div class="card-body">',
             ]
-
             $.each(row, function (key, value) {
                 let title = options.titleConfig.filter(function (item) {
                     return item.field === key
@@ -287,8 +293,6 @@ function initTable(options) {
                 if (title) {
                     html.push('<p><b style="display: inline-block; margin-right: 10px;">' + title.title + ':</b> ' + value + '</p>')
                 }
-
-
             })
             html.concat([
                 '</div>',
@@ -500,7 +504,6 @@ function initTitleConfig(titleConfig) {
  * @returns {boolean}
  */
 function isPass(val, min, max) {
-    console.log(arguments)
     if (max * 1 >= val * 1 && val * 1 >= min * 1) {
         return true
     }
