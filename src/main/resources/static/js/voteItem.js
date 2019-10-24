@@ -500,7 +500,6 @@ function initTitleConfig(titleConfig) {
  * @returns {boolean}
  */
 function isPass(val, min, max) {
-    console.log(arguments)
     if (max * 1 >= val * 1 && val * 1 >= min * 1) {
         return true
     }
