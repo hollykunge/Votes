@@ -192,6 +192,7 @@ function configOperation(rules, columnsOption) {
                     formatter: function (value, row, index) {
                         return [
                             '<a class="' + rules.isRead ? (row.agreeFlag == '1' ? '' : 'normal') : 'castVote' + '" href="javascript:void(0)" data-action="vote" title="vote">',
+
                             rules.isRead ? (row.agreeFlag == '1' ? templateOption.haveVotedRead[0] : templateOption.haveVotedRead[1]) : '投票',
                             '</a>'
                         ].join('')
