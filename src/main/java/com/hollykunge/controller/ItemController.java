@@ -473,15 +473,23 @@ public class ItemController {
             String excelHeader = item.getVote().getExcelHeader();
             LinkedHashMap jsonObject = JSON.parseObject(excelHeader, LinkedHashMap.class);
             //清洗一遍数据，excelhead中对应的值为null的给默认值无
+            AtomicInteger setId = new AtomicInteger();
             statisticsDownloadData.forEach(data -> {
+                setId.getAndIncrement();
+                ReflectionUtils.setFieldValue(data,"voteItemId", setId.intValue());
+                AtomicInteger index = new AtomicInteger();
                 jsonObject.forEach((key, value) -> {
+                    index.getAndIncrement();
+                    if (index.intValue() > 7) {
+                        return;
+                    }
                     if (StringUtils.isEmpty(ReflectionUtils.getFieldValue(data, (String) key))) {
                         ReflectionUtils.setFieldValue(data, (String) key, "无");
                     }
                 });
             });
             EasyExcel.write(response.getOutputStream())
-                    .head(head(jsonObject))
+                    .head(head(jsonObject,item.getRules()))
                     .sheet("统计情况")
                     .doWrite(statisticsDownloadData);
             return "success";
@@ -516,6 +524,7 @@ public class ItemController {
             for (VoteItem vote : tempData) {
                 this.resetVoteItem(vote);
                 vote.setItem(dataItem);
+                vote.setTurnNum(String.valueOf(dataItem.getTurnNum()));
                 voteItemService.add(vote);
             }
             return "redirect:/voteItemsView/" + id;
@@ -526,12 +535,15 @@ public class ItemController {
 
     private void resetVoteItem(VoteItem voteItem) {
         voteItem.setVoteItemId(null);
-        voteItem.setStatisticsOrderScore(0);
-        voteItem.setStatisticsToalScore(null);
-        voteItem.setStatisticsNum(null);
+        voteItem.setParentStatisticsNum(voteItem.getCurrentStatisticsNum());
+        voteItem.setParentStatisticsOrderScore(voteItem.getCurrentStatisticsOrderScore());
+        voteItem.setParentStatisticsToalScore(voteItem.getCurrentStatisticsToalScore());
+        voteItem.setCurrentStatisticsNum(null);
+        voteItem.setCurrentStatisticsOrderScore(null);
+        voteItem.setCurrentStatisticsToalScore(null);
     }
 
-    private List<List<String>> head(LinkedHashMap jsonObject) {
+    private List<List<String>> head(LinkedHashMap jsonObject,String flag) {
         try {
             List<List<String>> list = new ArrayList<List<String>>();
             List<String> one = new ArrayList<>();
@@ -549,7 +561,15 @@ public class ItemController {
                 list.add(head);
             });
             List<String> fina = new ArrayList<>();
-            fina.add("结果");
+            if(Objects.equals(flag,"1")){
+                fina.add("总票数结果");
+            }
+            if(Objects.equals(flag,"2")){
+                fina.add("排序汇总结果");
+            }
+            if(Objects.equals(flag,"3")){
+                fina.add("总得分结果");
+            }
             list.add(fina);
             return list;
         } catch (Exception e) {

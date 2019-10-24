@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author: zhhongyu
@@ -71,7 +72,7 @@ public class UserVoteItemServiceImp implements UserVoteItemService {
         //否同
         if (Objects.equals(item.getRules(), VoteConstants.ITEM_RULE_AGER)) {
             List<Object[]> objects = userVoteItemRepository.agreeRule(item.getId());
-            result.put("voteItems", this.getRuleList(item,objects, VoteConstants.ITEM_RULE_AGER));
+            result.put("voteItems", this.getRuleList(item, objects, VoteConstants.ITEM_RULE_AGER));
             return result;
         }
         //排序
@@ -82,15 +83,15 @@ public class UserVoteItemServiceImp implements UserVoteItemService {
         //打分规则
         if (Objects.equals(item.getRules(), VoteConstants.ITEM_RULE_SCORE)) {
             List<Object[]> objects = userVoteItemRepository.scoreRule(item.getId());
-            result.put("voteItems", this.getRuleList(item,objects, VoteConstants.ITEM_RULE_SCORE));
+            result.put("voteItems", this.getRuleList(item, objects, VoteConstants.ITEM_RULE_SCORE));
             return result;
         }
         return result;
     }
 
-    private List<VoteItem> getRuleList(Item item,List<Object[]> projections, String flag) {
+    private List<VoteItem> getRuleList(Item item, List<Object[]> projections, String flag) {
         List<VoteItem> itemData = voteItemRepository.findByItem(item).get();
-        if(itemData.size()==0){
+        if (itemData.size() == 0) {
             throw new BaseException("没有投票项...");
         }
         List<VoteItem> voteItems = new ArrayList<>();
@@ -98,52 +99,48 @@ public class UserVoteItemServiceImp implements UserVoteItemService {
                 projections) {
             VoteItem one = voteItemRepository.findOne(Long.parseLong(String.valueOf(objects[1])));
             if (Objects.equals(flag, VoteConstants.ITEM_RULE_AGER)) {
-                one.setStatisticsNum(String.valueOf(objects[0]));
+                one.setCurrentStatisticsNum(String.valueOf(objects[0]));
             }
             if (Objects.equals(flag, VoteConstants.ITEM_RULE_SCORE)) {
-                one.setStatisticsToalScore(String.valueOf(objects[0]));
+                one.setCurrentStatisticsToalScore(String.valueOf(objects[0]));
             }
             voteItems.add(one);
         }
-
-        Map<Long, String> numIndex = voteItems.stream().collect(HashMap::new, (m,v)->
-                m.put(v.getVoteItemId(), v.getStatisticsNum()),HashMap::putAll);
-        Map<Long, String> totalIndex = voteItems.stream().collect(HashMap::new, (m,v)->
-                m.put(v.getVoteItemId(), v.getStatisticsToalScore()),HashMap::putAll);
-        itemData.forEach(o1 ->{
-            o1.setStatisticsNum(numIndex.get(o1.getVoteItemId()));
-            o1.setStatisticsToalScore(totalIndex.get(o1.getVoteItemId()));
-        });
-        return itemData;
+        List<VoteItem> collect = itemData
+                .stream()
+                .filter(voteItem -> !voteItems.stream().anyMatch(vote -> (long)vote.getVoteItemId() == voteItem.getVoteItemId()))
+                .collect(Collectors.toList());
+        voteItems.addAll(collect);
+        return voteItems;
     }
 
     /**
      * 排序规则算法
+     *
      * @param item
      * @return
      */
-    private List<VoteItem> getOrderRuleList(Item item){
+    private List<VoteItem> getOrderRuleList(Item item) {
         Optional<List<VoteItem>> byItem = voteItemRepository.findByItem(item);
         if (byItem.isPresent() && byItem.get().size() > 0) {
-            for (VoteItem voteItem:
-                 byItem.get()) {
+            for (VoteItem voteItem :
+                    byItem.get()) {
                 List<Integer> integers = userVoteItemRepository.orderRule(item.getId(), voteItem.getVoteItemId());
-                Integer max = userVoteItemRepository.orderRuleMaxScore(item.getId(), voteItem.getVoteItemId());
-                voteItem.setStatisticsOrderScore(calculate(max, integers));
+                voteItem.setCurrentStatisticsOrderScore(calculate(byItem.get().size(), integers));
             }
             Collections.sort(byItem.get(), new Comparator<VoteItem>() {
                 @Override
                 public int compare(VoteItem o1, VoteItem o2) {
                     //倒序
-                    return o2.getStatisticsOrderScore().compareTo(o1.getStatisticsOrderScore());
+                    return o2.getCurrentStatisticsOrderScore().compareTo(o1.getCurrentStatisticsOrderScore());
                 }
             });
         }
         return byItem.get();
     }
 
-    private Integer calculate (Integer max,List<Integer> list){
-        int i = list.stream().mapToInt(integer -> integer*(max + 1 - integer)).sum();
+    private Integer calculate(Integer max, List<Integer> list) {
+        int i = list.stream().mapToInt(integer -> max + 1 - integer).sum();
         return i;
     }
 }
