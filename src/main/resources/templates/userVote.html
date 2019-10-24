@@ -149,8 +149,6 @@
     const $table = $('#voteTable') // 当前页面表格
     let titleConfig = [[${ item.vote.excelHeader }]] // excelHeader
     // 表头 column title
-    // 已投票数
-    let votedCount = 0
 
     $(function () {
         if (titleConfig) {
@@ -202,63 +200,52 @@
                     min: row.item.agreeMin
                 }, 'max')
 
-                votedCount++;
-
-                switch (e.target.nodeName) {
-                    case 'A':
-                        if (!maxPass) {
-                            // 票数用尽
-                            if ($(e.target).text() === '已投') {
-                                return
-                            }
-                            $('body').message({
-                                message: [
-                                    '票数已用尽'
-                                ].join(''),
-                                type: 'danger'
-                            })
+                if ($(e.target).data('action') === 'vote') { // 投票动作
+                    if (!maxPass) {
+                        // 票数用尽
+                        if ($(e.target).text() === '已投') {
                             return
                         }
-                        if ($(e.target).attr('class') === '') {
-                            return
-                        }
-                        $(e.target).html(templateOption.haveVoted).removeClass('castVote')
-
-
-                        // 通过验证 添加到数组
-                        $._voteArr.push(initDataItem(row, 'castVote', '1'))
-                        // message 提示
                         $('body').message({
                             message: [
-                                '最少可以投',
-                                row.item.agreeMin,
-                                '票，',
-                                '最多可投',
-                                row.item.agreeMax,
-                                '票，',
-                                '还剩',
-                                row.item.agreeMax * 1 - ($._voteArr.length * 1),
-                                '票'
-                            ].join('')
+                                '票数已用尽'
+                            ].join(''),
+                            type: 'danger'
                         })
-                        break;
-                    case 'I':
-                    case 'DIV':
-                        break;
-                    case 'SPAN':
-                        // 取消操作 删除已选值
-                        $._voteArr = $._voteArr.filter(function (el, index) {
-                            if (el.voteItem.voteItemId !== row.voteItemId) {
-                                return el
-                            }
-                            return false
+                        return
+                    }
+                    if ($(e.target).attr('class') === '') {
+                        return
+                    }
+                    $(e.target).html(templateOption.haveVoted).removeClass('castVote')
+                    // 通过验证 添加到数组
+                    $._voteArr.push(initDataItem(row, 'castVote', '1'))
+                    // message 提示
+                    $('body').message({
+                        message: [
+                            '最少可以投',
+                            row.item.agreeMin,
+                            '票，',
+                            '最多可投',
+                            row.item.agreeMax,
+                            '票，',
+                            '还剩',
+                            row.item.agreeMax * 1 - ($._voteArr.length * 1),
+                            '票'
+                        ].join('')
+                    })
+                } else if ($(e.target).data('action') === 'cancel') {
+                    // 取消操作 删除已选值
+                    $._voteArr = $._voteArr.filter(function (el, index) {
+                        if (el.voteItem.voteItemId !== row.voteItemId) {
+                            return el
+                        }
+                        return false
 
-                        })
-                        $(e.target).parents('a').addClass('castVote').html('投票')
-                        ;
-                    default:
-                        ;
+                    })
+                    $(e.target).parents('a').addClass('castVote').html('投票')
                 }
+
                 $('#votedStatus').text("已投票数：" + $._voteArr.length + "/" + data.length)
 
 
