@@ -126,8 +126,8 @@ public class UserVoteItemServiceImp implements UserVoteItemService {
             for (VoteItem voteItem :
                     byItem.get()) {
                 List<Integer> integers = userVoteItemRepository.orderRule(item.getId(), voteItem.getVoteItemId());
-                Integer max = userVoteItemRepository.orderRuleMaxScore(item.getId(), voteItem.getVoteItemId());
-                voteItem.setStatisticsOrderScore(calculate(max, integers));
+//                Integer max = userVoteItemRepository.orderRuleMaxScore(item.getId(), voteItem.getVoteItemId());
+                voteItem.setStatisticsOrderScore(calculate(byItem.get().size(), integers));
             }
             Collections.sort(byItem.get(), new Comparator<VoteItem>() {
                 @Override
@@ -141,7 +141,7 @@ public class UserVoteItemServiceImp implements UserVoteItemService {
     }
 
     private Integer calculate(Integer max, List<Integer> list) {
-        int i = list.stream().mapToInt(integer -> integer * (max + 1 - integer)).sum();
+        int i = list.stream().mapToInt(integer -> max + 1 - integer).sum();
         return i;
     }
 }
