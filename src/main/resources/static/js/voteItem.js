@@ -229,7 +229,7 @@ function configOperation(rules, columnsOption) {
                     formatter: function (value, row, index) {
                         if (rules.isRead) {
                             return [
-                                `<input class="form-control voteInput" readonly value="${row.score}" data-live-search="true" name="orgid" >`,
+                                '<input class="form-control voteInput" readonly value="' + row.score + '" data-live-search="true" name="orgid" >',
                             ].join('')
                         }
                         return [
