@@ -190,9 +190,9 @@ function configOperation(rules, columnsOption) {
                     valign: 'middle',
                     events: window.operateEvents,
                     formatter: function (value, row, index) {
+                        var className = rules.isRead ? (row.agreeFlag == '1' ? '' : 'normal') : 'castVote'
                         return [
-                            '<a class="' + rules.isRead ? (row.agreeFlag == '1' ? '' : 'normal') : 'castVote' + '" href="javascript:void(0)" data-action="vote" title="vote">',
-
+                            '<a class="'+ className +'" href="javascript:void(0)" data-action="vote" title="vote">',
                             rules.isRead ? (row.agreeFlag == '1' ? templateOption.haveVotedRead[0] : templateOption.haveVotedRead[1]) : '投票',
                             '</a>'
                         ].join('')
@@ -530,10 +530,12 @@ function delHasItem(data, hasItemIndex, keys) {
         })
     }
     return arr.map(function (el) {
+        var obj = {}
+        obj[keys] = '0'
         if (keys == 'score') {
-            return Object.assign({}, initDataItem(el), {[keys]: '0'})
+            return Object.assign({}, initDataItem(el), obj)
         } else {
-            return Object.assign({}, initDataItem(el, 'castVote'), {[keys]: '0'})
+            return Object.assign({}, initDataItem(el, 'castVote'), obj)
         }
         // return initDataItem(el, 'castVote', '0')
     })
