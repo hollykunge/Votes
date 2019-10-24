@@ -489,7 +489,7 @@ public class ItemController {
                 });
             });
             EasyExcel.write(response.getOutputStream())
-                    .head(head(jsonObject))
+                    .head(head(jsonObject,item.getRules()))
                     .sheet("统计情况")
                     .doWrite(statisticsDownloadData);
             return "success";
@@ -539,7 +539,7 @@ public class ItemController {
         voteItem.setStatisticsNum(null);
     }
 
-    private List<List<String>> head(LinkedHashMap jsonObject) {
+    private List<List<String>> head(LinkedHashMap jsonObject,String flag) {
         try {
             List<List<String>> list = new ArrayList<List<String>>();
             List<String> one = new ArrayList<>();
@@ -557,7 +557,15 @@ public class ItemController {
                 list.add(head);
             });
             List<String> fina = new ArrayList<>();
-            fina.add("结果");
+            if(Objects.equals(flag,"1")){
+                fina.add("总票数结果");
+            }
+            if(Objects.equals(flag,"2")){
+                fina.add("排序汇总结果");
+            }
+            if(Objects.equals(flag,"3")){
+                fina.add("总得分结果");
+            }
             list.add(fina);
             return list;
         } catch (Exception e) {
