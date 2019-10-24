@@ -60,27 +60,71 @@ public class VoteItem {
 
     @Column(name = "attr6")
     private String attr6;
-    @Column(name = "statistics_num")
-    private String statisticsNum;
-    @Column(name = "statistics_toal_score")
-    private String statisticsToalScore;
-    @Column(name = "statistics_order_score")
-    private Integer statisticsOrderScore;
+    /**
+     * 当前轮统计结果
+     */
+    @Column(name = "current_statistics_num")
+    private String currentStatisticsNum;
+    @Column(name = "current_statistics_toal_score")
+    private String currentStatisticsToalScore;
+    @Column(name = "current_statistics_order_score")
+    private Integer currentStatisticsOrderScore;
+    /**
+     * 上一轮统计结果
+     */
+    @Column(name = "parent_statistics_num")
+    private String parentStatisticsNum;
+    @Column(name = "parent_statistics_toal_score")
+    private String parentStatisticsToalScore;
+    @Column(name = "parent_statistics_order_score")
+    private Integer parentStatisticsOrderScore;
 
-    public String getStatisticsNum() {
-        return statisticsNum;
+    public String getCurrentStatisticsNum() {
+        return currentStatisticsNum;
     }
 
-    public void setStatisticsNum(String statisticsNum) {
-        this.statisticsNum = statisticsNum;
+    public void setCurrentStatisticsNum(String currentStatisticsNum) {
+        this.currentStatisticsNum = currentStatisticsNum;
     }
 
-    public String getStatisticsToalScore() {
-        return statisticsToalScore;
+    public String getCurrentStatisticsToalScore() {
+        return currentStatisticsToalScore;
     }
 
-    public void setStatisticsToalScore(String statisticsToalScore) {
-        this.statisticsToalScore = statisticsToalScore;
+    public void setCurrentStatisticsToalScore(String currentStatisticsToalScore) {
+        this.currentStatisticsToalScore = currentStatisticsToalScore;
+    }
+
+    public Integer getCurrentStatisticsOrderScore() {
+        return currentStatisticsOrderScore;
+    }
+
+    public void setCurrentStatisticsOrderScore(Integer currentStatisticsOrderScore) {
+        this.currentStatisticsOrderScore = currentStatisticsOrderScore;
+    }
+
+    public String getParentStatisticsNum() {
+        return parentStatisticsNum;
+    }
+
+    public void setParentStatisticsNum(String parentStatisticsNum) {
+        this.parentStatisticsNum = parentStatisticsNum;
+    }
+
+    public String getParentStatisticsToalScore() {
+        return parentStatisticsToalScore;
+    }
+
+    public void setParentStatisticsToalScore(String parentStatisticsToalScore) {
+        this.parentStatisticsToalScore = parentStatisticsToalScore;
+    }
+
+    public Integer getParentStatisticsOrderScore() {
+        return parentStatisticsOrderScore;
+    }
+
+    public void setParentStatisticsOrderScore(Integer parentStatisticsOrderScore) {
+        this.parentStatisticsOrderScore = parentStatisticsOrderScore;
     }
 
     public String getAttr6() {
@@ -164,11 +208,4 @@ public class VoteItem {
         this.item = item;
     }
 
-    public Integer getStatisticsOrderScore() {
-        return statisticsOrderScore;
-    }
-
-    public void setStatisticsOrderScore(Integer statisticsOrderScore) {
-        this.statisticsOrderScore = statisticsOrderScore;
-    }
 }
