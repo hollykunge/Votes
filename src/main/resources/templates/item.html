@@ -22,7 +22,6 @@
     <div id="alertMsg"></div>
     <div class="card border-dark mb-3">
         <div class="card-header">
-            <button class="btn btn-outline-danger btn-sm" id="delBtn">删除</button>
             <div style="float: right">
                 <a href="/item/export" class="btn btn-link">下载模板</a>
 
@@ -132,8 +131,15 @@
     let rules = [[${item.rules}]] // 规则范围 1否同 2排序 3打分
     let agree_rule = [[${item.agreeRule}]] // 规则范围 1否同 2排序 3打分
     let titleConfig =  [[${item.vote.excelHeader}]]
+    let delVoteId = ''
 
     $(function () {
+        window.operateEvents = {
+            "click #itemDelete" : function (e, value, row, index) {
+                delVoteId = row.voteItemId;
+                $('#delModel').modal('show');
+            }
+        }
         if(titleConfig) {
             titleConfig = initTitleConfig(titleConfig)
         } else {
@@ -145,9 +151,11 @@
             rules: rules,
             data: data,
             titleConfig: titleConfig,
-            checkbox: true,
-            clickToSelect: true,
-            url:'/voteItems/'+ [[${item.id}]]
+            // checkbox: true,
+            // clickToSelect: true,
+            url:'/voteItems/'+ [[${item.id}]],
+            operateCol: true,
+            operateColFormat: delFormatter
         })
 
         // 清空 file 值
@@ -172,20 +180,15 @@
                 }
             }
         })
-        // 删除确认框
-        $('#delBtn').click(function () {
-            $('#delModel').modal('show');
-        })
+        function delFormatter (value, row, index) {
+            return [
+                '<button id="itemDelete" type="button" class="btn btn-outline-danger btn-sm">删除</button>'
+            ].join("")
+        }
         // 删除
         $('#saveDelBtn').click(function () {
-            var selectItems = $table.bootstrapTable('getSelections')
-            var ids = '';
-            selectItems.forEach(item => {
-                ids = ids + item.voteItemId + ','
-            })
-            ids = ids.substring(0,ids.length-1)
             $.ajax({
-                url:"/deleteVoteItem/"+[[${item.id}]]+"/"+ids,
+                url:"/deleteVoteItem/"+[[${item.id}]]+"/"+delVoteId,
                 async:true,
                 contentType:"application/json;charset=utf-8",
                 dataType: 'html',
