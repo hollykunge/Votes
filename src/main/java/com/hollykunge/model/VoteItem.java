@@ -64,36 +64,66 @@ public class VoteItem {
      * 当前轮统计结果
      */
     @Column(name = "current_statistics_num")
-    private String currentStatisticsNum;
+    private Integer currentStatisticsNum;
     @Column(name = "current_statistics_toal_score")
-    private String currentStatisticsToalScore;
+    private Integer currentStatisticsToalScore;
     @Column(name = "current_statistics_order_score")
     private Integer currentStatisticsOrderScore;
     /**
      * 上一轮统计结果
      */
     @Column(name = "parent_statistics_num")
-    private String parentStatisticsNum;
+    private Integer parentStatisticsNum;
     @Column(name = "parent_statistics_toal_score")
-    private String parentStatisticsToalScore;
+    private Integer parentStatisticsToalScore;
     @Column(name = "parent_statistics_order_score")
     private Integer parentStatisticsOrderScore;
+    /**
+     * 排序
+     */
+    @Column(name = "vote_item_order")
+    private Integer voteItemOrder;
 
-    public String getCurrentStatisticsNum() {
+    public Integer getCurrentStatisticsNum() {
         return currentStatisticsNum;
     }
 
-    public void setCurrentStatisticsNum(String currentStatisticsNum) {
+    public void setCurrentStatisticsNum(Integer currentStatisticsNum) {
         this.currentStatisticsNum = currentStatisticsNum;
     }
 
-    public String getCurrentStatisticsToalScore() {
+    public Integer getCurrentStatisticsToalScore() {
         return currentStatisticsToalScore;
     }
 
-    public void setCurrentStatisticsToalScore(String currentStatisticsToalScore) {
+    public void setCurrentStatisticsToalScore(Integer currentStatisticsToalScore) {
         this.currentStatisticsToalScore = currentStatisticsToalScore;
     }
+
+    public Integer getParentStatisticsNum() {
+        return parentStatisticsNum;
+    }
+
+    public void setParentStatisticsNum(Integer parentStatisticsNum) {
+        this.parentStatisticsNum = parentStatisticsNum;
+    }
+
+    public Integer getParentStatisticsToalScore() {
+        return parentStatisticsToalScore;
+    }
+
+    public void setParentStatisticsToalScore(Integer parentStatisticsToalScore) {
+        this.parentStatisticsToalScore = parentStatisticsToalScore;
+    }
+
+    public Integer getVoteItemOrder() {
+        return voteItemOrder;
+    }
+
+    public void setVoteItemOrder(Integer voteItemOrder) {
+        this.voteItemOrder = voteItemOrder;
+    }
+
 
     public Integer getCurrentStatisticsOrderScore() {
         return currentStatisticsOrderScore;
@@ -101,22 +131,6 @@ public class VoteItem {
 
     public void setCurrentStatisticsOrderScore(Integer currentStatisticsOrderScore) {
         this.currentStatisticsOrderScore = currentStatisticsOrderScore;
-    }
-
-    public String getParentStatisticsNum() {
-        return parentStatisticsNum;
-    }
-
-    public void setParentStatisticsNum(String parentStatisticsNum) {
-        this.parentStatisticsNum = parentStatisticsNum;
-    }
-
-    public String getParentStatisticsToalScore() {
-        return parentStatisticsToalScore;
-    }
-
-    public void setParentStatisticsToalScore(String parentStatisticsToalScore) {
-        this.parentStatisticsToalScore = parentStatisticsToalScore;
     }
 
     public Integer getParentStatisticsOrderScore() {
