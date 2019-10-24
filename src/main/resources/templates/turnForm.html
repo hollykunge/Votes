@@ -37,8 +37,12 @@
                                required="" th:field="*{memberSize}"/>
                     </div>
                 </div>
-                <br/>
-                <h6 class="p-1 mb-2 bg-customer text-white">投票规则</h6>
+
+                <h6 class="p-1 mb-2 bg-customer text-white">注意事项</h6>
+                <textarea th:field="*{body}"
+                          placeholder="" class="form-control" id="tips"/>
+
+                <h6 class="p-1 mb-2 bg-customer-primary text-white">投票规则</h6>
                 <div class="row" style="margin-left: 240px;margin-bottom: 16px">
                     <div class="custom-control custom-radio col-md-3">
                         <input id="isNot" name="role" type="radio" class="custom-control-input"
@@ -73,14 +77,6 @@
                         </div>
                     </div>
                     <div class="col-md-4 mb-3">
-                        <label for="max">范围（最大）</label>
-                        <input type="number" class="form-control" id="max" placeholder=""
-                               th:field="*{agreeMax}"/>
-                        <div class="invalid-feedback">
-                            填写最大数量
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-3">
                         <label for="min">范围（最小）</label>
                         <input type="number" class="form-control" id="min" placeholder=""
                                th:field="*{agreeMin}"/>
@@ -88,17 +84,25 @@
                             填写最小数量
                         </div>
                     </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="max">范围（最大）</label>
+                        <input type="number" class="form-control" id="max" placeholder=""
+                               th:field="*{agreeMax}"/>
+                        <div class="invalid-feedback">
+                            填写最大数量
+                        </div>
+                    </div>
                 </div>
                 <div id="sortDiv" class="row">
-                    <div class="col-md-6 mb-3">
-                        <label for="max">分数（最高）</label>
-                        <input type="number" class="form-control" id="maxSort" placeholder=""
-                               th:field="*{maxScore}"/>
-                    </div>
                     <div class="col-md-6 mb-3">
                         <label for="min">分数（最低）</label>
                         <input type="number" class="form-control" id="minSort" placeholder=""
                                th:field="*{minScore}"/>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="max">分数（最高）</label>
+                        <input type="number" class="form-control" id="maxSort" placeholder=""
+                               th:field="*{maxScore}"/>
                     </div>
                 </div>
                 <div id="countDiv" class="row">
@@ -108,10 +112,6 @@
                                   placeholder="" class="form-control" id="description"/>
                     </div>
                 </div>
-
-                <h6 class="p-1 mb-2 bg-customer text-white">注意事项</h6>
-                <textarea th:field="*{body}"
-                          placeholder="" class="form-control" id="tips"/>
                 <input type="hidden" th:field="*{vote}"/>
                 <input type="hidden" th:field="*{user}"/>
                 <input type="hidden" th:field="*{id}"/>
