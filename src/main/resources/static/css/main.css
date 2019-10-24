@@ -113,6 +113,11 @@ a:hover, a:focus, a:active {
     margin-top: 24px;
 }
 
+.bg-customer-primary {
+    background: linear-gradient(to right, rgb(76, 153, 255), white);
+    margin-top: 24px;
+}
+
 .tips-hide {
     display: none;
 }
