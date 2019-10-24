@@ -5,7 +5,7 @@ const templateOption = {
         '<span class="btn btn-link">',
         '<span class="badge badge-info">已投</span>',
         '</span>',
-        '<span class="btn btn-link">取消</span>',
+        '<span class="btn btn-link" data-action="cancel">取消</span>',
         '</div>'
     ].join(''),
     haveVotedRead: [
@@ -193,7 +193,7 @@ function configOperation(rules, columnsOption) {
                     events: window.operateEvents,
                     formatter: function (value, row, index) {
                         return [
-                            `<a class="${rules.isRead ? (row.agreeFlag == '1' ? '' : 'normal') : 'castVote'}" href="javascript:void(0)" title="vote">`,
+                            `<a class="${rules.isRead ? (row.agreeFlag == '1' ? '' : 'normal') : 'castVote'}" href="javascript:void(0)" title="vote" data-action="vote">`,
                             rules.isRead ? (row.agreeFlag == '1' ? templateOption.haveVotedRead[0] : templateOption.haveVotedRead[1]) : '投票',
                             '</a>'
                         ].join('')
@@ -403,8 +403,8 @@ function request(obj) {
             $('#loading').modal('show');
         },
         success: function (req) {
-            $('button[type=submit]').removeAttr('disabled');
-            $('button[type=submit]').find('.hide').addClass('hide')
+            // $('button[type=submit]').removeAttr('disabled');
+            // $('button[type=submit]').find('.hide').addClass('hide')
 
             //请求成功时处理
             if (req == 'success') {
@@ -414,7 +414,7 @@ function request(obj) {
                 })
                 setTimeout(function () {
                     window.location.reload()
-                }, 1000)
+                }, 500)
                 return
             }
             $('body').message({
