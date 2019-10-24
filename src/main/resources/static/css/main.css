@@ -131,9 +131,13 @@ a:hover, a:focus, a:active {
     overflow: hidden;
     padding: 15px 15px 15px 20px;
     display: flex;
-    align-items: center
+    align-items: center;
+    z-index:10000;
 }
 
+.position_alert strong{
+    display: inline-block;margin-right: 60px;
+}
 .alert_message_fade_enter, .alert_message_fade_leave_active {
     opacity: 0;
     transform: translate(-50%, -100%)
