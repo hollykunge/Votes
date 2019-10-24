@@ -99,18 +99,19 @@ public class UserVoteItemServiceImp implements UserVoteItemService {
                 projections) {
             VoteItem one = voteItemRepository.findOne(Long.parseLong(String.valueOf(objects[1])));
             if (Objects.equals(flag, VoteConstants.ITEM_RULE_AGER)) {
-                one.setCurrentStatisticsNum(String.valueOf(objects[0]));
+                one.setCurrentStatisticsNum(Integer.parseInt(String.valueOf(objects[0])));
             }
             if (Objects.equals(flag, VoteConstants.ITEM_RULE_SCORE)) {
-                one.setCurrentStatisticsToalScore(String.valueOf(objects[0]));
+                one.setCurrentStatisticsToalScore(Integer.parseInt(String.valueOf(objects[0])));
             }
             voteItems.add(one);
         }
         List<VoteItem> collect = itemData
                 .stream()
-                .filter(voteItem -> !voteItems.stream().anyMatch(vote -> (long)vote.getVoteItemId() == voteItem.getVoteItemId()))
+                .filter(voteItem -> !voteItems.stream().anyMatch(vote -> (long) vote.getVoteItemId() == voteItem.getVoteItemId()))
                 .collect(Collectors.toList());
         voteItems.addAll(collect);
+        this.setVoteItemOrder(voteItems);
         return voteItems;
     }
 
@@ -128,19 +129,47 @@ public class UserVoteItemServiceImp implements UserVoteItemService {
                 List<Integer> integers = userVoteItemRepository.orderRule(item.getId(), voteItem.getVoteItemId());
                 voteItem.setCurrentStatisticsOrderScore(calculate(byItem.get().size(), integers));
             }
-            Collections.sort(byItem.get(), new Comparator<VoteItem>() {
-                @Override
-                public int compare(VoteItem o1, VoteItem o2) {
-                    //倒序
-                    return o2.getCurrentStatisticsOrderScore().compareTo(o1.getCurrentStatisticsOrderScore());
-                }
+            Collections.sort(byItem.get(), (VoteItem o1, VoteItem o2) -> {
+                //倒序
+                return o2.getCurrentStatisticsOrderScore().compareTo(o1.getCurrentStatisticsOrderScore());
             });
         }
-        return byItem.get();
+        List<VoteItem> voteItems = this.setVoteItemOrder(byItem.get());
+        return voteItems;
     }
 
     private Integer calculate(Integer max, List<Integer> list) {
         int i = list.stream().mapToInt(integer -> max + 1 - integer).sum();
         return i;
+    }
+
+    private List<VoteItem> setVoteItemOrder(List<VoteItem> voteItem) {
+        //设置起始值为1
+        if(voteItem.size() > 0){
+            voteItem.get(0).setVoteItemOrder(1);
+        }
+        for (int i = 1; i < voteItem.size(); i++) {
+            int y = 0;
+            if(voteItem.get(i).getCurrentStatisticsOrderScore() != null){
+                y = voteItem.get(i).getCurrentStatisticsOrderScore().compareTo(voteItem.get(i - 1).getCurrentStatisticsOrderScore());
+            }
+            if(voteItem.get(i).getCurrentStatisticsNum() != null){
+                y = voteItem.get(i).getCurrentStatisticsNum().compareTo(voteItem.get(i - 1).getCurrentStatisticsNum());
+            }
+            if(voteItem.get(i).getCurrentStatisticsToalScore() != null){
+                y = voteItem.get(i).getCurrentStatisticsToalScore().compareTo(voteItem.get(i - 1).getCurrentStatisticsToalScore());
+            }
+            if(voteItem.get(i).getCurrentStatisticsToalScore() == null
+                    && voteItem.get(i).getCurrentStatisticsNum() == null
+                    && voteItem.get(i).getCurrentStatisticsOrderScore() == null){
+                continue;
+            }
+            if(y == 0){
+                voteItem.get(i).setVoteItemOrder(voteItem.get(i-1).getVoteItemOrder());
+                continue;
+            }
+            voteItem.get(i).setVoteItemOrder(voteItem.get(i-1).getVoteItemOrder()+1);
+        }
+        return voteItem;
     }
 }
