@@ -124,14 +124,14 @@
 <div th:replace="/fragments/footer :: footer" />
 
 <script th:inline="javascript">
-    let data = JSON.parse([[${voteItems}]] || '[]')
-    let $table = $('#table')
-    let $remove = $('#remove')
-    let selections = []
-    let rules = [[${item.rules}]] // 规则范围 1否同 2排序 3打分
-    let agree_rule = [[${item.agreeRule}]] // 规则范围 1否同 2排序 3打分
-    let titleConfig =  [[${item.vote.excelHeader}]]
-    let delVoteId = ''
+    var data = JSON.parse([[${voteItems}]] || '[]')
+    var $table = $('#table')
+    var $remove = $('#remove')
+    var selections = []
+    var rules = [[${item.rules}]] // 规则范围 1否同 2排序 3打分
+    var agree_rule = [[${item.agreeRule}]] // 规则范围 1否同 2排序 3打分
+    var titleConfig =  [[${item.vote.excelHeader}]]
+    var delVoteId = ''
 
     $(function () {
         window.operateEvents = {
@@ -235,7 +235,6 @@
             var innerDiv = '<div class="alert alert-success">'+ info +'</div>';
             $("#alertMsg").html(innerDiv)
         }
-
     })
 </script>
 <script type="text/javascript" th:src="@{/js/voteItem.js}"></script>
