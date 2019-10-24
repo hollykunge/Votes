@@ -5,7 +5,6 @@
 
 <head>
     <div th:replace="/fragments/header :: header-css"/>
-
 </head>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary" style="margin-bottom: 16px">
     <div class="container">
@@ -20,6 +19,15 @@
         <div class="container">
             <h1 class="display-5" th:text="${item.getVote().title}">无标题</h1>
             <p class="lead" th:text="${item.getVote().body}">无描述</p>
+        </div>
+    </div>
+    <div class="modal warning">
+        <div class=" position_alert alert alert-warning alert-dismissible fade show " role="alert">
+            <strong>还有剩余人员未打分，确定提交吗？</strong>
+            <div>
+                <button type="button" class="btn btn-primary btn-sm submit-fraction">确定</button>
+                <button type="button" class="btn btn-danger btn-sm close-btn">取消</button>
+            </div>
         </div>
     </div>
     <div class="card-deck mb-3 text-center">
@@ -161,10 +169,28 @@
         window.operateEvents = {
             // 打分
             'change .voteInput': function (e, value, row, index) {
+                let isRepeat = {
+                    repeat: false,
+                    index: index
+                };
                 if (!isPass($(e.target).val(), row.item.minScore, row.item.maxScore)) {
                     return
                 }
                 row.score = $(e.target).val()
+
+                // 判断是否已存在该项内容，存在则修改，不存在push
+                $.each($._fraction, function (index, item) {
+                    if (item.voteItem.voteItemId === row.voteItemId) {
+                        isRepeat = {
+                            repeat: true,
+                            index: index
+                        }
+                    }
+                })
+                if (isRepeat.repeat) {
+                    $._fraction[isRepeat.index].score = $(e.target).val()
+                    return
+                }
                 $._fraction.push(initDataItem(row))
             },
             // 投票
@@ -197,7 +223,6 @@
                             return
                         }
                         $(e.target).html(templateOption.haveVoted).removeClass('castVote')
-
 
 
                         // 通过验证 添加到数组
@@ -331,16 +356,35 @@
                 }
             } else if ($._fraction) {
                 if ($._fraction.length > 0) {
-                    requestBody = $._fraction.concat(
-                        delHasItem(
-                            data,
-                            $._fraction.map(function (item) {
-                                return item.voteItem.voteItemId
-                            }),
-                            'score'
+                    if ($._fraction.length !== data.length) {
+                        requestBody = $._fraction.concat(
+                            delHasItem(
+                                data,
+                                $._fraction.map(function (item) {
+                                    return item.voteItem.voteItemId
+                                }),
+                                'score'
+                            )
                         )
-                    )
+                        $('.warning').show()
+                        $('.submit-fraction')
+                            .off('click')
+                            .on('click', function () {
+                                $(this).parents('.modal').hide()
+                                request({
+                                    url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),
+                                    data: JSON.stringify(requestBody)
+                                })
+                            })
+                        $('.close-btn')
+                            .off('click')
+                            .on('click', function () {
+                                $('.modal').hide();
+                            })
+                    }
+
                 }
+                return
             } else {
                 requestBody = data.map(function (item, index) {
                     return initDataItem(item)
