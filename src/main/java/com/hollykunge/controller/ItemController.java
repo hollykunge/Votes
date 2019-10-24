@@ -524,6 +524,7 @@ public class ItemController {
             for (VoteItem vote : tempData) {
                 this.resetVoteItem(vote);
                 vote.setItem(dataItem);
+                vote.setTurnNum(String.valueOf(dataItem.getTurnNum()));
                 voteItemService.add(vote);
             }
             return "redirect:/voteItemsView/" + id;
@@ -534,9 +535,12 @@ public class ItemController {
 
     private void resetVoteItem(VoteItem voteItem) {
         voteItem.setVoteItemId(null);
-        voteItem.setStatisticsOrderScore(0);
-        voteItem.setStatisticsToalScore(null);
-        voteItem.setStatisticsNum(null);
+        voteItem.setParentStatisticsNum(voteItem.getCurrentStatisticsNum());
+        voteItem.setParentStatisticsOrderScore(voteItem.getCurrentStatisticsOrderScore());
+        voteItem.setParentStatisticsToalScore(voteItem.getCurrentStatisticsToalScore());
+        voteItem.setCurrentStatisticsNum(null);
+        voteItem.setCurrentStatisticsOrderScore(null);
+        voteItem.setCurrentStatisticsToalScore(null);
     }
 
     private List<List<String>> head(LinkedHashMap jsonObject,String flag) {

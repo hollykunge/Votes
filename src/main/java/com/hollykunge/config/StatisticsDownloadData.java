@@ -30,9 +30,9 @@ public class StatisticsDownloadData {
 
     private String attr6;
 
-    private String statisticsNum;
+    private String currentStatisticsNum;
 
-    private String statisticsToalScore;
+    private String currentStatisticsToalScore;
 
-    private Integer statisticsOrderScore;
+    private Integer currentStatisticsOrderScore;
 }

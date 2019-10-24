@@ -401,8 +401,8 @@ function request(obj) {
             $('#loading').modal('show');
         },
         success: function (req) {
-            $('button[type=submit]').removeAttr('disabled');
-            $('button[type=submit]').find('.hide').addClass('hide')
+            // $('button[type=submit]').removeAttr('disabled');
+            // $('button[type=submit]').find('.hide').addClass('hide')
 
             //请求成功时处理
             if (req == 'success') {
@@ -412,7 +412,7 @@ function request(obj) {
                 })
                 setTimeout(function () {
                     window.location.reload()
-                }, 1000)
+                }, 500)
                 return
             }
             $('body').message({
