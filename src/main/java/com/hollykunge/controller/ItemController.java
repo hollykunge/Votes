@@ -473,8 +473,16 @@ public class ItemController {
             String excelHeader = item.getVote().getExcelHeader();
             LinkedHashMap jsonObject = JSON.parseObject(excelHeader, LinkedHashMap.class);
             //清洗一遍数据，excelhead中对应的值为null的给默认值无
+            AtomicInteger setId = new AtomicInteger();
             statisticsDownloadData.forEach(data -> {
+                setId.getAndIncrement();
+                ReflectionUtils.setFieldValue(data,"voteItemId", setId.intValue());
+                AtomicInteger index = new AtomicInteger();
                 jsonObject.forEach((key, value) -> {
+                    index.getAndIncrement();
+                    if (index.intValue() > 7) {
+                        return;
+                    }
                     if (StringUtils.isEmpty(ReflectionUtils.getFieldValue(data, (String) key))) {
                         ReflectionUtils.setFieldValue(data, (String) key, "无");
                     }
