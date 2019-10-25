@@ -49,7 +49,7 @@ function excelImport(voteId) {
     if (form) {
         form.append("file", fileObj); // 文件对象
     }
-    xhr = new XMLHttpRequest(); // XMLHttpRequest 对象
+    var xhr = new XMLHttpRequest(); // XMLHttpRequest 对象
     xhr.open("post", url, false); //post方式，url为服务器请求地址，true 该参数规定请求是否异步处理。
     xhr.onload = uploadComplete; //请求完成
     xhr.onerror = uploadFailed; //请求失败
@@ -290,11 +290,15 @@ function initTable(options) {
                 '<div class="card-body">',
             ]
             $.each(row, function (key, value) {
-                var title = options.titleConfig.filter(function (item) {
-                    return item.field === key
+                var title = options.titleConfig.filter(function (item, index) {
+                    if(index >= 6) {
+                        return item.field === key
+                    }
                 })[0]
                 if (title) {
-                    html.push('<p><b style="display: inline-block; margin-right: 10px;">' + title.title + ':</b> ' + value + '</p>')
+                    html.push('<p><b style="display: inline-block; margin-right: 10px;">' + title.title + ':</b> ' + value.split(',')[0] + '</p>')
+                    // #206 详情卡片使用其它显示行内没有的属性
+                    html.push('<p><b style="display: inline-block; margin-right: 10px;">其他:</b> ' + value.split(',').slice(1).join(' ') + '</p>')
                 }
             })
             html.concat([

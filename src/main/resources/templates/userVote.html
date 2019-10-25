@@ -280,7 +280,8 @@
             },
             // 排序选择事件回调
             'change .selectVote': function (e, value, row, index) {
-
+                //  #205 部分浏览器 change 后, select未失去焦点，导致 select 无法触发focus事件
+                $(e.target)[0].blur()
                 currentValue = ''
                 row.SerialNumber = $(e.target).val()
                 data[index] = row
