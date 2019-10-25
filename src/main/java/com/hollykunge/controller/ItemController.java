@@ -207,7 +207,7 @@ public class ItemController {
             }
             model.addAttribute("item", item);
             model.addAttribute("vote",item.getVote());
-            model.addAttribute("parentItem",prentItem);
+            model.addAttribute("parentItemRule",prentItem.getRules());
             return "/item";
         } catch (Exception e) {
             throw e;
