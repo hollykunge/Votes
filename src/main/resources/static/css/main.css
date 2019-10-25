@@ -137,16 +137,19 @@ a:hover, a:focus, a:active {
     padding: 15px 15px 15px 20px;
     display: flex;
     align-items: center;
-    z-index:10000;
+    z-index: 10000;
 }
 
-.position_alert strong{
-    display: inline-block;margin-right: 60px;
+.position_alert strong {
+    display: inline-block;
+    margin-right: 60px;
 }
+
 .alert_message_fade_enter, .alert_message_fade_leave_active {
     opacity: 0;
     transform: translate(-50%, -100%)
 }
+
 .fade-in-linear-enter, .fade-in-linear-leave, .fade-in-linear-leave-active {
     opacity: 0
 }
@@ -179,23 +182,35 @@ a:hover, a:focus, a:active {
     color: #000000;
 }
 
-.modal{
+.modal {
     opacity: 1;
-    background: rgba(255,255,255, .6);
+    background: rgba(255, 255, 255, .6);
 }
-.spin-large{
+
+.spin-large {
     width: 50px;
     height: 50px;
 }
-.loading{
+
+.loading {
     transform: translateY(-40%);
     top: 40%;
 }
 
-.have-voted{
+.have-voted {
     width: 120px;
     display: inline-block;
 }
-.hide{
+
+.hide {
     display: none;
+}
+
+.warning_input {
+    border: 1px solid rgba(165, 0, 0, 0.4);
+}
+
+.warning_input:focus {
+    border: 1px solid rgba(165, 0, 0, 0.4);
+    box-shadow: 0 0 0 0.2rem rgba(65, 0, 0, 0.4);
 }
