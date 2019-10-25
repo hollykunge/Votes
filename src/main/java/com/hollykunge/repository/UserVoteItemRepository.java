@@ -20,7 +20,7 @@ public interface UserVoteItemRepository extends JpaRepository<UserVoteItem, Long
 
     @Query(value = "SELECT count(1)  num,vote_item_id voteItemId " +
             " FROM USER_VOTE_ITEM " +
-            " group by vote_item_id,item_id " +
+            " group by vote_item_id,item_id,agree_flag " +
             " having item_id = ?1 and agree_flag = '1' "+
             " order by num desc", nativeQuery = true)
     List<Object[]> agreeRule(Long itemId);
