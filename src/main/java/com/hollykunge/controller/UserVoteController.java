@@ -91,6 +91,7 @@ public class UserVoteController {
         List<Item> byPrevious = itemService.findByPrevious(String.valueOf(id));
         if(byPrevious.size() == 0){
             redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("没有下一轮投票！"));
+            return "redirect:"+VoteConstants.INVITECODE_RPC+id+"/"+code;
         }
         Item item = byPrevious.get(0);
         return "redirect:"+VoteConstants.INVITECODE_RPC+item.getId()+"/"+item.getCode();
