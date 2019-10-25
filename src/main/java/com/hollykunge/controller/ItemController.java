@@ -201,7 +201,10 @@ public class ItemController {
 
         try {
             Item item = itemService.findById(id);
-            Item prentItem = itemService.findById(Long.valueOf(item.getPreviousId()));
+            Item prentItem = null;
+            if(!StringUtils.isEmpty(item.getPreviousId())){
+                prentItem = itemService.findById(Long.valueOf(item.getPreviousId()));
+            }
             model.addAttribute("item", item);
             model.addAttribute("vote",item.getVote());
             model.addAttribute("parentItem",prentItem);
