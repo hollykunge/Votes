@@ -9,11 +9,11 @@ import com.hollykunge.model.VoteItem;
 import com.hollykunge.service.VoteItemService;
 import com.hollykunge.util.ExceptionCommonUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhhongyu
@@ -21,16 +21,16 @@ import java.util.List;
  */
 @Slf4j
 public class UploadDataListener extends AnalysisEventListener<ItemUploadData> {
-    private final Model model;
+    private final Map<String,Object> resultMsg;
 
     private final VoteItemService voteItemService;
 
     private final Item item;
 
-    public UploadDataListener(Item item, VoteItemService voteItemService,Model model) {
+    public UploadDataListener(Item item, VoteItemService voteItemService,Map<String,Object> resultMsg) {
         this.voteItemService = voteItemService;
         this.item = item;
-        this.model = model;
+        this.resultMsg = resultMsg;
     }
 
 
@@ -70,8 +70,11 @@ public class UploadDataListener extends AnalysisEventListener<ItemUploadData> {
             try {
                 voteItemService.add(voteItem);
                 log.info("存储数据库成功！");
+                resultMsg.put("status",200);
+                resultMsg.put("msg","导入成功");
             } catch (Exception e) {
-                model.addAttribute("showAlertMessage","保存excel失败!excel中可能存在不规范数据，或数据库连接失败,失败原因:"+e.getMessage());
+                resultMsg.put("status",500);
+                resultMsg.put("msg","保存excel失败!excel中可能存在不规范数据，或数据库连接失败,失败原因:"+e.getMessage());
                 log.error("存储数据库失败！");
                 log.error(ExceptionCommonUtil.getExceptionMessage(e));
             }

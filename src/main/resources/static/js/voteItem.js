@@ -2,10 +2,10 @@
 var templateOption = {
     haveVoted: [
         '<div class="have-voted">',
-        '<span class="btn btn-link">',
-        '<span class="badge badge-info">已投</span>',
+        '<span>',
+        '<span class="badge badge-info mr15">已投</span>',
         '</span>',
-        '<span class="btn btn-link" data-action="cancel">取消</span>',
+        '<span data-action="cancel">取消</span>',
         '</div>'
     ].join(''),
     haveVotedRead: [
@@ -33,7 +33,7 @@ function showAddModel() {
     var inputdiv = "";
     for (var i = 0; i < titleConfig.length; i++) {
         inputdiv = inputdiv + "<div class='form-group col-md-6'>";
-        inputdiv = inputdiv + "<label>" + titleConfig[i].title + "</label><input class='form-control'/>";
+        inputdiv = inputdiv + "<label>" + titleConfig[i].title + "</label><input class='form-control-sm'/>";
         inputdiv = inputdiv + "</div>";
     }
     $('#formRow').append(inputdiv);
@@ -56,7 +56,6 @@ function excelImport(voteId) {
     xhr.upload.onprogress = progressFunction; //【上传进度调用方法实现】
     xhr.upload.onloadstart = function () { //上传开始执行方法
         ot = new Date().getTime(); //设置上传开始时间
-
 
 
         oloaded = 0; //设置上传开始时，以上传的文件大小为0
@@ -196,7 +195,7 @@ function configOperation(rules, columnsOption) {
                     formatter: function (value, row, index) {
                         var className = rules.isRead ? (row.agreeFlag == '1' ? '' : 'normal') : 'castVote'
                         return [
-                            '<a class="'+ className +'" href="javascript:void(0)" data-action="vote" title="vote">',
+                            '<a class="btn btn-link btn-sm ' + className + '" href="javascript:void(0)" data-action="vote" title="vote">',
                             rules.isRead ? (row.agreeFlag == '1' ? templateOption.haveVotedRead[0] : templateOption.haveVotedRead[1]) : '投票',
                             '</a>'
                         ].join('')
@@ -215,7 +214,7 @@ function configOperation(rules, columnsOption) {
                             return '<a>' + row.order + '</a>'
                         }
                         return [
-                            '<select class="form-control selectpicker selectVote" data-live-search="true" name="orgid" >',
+                            '<select class="form-control-sm selectpicker selectVote" data-live-search="true" name="orgid" >',
                             '<option value="">请选择</option>',
                             '</select>'
                         ].join('')
@@ -233,11 +232,11 @@ function configOperation(rules, columnsOption) {
                     formatter: function (value, row, index) {
                         if (rules.isRead) {
                             return [
-                                '<input class="form-control voteInput" readonly value="' + row.score + '" data-live-search="true" name="orgid" >',
+                                '<input class="form-control-sm voteInput" readonly value="' + row.score + '" data-live-search="true" name="orgid" >',
                             ].join('')
                         }
                         return [
-                            '<input class="form-control voteInput" data-live-search="true" name="orgid" >',
+                            '<input class="form-control-sm voteInput" data-live-search="true" name="orgid" >',
                         ].join('')
                     }
                 })
@@ -291,14 +290,29 @@ function initTable(options) {
             ]
             $.each(row, function (key, value) {
                 var title = options.titleConfig.filter(function (item, index) {
-                    if(index >= 6) {
-                        return item.field === key
-                    }
+                    return item.field === key
                 })[0]
                 if (title) {
-                    html.push('<p><b style="display: inline-block; margin-right: 10px;">' + title.title + ':</b> ' + value.split(',')[0] + '</p>')
-                    // #206 详情卡片使用其它显示行内没有的属性
-                    html.push('<p><b style="display: inline-block; margin-right: 10px;">其他:</b> ' + value.split(',').slice(1).join(' ') + '</p>')
+                    if (value.indexOf(',') === -1) {
+                        html.push('<p><b style="display: inline-block; margin-right: 10px;">' + title.title + ':</b> ' + value.split(',')[0] + '</p>')
+                    } else {
+                        html.push(
+                            [
+                                '<p>' ,
+                                '<b style="display: inline-block; margin-right: 10px;">' ,
+                                title.title ,
+                                ':</b> ' ,
+                                value.split(',')[0],
+                                '</p>',
+                                '<p>' ,
+                                '<b style="display: inline-block; margin-right: 10px;">' ,
+                                '其他' ,
+                                ':</b> ' ,
+                                value.split(',').slice(1).join(' '),
+                                '</p>'
+                            ].join('')
+                        )
+                    }
                 }
             })
             html.concat([

@@ -176,6 +176,9 @@ public class UserVoteController {
         String clientIp = request.getHeader("clientIp");
         //如果请求头中没有ip，则为本地测试，使用默认值了
         if(StringUtils.isEmpty(clientIp)){
+            clientIp = request.getRemoteHost();
+        }
+        if(StringUtils.isEmpty(clientIp)){
             clientIp = VoteConstants.DEFUALT_CLIENTIP;
         }
         return clientIp;

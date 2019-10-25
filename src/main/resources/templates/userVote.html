@@ -23,7 +23,7 @@
     </div>
     <div class="modal warning">
         <div class=" position_alert alert alert-warning alert-dismissible fade show " role="alert">
-            <strong>还有剩余人员未打分，确定提交吗？</strong>
+            <strong>还有剩余人员未打分(分数不符合规则将视为0分)，确定提交吗？</strong>
             <div>
                 <button type="button" class="btn btn-primary btn-sm submit-fraction">确定</button>
                 <button type="button" class="btn btn-danger btn-sm close-btn">取消</button>
@@ -58,8 +58,7 @@
                             <li th:text="${'小于'+ item.agreeMax}"></li>
                         </div>
                         <div th:case="3">
-                            <li th:text="${'大于'+ item.minScore}"></li>
-                            <li th:text="${'小于'+ item.maxScore}"></li>
+                            分数范围 (<span th:text="${item.minScore}"></span> -- <span th:text="${item.maxScore}"></span>)
                         </div>
                     </div>
                 </ul>
@@ -190,10 +189,12 @@
                     index: index
                 };
                 if (!isPass($(e.target).val(), row.item.minScore, row.item.maxScore)) {
+                    $(e.target).focus().addClass('warning_input')
                     return
                 }
-                row.score = $(e.target).val()
 
+                row.score = $(e.target).val()
+                $(e.target).removeClass('warning_input')
                 // 判断是否已存在该项内容，存在则修改，不存在push
                 $.each($._fraction, function (index, item) {
                     if (item.voteItem.voteItemId === row.voteItemId) {
@@ -207,6 +208,7 @@
                     $._fraction[isRepeat.index].score = $(e.target).val()
                     return
                 }
+
                 $._fraction.push(initDataItem(row))
             },
             // 投票
@@ -232,7 +234,7 @@
                         })
                         return
                     }
-                    if ($(e.target).attr('class') === '') {
+                    if ($(e.target).attr('class') === 'btn btn-link btn-sm') {
                         return
                     }
                     $(e.target).html(templateOption.haveVoted).removeClass('castVote')
