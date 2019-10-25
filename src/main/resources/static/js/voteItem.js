@@ -49,7 +49,7 @@ function excelImport(voteId) {
     if (form) {
         form.append("file", fileObj); // 文件对象
     }
-    xhr = new XMLHttpRequest(); // XMLHttpRequest 对象
+    var xhr = new XMLHttpRequest(); // XMLHttpRequest 对象
     xhr.open("post", url, false); //post方式，url为服务器请求地址，true 该参数规定请求是否异步处理。
     xhr.onload = uploadComplete; //请求完成
     xhr.onerror = uploadFailed; //请求失败

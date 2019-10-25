@@ -38,14 +38,14 @@
             </table>
         </div>
     </div>
-    <div class="card border-dark mb-3 shadow-sm">
-        <div class="card-header">
-            <span>排序内容</span>
-        </div>
-        <div class="card-body text-primary card-nopadding">
-            <table class="table-striped table-sm" id="order"></table>
-        </div>
-    </div>
+<!--    <div class="card border-dark mb-3 shadow-sm">-->
+<!--        <div class="card-header">-->
+<!--            <span>排序内容</span>-->
+<!--        </div>-->
+<!--        <div class="card-body text-primary card-nopadding">-->
+<!--            <table class="table-striped table-sm" id="order"></table>-->
+<!--        </div>-->
+<!--    </div>-->
     <!--上传框-->
     <div class="modal fade" id="importModel" tabindex="-1" role="dialog" aria-labelledby="importTitle" aria-hidden="true" data-backdrop="static">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -124,33 +124,42 @@
 <div th:replace="/fragments/footer :: footer" />
 
 <script th:inline="javascript">
-    var data = JSON.parse([[${voteItems}]] || '[]')
-    var $table = $('#table')
-    var $remove = $('#remove')
-    var selections = []
-    var rules = [[${item.rules}]] // 规则范围 1否同 2排序 3打分
-    var agree_rule = [[${item.agreeRule}]] // 规则范围 1否同 2排序 3打分
-    var titleConfig =  [[${item.vote.excelHeader}]]
-    var delVoteId = ''
+    var $table = $('#table');
+    var rules = [[${parentItemRule}]];// 规则范围 1否同 2排序 3打分
+    var titleConfig =  [[${item.vote.excelHeader}]];
+    var delVoteId = '';
+    var turnNum = [[${item.turnNum}]];
+
 
     $(function () {
+        var resultName = '';
+        if(rules == '1'){
+            resultName = "parentStatisticsNum";
+        }else if(rules == '2'){
+            resultName = "parentStatisticsOrderScore";
+        }else{
+            resultName = "parentStatisticsToalScore";
+        }
+        if(titleConfig) {
+            titleConfig = initTitleConfig(titleConfig);
+            if (turnNum != '1'){
+                titleConfig.splice(5,0,{'title':'结果','field': resultName})
+            }
+        } else {
+            titleConfig = []
+        }
+        // 删除按钮列
         window.operateEvents = {
             "click #itemDelete" : function (e, value, row, index) {
                 delVoteId = row.voteItemId;
                 $('#delModel').modal('show');
             }
         }
-        if(titleConfig) {
-            titleConfig = initTitleConfig(titleConfig)
-        } else {
-            // null.map不存在的错误
-            titleConfig = []
-        }
         // 添加checkbox列
         initTable({
             rules: rules,
-            data: data,
             titleConfig: titleConfig,
+            data: [],
             // checkbox: true,
             // clickToSelect: true,
             url:'/voteItems/'+ [[${item.id}]],
