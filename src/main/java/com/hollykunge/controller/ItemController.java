@@ -201,6 +201,10 @@ public class ItemController {
 
         try {
             Item item = itemService.findById(id);
+            if(!StringUtils.isEmpty(item.getPreviousId())){
+                Item prentItem = itemService.findById(Long.valueOf(item.getPreviousId()));
+                model.addAttribute("parentItemRule",prentItem.getRules());
+            }
             model.addAttribute("item", item);
             model.addAttribute("vote",item.getVote());
             return "/item";
@@ -541,6 +545,7 @@ public class ItemController {
         voteItem.setCurrentStatisticsNum(null);
         voteItem.setCurrentStatisticsOrderScore(null);
         voteItem.setCurrentStatisticsToalScore(null);
+        voteItem.setVoteItemOrder(null);
     }
 
     private List<List<String>> head(LinkedHashMap jsonObject,String flag) {
