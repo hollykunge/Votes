@@ -283,7 +283,8 @@ public class ItemController {
      */
     @RequestMapping(value = "/item/import", method = RequestMethod.POST)
     @ExtApiIdempotent(value = VoteConstants.EXTAPIHEAD)
-    public String excelImport(MultipartFile file, HttpServletRequest request,Model model) throws Exception {
+    public Map<String,Object> excelImport(MultipartFile file, HttpServletRequest request,Model model) throws Exception {
+        Map<String,Object> result = new HashMap<>();
         try {
             String itemIdTemp = request.getHeader("itemId");
             if (StringUtils.isEmpty(itemIdTemp)) {
@@ -291,13 +292,13 @@ public class ItemController {
             }
             Item item = new Item();
             item.setId(Long.parseLong(itemIdTemp));
-            EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadDataListener(item, voteItemService,model)).sheet().doRead();
-
+            EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadDataListener(item, voteItemService,result)).sheet().doRead();
             EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadHeaderDataListener(item,voteService,itemService)).sheet().doRead();
-            return this.voteItemsView(Long.valueOf(itemIdTemp),model);
-
+            return result;
         } catch (Exception e) {
-            return "redirect:/error";
+            result.put("status",500);
+            result.put("msg",e.getMessage());
+            return result;
         }
     }
 
