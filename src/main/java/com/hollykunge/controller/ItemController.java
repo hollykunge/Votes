@@ -283,7 +283,7 @@ public class ItemController {
      */
     @RequestMapping(value = "/item/import", method = RequestMethod.POST)
     @ExtApiIdempotent(value = VoteConstants.EXTAPIHEAD)
-    public Map<String,Object> excelImport(MultipartFile file, HttpServletRequest request,Model model) throws Exception {
+    public @ResponseBody Map<String,Object> excelImport(MultipartFile file, HttpServletRequest request,Model model) throws Exception {
         Map<String,Object> result = new HashMap<>();
         try {
             String itemIdTemp = request.getHeader("itemId");
