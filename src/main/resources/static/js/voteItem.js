@@ -1,5 +1,4 @@
-const templateOption = {
-
+var templateOption = {
     haveVoted: [
         '<div class="have-voted">',
         '<span class="btn btn-link">',
@@ -12,8 +11,7 @@ const templateOption = {
         '<span class="badge badge-success">已投</span>',
         '<span class="badge badge-secondary">未投</span>'
     ]
-
-}
+};
 
 // 弹窗显示
 function showImportModel() {
@@ -137,7 +135,7 @@ function showModel(id) {
  */
 function columnConfig(rules, callback) {
     // 根据 excelHeader 修改头部格式
-    let columnsOption = rules.titleConfig
+    var columnsOption = rules.titleConfig
         .map(function (item, index) {
             if (rules.isRead) {
                 // ...
@@ -192,8 +190,9 @@ function configOperation(rules, columnsOption) {
                     valign: 'middle',
                     events: window.operateEvents,
                     formatter: function (value, row, index) {
+                        var className = rules.isRead ? (row.agreeFlag == '1' ? '' : 'normal') : 'castVote'
                         return [
-                            `<a class="${rules.isRead ? (row.agreeFlag == '1' ? '' : 'normal') : 'castVote'}" href="javascript:void(0)" data-action="vote" title="vote">`,
+                            '<a class="'+ className +'" href="javascript:void(0)" data-action="vote" title="vote">',
                             rules.isRead ? (row.agreeFlag == '1' ? templateOption.haveVotedRead[0] : templateOption.haveVotedRead[1]) : '投票',
                             '</a>'
                         ].join('')
@@ -230,7 +229,7 @@ function configOperation(rules, columnsOption) {
                     formatter: function (value, row, index) {
                         if (rules.isRead) {
                             return [
-                                `<input class="form-control voteInput" readonly value="${row.score}" data-live-search="true" name="orgid" >`,
+                                '<input class="form-control voteInput" readonly value="' + row.score + '" data-live-search="true" name="orgid" >',
                             ].join('')
                         }
                         return [
@@ -241,7 +240,7 @@ function configOperation(rules, columnsOption) {
                 ;
         }
     }
-    if (rules.operateCol){
+    if (rules.operateCol) {
         columnsOption.push({
             title: '操作',
             field: "Button",
@@ -287,7 +286,7 @@ function initTable(options) {
                 '<div class="card-body">',
             ]
             $.each(row, function (key, value) {
-                let title = options.titleConfig.filter(function (item) {
+                var title = options.titleConfig.filter(function (item) {
                     return item.field === key
                 })[0]
                 if (title) {
@@ -313,7 +312,7 @@ function resetData(data, ruleOption) {
 
     return data.map(function (item) {
         var obj = {}
-        for (let key in item
+        for (var key in item
             ) {
             obj[key] = item[key]
         }
@@ -366,14 +365,14 @@ function columnOperation(data, val, delOrder, allOrder, preValue) {
  * @param type
  */
 function initDataItem(item, type) {
-    let obj = {}
+    var obj = {}
     if (type === 'castVote') {
         obj.agreeFlag = '1'
     }
     obj.score = item.score ? item.score : ''
     obj.order = item.SerialNumber
     obj.voteItem = {}
-    for (let key in item) {
+    for (var key in item) {
         obj.voteItem[key] = item[key]
     }
     obj.item = item.item
@@ -403,8 +402,8 @@ function request(obj) {
             $('#loading').modal('show');
         },
         success: function (req) {
-            $('button[type=submit]').removeAttr('disabled');
-            $('button[type=submit]').find('.hide').addClass('hide')
+            // $('button[type=submit]').removeAttr('disabled');
+            // $('button[type=submit]').find('.hide').addClass('hide')
 
             //请求成功时处理
             if (req == 'success') {
@@ -414,7 +413,7 @@ function request(obj) {
                 })
                 setTimeout(function () {
                     window.location.reload()
-                }, 1000)
+                }, 500)
                 return
             }
             $('body').message({
@@ -450,10 +449,10 @@ function sorts(arr, callback, callbackFun) {
     if (callback) {
         arr = [].concat(callback(arr))
     }
-    for (let i = 0; i < arr.length; i++) {
-        for (let j = 0; j < arr.length; j++) {
+    for (var i = 0; i < arr.length; i++) {
+        for (var j = 0; j < arr.length; j++) {
             if (arr[i] < arr[j]) {
-                let temp = arr[j]
+                var temp = arr[j]
                 arr[j] = arr[i]
                 arr[i] = temp
             }
@@ -472,7 +471,7 @@ function sorts(arr, callback, callbackFun) {
  * @returns {*}
  */
 function initTitleConfig(titleConfig) {
-    let titleObj = JSON.parse(titleConfig)
+    var titleObj = JSON.parse(titleConfig)
     titleConfig = sorts(
         Object.keys(titleObj),
         function (arr) {
@@ -523,18 +522,20 @@ function isPass(val, min, max) {
  * @returns {any[]}
  */
 function delHasItem(data, hasItemIndex, keys) {
-    let arr = [].concat(data)
-    let hasArr = []
+    var arr = [].concat(data)
+    var hasArr = []
     for (var i = 0; i < hasItemIndex.length; i++) {
         arr = arr.filter(function (item) {
             return item.voteItemId !== hasItemIndex[i]
         })
     }
     return arr.map(function (el) {
+        var obj = {}
+        obj[keys] = '0'
         if (keys == 'score') {
-            return Object.assign({}, initDataItem(el), {[keys]: '0'})
+            return Object.assign({}, initDataItem(el), obj)
         } else {
-            return Object.assign({}, initDataItem(el, 'castVote'), {[keys]: '0'})
+            return Object.assign({}, initDataItem(el, 'castVote'), obj)
         }
         // return initDataItem(el, 'castVote', '0')
     })
@@ -544,7 +545,7 @@ function delHasItem(data, hasItemIndex, keys) {
  * 弹窗
  * @param object
  */
-let seed = 1
+var seed = 1
 $.fn.message = function (options) {
     options = options || {};
     if (typeof options === 'string') {
@@ -554,10 +555,10 @@ $.fn.message = function (options) {
         };
     }
 
-    let userOnClose = options.onClose;
-    let id = 'message_' + seed++
+    var userOnClose = options.onClose;
+    var id = 'message_' + seed++
     $('<div id="' + id + '" class="alert alert-' + (options.type || 'success') + ' position_alert fade-in-linear-enter">' + options.message + '</div>').appendTo($('body'))
-    let timerTag, timerAddTag, timerRemoveTag;
+    var timerTag, timerAddTag, timerRemoveTag;
     timerTag = setTimeout(function () {
         $('.alert').removeClass('fade-in-linear-enter')
         timerAddTag = setTimeout(function () {
@@ -598,4 +599,14 @@ function PassRules(option, minOrMax) {
 
 }
 
-
+function unique(arr) {
+    for (var i = 0; i < arr.length; i++) {
+        for (var j = i + 1; j < arr.length; j++) {
+            if (arr[i] == arr[j]) {         //第一个等同于第二个，splice方法删除第二个
+                arr.splice(j, 1);
+                j--;
+            }
+        }
+    }
+    return arr;
+}

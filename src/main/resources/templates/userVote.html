@@ -135,7 +135,7 @@
 </div>
 </body>
 <script type="text/javascript" th:inline="javascript">
-    const voteOption = {
+    var voteOption = {
         rules: [[${ item.rules }]], // 规则范围 1否同 2排序 3打分
         agreeRule: [[${ item.agreeRule }]], // 1为同意 0为否决
         agreeMax: [[${ item.agreeMax }]], // 否同最大范围
@@ -144,10 +144,10 @@
         maxScore: [[${ item.maxScore }]], // 最大分数
         minScore: [[${ item.minScore }]], // 最小分数
     }
-    const hasVotes = JSON.parse([[${ userVoteItems }]] || '[]')
-    const data = JSON.parse([[${ voteItems }]] || '[]') // voteItem
-    const $table = $('#voteTable') // 当前页面表格
-    let titleConfig = [[${ item.vote.excelHeader }]] // excelHeader
+    var hasVotes = JSON.parse([[${ userVoteItems }]] || '[]')
+    var data = JSON.parse([[${ voteItems }]] || '[]') // voteItem
+    var $table = $('#voteTable') // 当前页面表格
+    var titleConfig = [[${ item.vote.excelHeader }]] // excelHeader
     // 表头 column title
 
     $(function () {
@@ -157,17 +157,17 @@
             // null.map不存在的错误
             titleConfig = []
         }
-        let allOrder = data
+        var allOrder = data
                 .map(function (item, index) {
                     return index * 1 + 1
                 }),
             delOrder = [];
-        let currentVal = '';
-        let currentValue = ''
+        var currentVal = '';
+        var currentValue = ''
         window.operateEvents = {
             // 打分
             'change .voteInput': function (e, value, row, index) {
-                let isRepeat = {
+                var isRepeat = {
                     repeat: false,
                     index: index
                 };
@@ -194,7 +194,7 @@
             // 投票
             'click .castVote': function (e, value, row, index) {
                 // 最大投票数是否超出
-                let maxPass = PassRules({
+                var maxPass = PassRules({
                     currentVotes: $._voteArr.length,
                     max: row.item.agreeMax,
                     min: row.item.agreeMin
@@ -253,10 +253,8 @@
             // 排序点击事件回调
             'mousedown .selectVote': function (e, value, row, index) {
                 // 点击排序时, 绘制option
-                let html = ''
-                allOrder = [...new
-                Set(allOrder)
-            ]
+                var html = ''
+                allOrder = unique(allOrder)
                 if (value) {
                     currentVal = value;
                     currentValue = '<option selected="true" value="' + value + '">' + value + '</option>'
@@ -305,7 +303,7 @@
 
         $('#voteDone').on('click', function (e) {
             var e = window.event || e
-            let requestBody = []
+            var requestBody = []
             if (voteOption.rules === '2') {
                 if (data.filter(function (item) {
                     if (!item.SerialNumber) {
@@ -323,7 +321,7 @@
             if ($._voteArr) {
                 if ($._voteArr.length > 0) {
                     // passMin
-                    let passMin = PassRules({
+                    var passMin = PassRules({
                         currentVotes: $._voteArr.length,
                         max: $._voteArr[0].item.agreeMax,
                         min: $._voteArr[0].item.agreeMin
