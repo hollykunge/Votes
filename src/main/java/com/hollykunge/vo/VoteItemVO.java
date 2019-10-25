@@ -1,5 +1,7 @@
 package com.hollykunge.vo;
 
+import javax.persistence.Column;
+
 /**
  * @author: zhhongyu
  * @description:
@@ -35,9 +37,18 @@ public class VoteItemVO {
     private String attr5;
 
     private String attr6;
-    private String statisticsNum;
-    private String statisticsToalScore;
-    private Integer statisticsOrderScore;
+
+    private Integer currentStatisticsNum;
+    private Integer currentStatisticsToalScore;
+    private Integer currentStatisticsOrderScore;
+    /**
+     * 上一轮统计结果
+     */
+    private Integer parentStatisticsNum;
+    private Integer parentStatisticsToalScore;
+    private Integer parentStatisticsOrderScore;
+
+    private Integer voteItemOrder;
 
     public Long getVoteItemId() {
         return voteItemId;
@@ -111,27 +122,59 @@ public class VoteItemVO {
         this.attr6 = attr6;
     }
 
-    public String getStatisticsNum() {
-        return statisticsNum;
+    public Integer getCurrentStatisticsNum() {
+        return currentStatisticsNum;
     }
 
-    public void setStatisticsNum(String statisticsNum) {
-        this.statisticsNum = statisticsNum;
+    public void setCurrentStatisticsNum(Integer currentStatisticsNum) {
+        this.currentStatisticsNum = currentStatisticsNum;
     }
 
-    public String getStatisticsToalScore() {
-        return statisticsToalScore;
+    public Integer getCurrentStatisticsToalScore() {
+        return currentStatisticsToalScore;
     }
 
-    public void setStatisticsToalScore(String statisticsToalScore) {
-        this.statisticsToalScore = statisticsToalScore;
+    public void setCurrentStatisticsToalScore(Integer currentStatisticsToalScore) {
+        this.currentStatisticsToalScore = currentStatisticsToalScore;
     }
 
-    public Integer getStatisticsOrderScore() {
-        return statisticsOrderScore;
+    public Integer getCurrentStatisticsOrderScore() {
+        return currentStatisticsOrderScore;
     }
 
-    public void setStatisticsOrderScore(Integer statisticsOrderScore) {
-        this.statisticsOrderScore = statisticsOrderScore;
+    public void setCurrentStatisticsOrderScore(Integer currentStatisticsOrderScore) {
+        this.currentStatisticsOrderScore = currentStatisticsOrderScore;
+    }
+
+    public Integer getParentStatisticsNum() {
+        return parentStatisticsNum;
+    }
+
+    public void setParentStatisticsNum(Integer parentStatisticsNum) {
+        this.parentStatisticsNum = parentStatisticsNum;
+    }
+
+    public Integer getParentStatisticsToalScore() {
+        return parentStatisticsToalScore;
+    }
+
+    public void setParentStatisticsToalScore(Integer parentStatisticsToalScore) {
+        this.parentStatisticsToalScore = parentStatisticsToalScore;
+    }
+
+    public Integer getParentStatisticsOrderScore() {
+        return parentStatisticsOrderScore;
+    }
+
+    public void setParentStatisticsOrderScore(Integer parentStatisticsOrderScore) {
+        this.parentStatisticsOrderScore = parentStatisticsOrderScore;
+    }
+
+    public Integer getVoteItemOrder() {
+        return voteItemOrder;
+    }
+
+    public void setVoteItemOrder(Integer voteItemOrder) {
+        this.voteItemOrder = voteItemOrder;
     }
 }
