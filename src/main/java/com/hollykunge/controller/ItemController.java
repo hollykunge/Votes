@@ -201,8 +201,10 @@ public class ItemController {
 
         try {
             Item item = itemService.findById(id);
+            Item prentItem = itemService.findById(Long.valueOf(item.getPreviousId()));
             model.addAttribute("item", item);
             model.addAttribute("vote",item.getVote());
+            model.addAttribute("parentItem",prentItem);
             return "/item";
         } catch (Exception e) {
             throw e;
@@ -541,6 +543,7 @@ public class ItemController {
         voteItem.setCurrentStatisticsNum(null);
         voteItem.setCurrentStatisticsOrderScore(null);
         voteItem.setCurrentStatisticsToalScore(null);
+        voteItem.setVoteItemOrder(null);
     }
 
     private List<List<String>> head(LinkedHashMap jsonObject,String flag) {
