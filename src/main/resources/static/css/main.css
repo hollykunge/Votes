@@ -214,3 +214,8 @@ a:hover, a:focus, a:active {
     border: 1px solid rgba(165, 0, 0, 0.4);
     box-shadow: 0 0 0 0.2rem rgba(65, 0, 0, 0.4);
 }
+
+.mr15{
+    display: inline-block;
+    margin-right: 15px;
+}
