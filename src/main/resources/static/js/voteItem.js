@@ -290,11 +290,15 @@ function initTable(options) {
                 '<div class="card-body">',
             ]
             $.each(row, function (key, value) {
-                var title = options.titleConfig.filter(function (item) {
-                    return item.field === key
+                var title = options.titleConfig.filter(function (item, index) {
+                    if(index >= 6) {
+                        return item.field === key
+                    }
                 })[0]
                 if (title) {
-                    html.push('<p><b style="display: inline-block; margin-right: 10px;">' + title.title + ':</b> ' + value + '</p>')
+                    html.push('<p><b style="display: inline-block; margin-right: 10px;">' + title.title + ':</b> ' + value.split(',')[0] + '</p>')
+                    // #206 详情卡片使用其它显示行内没有的属性
+                    html.push('<p><b style="display: inline-block; margin-right: 10px;">其他:</b> ' + value.split(',').slice(1).join(' ') + '</p>')
                 }
             })
             html.concat([
