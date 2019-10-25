@@ -26,10 +26,13 @@ public class UploadHeaderDataListener extends AnalysisEventListener<ItemUploadDa
 
     private final Item item;
 
-    public UploadHeaderDataListener(Item item, VoteService voteService,ItemService itemService) {
+    private String header;
+
+    public UploadHeaderDataListener(Item item, VoteService voteService,ItemService itemService,String header) {
         this.item = item;
         this.voteService = voteService;
         this.itemService = itemService;
+        this.header = header;
     }
 
     /**
@@ -47,6 +50,7 @@ public class UploadHeaderDataListener extends AnalysisEventListener<ItemUploadDa
             vote = itemtemp.getVote();
             vote.setExcelHeader(setHeaderToString(headMap));
             voteService.updateById(vote);
+            header = vote.getExcelHeader();
             log.info("更新vote中的excel头成功！");
         } catch (Exception e) {
             log.error("更新vote数据库失败！");
