@@ -20,6 +20,7 @@
         </ol>
     </nav>
     <div id="alertMsg"></div>
+    <div class="alert alert-danger" th:if="${showAlertMessage}" th:utext="${showAlertMessage}"></div>
     <div class="card border-dark mb-3">
         <div class="card-header">
             <div style="float: right">

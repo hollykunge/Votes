@@ -91,6 +91,7 @@ public class UserVoteController {
         List<Item> byPrevious = itemService.findByPrevious(String.valueOf(id));
         if(byPrevious.size() == 0){
             redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("没有下一轮投票！"));
+            return "redirect:"+VoteConstants.INVITECODE_RPC+id+"/"+code;
         }
         Item item = byPrevious.get(0);
         return "redirect:"+VoteConstants.INVITECODE_RPC+item.getId()+"/"+item.getCode();
@@ -174,6 +175,9 @@ public class UserVoteController {
     public String getClientIp(HttpServletRequest request){
         String clientIp = request.getHeader("clientIp");
         //如果请求头中没有ip，则为本地测试，使用默认值了
+        if(StringUtils.isEmpty(clientIp)){
+            clientIp = request.getRemoteHost();
+        }
         if(StringUtils.isEmpty(clientIp)){
             clientIp = VoteConstants.DEFUALT_CLIENTIP;
         }

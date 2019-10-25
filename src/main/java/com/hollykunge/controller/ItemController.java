@@ -291,10 +291,9 @@ public class ItemController {
             }
             Item item = new Item();
             item.setId(Long.parseLong(itemIdTemp));
-            EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadDataListener(item, voteItemService)).sheet().doRead();
+            EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadDataListener(item, voteItemService,model)).sheet().doRead();
 
             EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadHeaderDataListener(item,voteService,itemService)).sheet().doRead();
-//            return "redirect:/editItem/" + itemIdTemp;
             return this.voteItemsView(Long.valueOf(itemIdTemp),model);
 
         } catch (Exception e) {

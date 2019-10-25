@@ -1,15 +1,15 @@
 package com.hollykunge.config;
 
+import com.alibaba.excel.context.AnalysisContext;
+import com.alibaba.excel.event.AnalysisEventListener;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.hollykunge.model.Item;
-import com.hollykunge.model.Vote;
 import com.hollykunge.model.VoteItem;
 import com.hollykunge.service.VoteItemService;
 import com.hollykunge.util.ExceptionCommonUtil;
 import lombok.extern.slf4j.Slf4j;
-import com.alibaba.excel.context.AnalysisContext;
-import com.alibaba.excel.event.AnalysisEventListener;
-import com.alibaba.fastjson.JSON;
+import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -21,15 +21,16 @@ import java.util.List;
  */
 @Slf4j
 public class UploadDataListener extends AnalysisEventListener<ItemUploadData> {
-
+    private final Model model;
 
     private final VoteItemService voteItemService;
 
     private final Item item;
 
-    public UploadDataListener(Item item, VoteItemService voteItemService) {
+    public UploadDataListener(Item item, VoteItemService voteItemService,Model model) {
         this.voteItemService = voteItemService;
         this.item = item;
+        this.model = model;
     }
 
 
@@ -70,6 +71,7 @@ public class UploadDataListener extends AnalysisEventListener<ItemUploadData> {
                 voteItemService.add(voteItem);
                 log.info("存储数据库成功！");
             } catch (Exception e) {
+                model.addAttribute("showAlertMessage","保存excel失败!excel中可能存在不规范数据，或数据库连接失败,失败原因:"+e.getMessage());
                 log.error("存储数据库失败！");
                 log.error(ExceptionCommonUtil.getExceptionMessage(e));
             }

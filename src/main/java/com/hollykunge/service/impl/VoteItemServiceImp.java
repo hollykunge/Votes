@@ -1,10 +1,12 @@
 package com.hollykunge.service.impl;
 
+import com.hollykunge.constants.VoteConstants;
 import com.hollykunge.model.Item;
 import com.hollykunge.model.VoteItem;
 import com.hollykunge.repository.VoteItemRepository;
 import com.hollykunge.service.VoteItemService;
 import com.hollykunge.util.ExceptionCommonUtil;
+import com.hollykunge.util.IntegerCompareUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -48,16 +51,16 @@ public class VoteItemServiceImp implements VoteItemService {
     @Override
     public Optional<List<VoteItem>> findByItem(Item item) {
         Optional<List<VoteItem>> byItem = voteItemRepository.findByItem(item);
-        if(!byItem.isPresent() && byItem.get().size() == 0){
+        if(byItem.isPresent() && byItem.get().size() >= 0){
             Collections.sort(byItem.get(),(voteItem1,voteItem2) ->{
-                if(voteItem1.getParentStatisticsNum() != null && voteItem2.getParentStatisticsNum() != null){
-                    return voteItem2.getParentStatisticsNum().compareTo(voteItem1.getCurrentStatisticsNum());
+                if(Objects.equals(item.getRules(), VoteConstants.ITEM_RULE_AGER)){
+                    return IntegerCompareUtil.compareTo(voteItem1.getParentStatisticsNum(),voteItem2.getParentStatisticsNum());
                 }
-                if(voteItem1.getCurrentStatisticsToalScore() != null && voteItem2.getCurrentStatisticsToalScore() != null){
-                    return voteItem2.getCurrentStatisticsToalScore().compareTo(voteItem1.getCurrentStatisticsToalScore());
+                if(Objects.equals(item.getRules(), VoteConstants.ITEM_RULE_SCORE)){
+                    return IntegerCompareUtil.compareTo(voteItem1.getParentStatisticsToalScore(),voteItem2.getParentStatisticsToalScore());
                 }
-                if(voteItem1.getParentStatisticsOrderScore() != null && voteItem2.getParentStatisticsOrderScore() != null){
-                    return voteItem2.getParentStatisticsOrderScore().compareTo(voteItem1.getParentStatisticsOrderScore());
+                if(Objects.equals(item.getRules(), VoteConstants.ITEM_RULE_ORDER)){
+                    return IntegerCompareUtil.compareTo(voteItem1.getParentStatisticsOrderScore(),voteItem2.getParentStatisticsOrderScore());
                 }
                 return 1;
             });
