@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,7 +47,22 @@ public class VoteItemServiceImp implements VoteItemService {
 
     @Override
     public Optional<List<VoteItem>> findByItem(Item item) {
-        return voteItemRepository.findByItem(item);
+        Optional<List<VoteItem>> byItem = voteItemRepository.findByItem(item);
+        if(!byItem.isPresent() && byItem.get().size() == 0){
+            Collections.sort(byItem.get(),(voteItem1,voteItem2) ->{
+                if(voteItem1.getParentStatisticsNum() != null && voteItem2.getParentStatisticsNum() != null){
+                    return voteItem2.getParentStatisticsNum().compareTo(voteItem1.getCurrentStatisticsNum());
+                }
+                if(voteItem1.getCurrentStatisticsToalScore() != null && voteItem2.getCurrentStatisticsToalScore() != null){
+                    return voteItem2.getCurrentStatisticsToalScore().compareTo(voteItem1.getCurrentStatisticsToalScore());
+                }
+                if(voteItem1.getParentStatisticsOrderScore() != null && voteItem2.getParentStatisticsOrderScore() != null){
+                    return voteItem2.getParentStatisticsOrderScore().compareTo(voteItem1.getParentStatisticsOrderScore());
+                }
+                return 1;
+            });
+        }
+        return byItem;
     }
     @Override
     public void deleteVoteItem(List<String> ids)throws Exception{
