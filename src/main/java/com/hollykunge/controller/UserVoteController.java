@@ -67,6 +67,10 @@ public class UserVoteController {
             if(!StringUtils.isEmpty(redirect)){
                 model.addAttribute("showAlertMessage", Base64Utils.decryption(redirect));
             }
+            if(!StringUtils.isEmpty(itemTemp.get().getPreviousId())){
+                Item parent = itemService.findById(Long.valueOf(itemTemp.get().getPreviousId()));
+                model.addAttribute("parentItemRules",parent.getRules());
+            }
             return "/userVote";
         }catch (Exception e){
             throw e;
