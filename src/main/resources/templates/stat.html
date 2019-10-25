@@ -98,7 +98,7 @@
 <script th:inline="javascript">
     var item = JSON.parse([[${itemObj}]] || '[]');
     var statistics = JSON.parse([[${statistics}]] || '[]');
-    var titleConfig = item.user.votes[0].excelHeader;
+    var titleConfig = [[${ item.vote.excelHeader }]] ;
     var data = statistics.voteItems;
     var $table = $('#table') // 当前页面表格
     var resultName = '';

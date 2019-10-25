@@ -30,6 +30,7 @@
             </div>
         </div>
     </div>
+    <div class="alert alert-danger" th:if="${showAlertMessage}" th:utext="${showAlertMessage}"></div>
     <div class="card-deck mb-3 text-center">
         <div class="card border-dark mb-3 shadow-sm">
             <div class="card-header">
@@ -103,15 +104,32 @@
             </button>
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <button id="nextVote" class="btn btn-primary btn-block hide">
+                <span>进入下一轮投票</span>
+            </button>
+        </div>
+    </div>
 </div>
 
 <div class="row" th:if="${item.status}!=2">
-    <div class="col-md-4">
+    <div class="col-md-4"></div>
+    <div class="col-md-4 text-center">
         <div class="jumbotron">
             <h1>
-                <span>该轮次投票状态为：</span><br/>
-                <span th:text="${itemStatus}"></span>
+                <span th:text="'' + ${item.vote.title} + ''" style="font-family: 黑体;"></span><br/>
             </h1>
+            <h3>
+                <span th:text="'第' + ${item.turnNum} + '轮投票状态：'"></span>
+                <span th:text="${itemStatus}" style="color: #F44336;"></span>
+            </h3>
+            <a th:href="@{'/userVote/nextTurn/{id}/{code}'(id=${item.id}, code=${item.code})}">
+                <button class="btn btn-primary" style="margin: 20px 0px 40px">
+                    <span>进入下一轮投票</span>
+                </button>
+            </a>
+            <div class="alert alert-danger" th:if="${showAlertMessage}" th:utext="${showAlertMessage}"></div>
         </div>
     </div>
     <div class="col-md-4"></div>
@@ -295,6 +313,7 @@
         if (hasVotes.length > 0) {
             $('#voteDone').attr('disabled', 'disabled')
             $('#voteDone').text("已提交")
+            $('#nextVote').show()
         }
         initTable({
             rules: voteOption.rules,
@@ -384,6 +403,11 @@
                 data: JSON.stringify(requestBody)
             })
 
+        })
+        // 点击进入下一轮投票
+        $('#nextVote').on('click', function (e) {
+            var url = window.location.href;
+            window.location.href = '/userVote/nextTurn'+url.substr(url.lastIndexOf('userVote')+8);
         })
     })
 
