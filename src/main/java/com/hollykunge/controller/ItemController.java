@@ -293,7 +293,9 @@ public class ItemController {
             Item item = new Item();
             item.setId(Long.parseLong(itemIdTemp));
             EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadDataListener(item, voteItemService,result)).sheet().doRead();
-            EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadHeaderDataListener(item,voteService,itemService)).sheet().doRead();
+            String excelHeader = null;
+            EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadHeaderDataListener(item,voteService,itemService,excelHeader)).sheet().doRead();
+            result.put("excelHeader",excelHeader);
             return result;
         } catch (Exception e) {
             result.put("status",500);
