@@ -164,12 +164,23 @@
     var hasVotes = JSON.parse([[${ userVoteItems }]] || '[]')
     var data = JSON.parse([[${ voteItems }]] || '[]') // voteItem
     var $table = $('#voteTable') // 当前页面表格
-    var titleConfig = [[${ item.vote.excelHeader }]] // excelHeader
     // 表头 column title
+    var titleConfig = [[${ item.vote.excelHeader }]] // excelHeader
+    var rules = [[${parentItemRules}]];// 规则范围 1否同 2排序 3打分
 
     $(function () {
+        if(rules == '1'){
+            resultName = "parentStatisticsNum";
+        }else if(rules == '2'){
+            resultName = "parentStatisticsOrderScore";
+        }else{
+            resultName = "parentStatisticsToalScore";
+        }
         if (titleConfig) {
             titleConfig = initTitleConfig(titleConfig)
+            if ( [[${ item.turnNum }]] != '1' ){
+                titleConfig.splice(5,0,{'title':'上一轮投票结果（分数）','field': resultName})
+            }
         } else {
             // null.map不存在的错误
             titleConfig = []

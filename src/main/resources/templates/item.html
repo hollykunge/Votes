@@ -69,7 +69,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
                     <button type="button" class="btn btn-primary copy-code" id="copyCode" data-loading-text="Loading..."
-                            th:onclick="'javascript:excelImport('+${item.id}+')'">
+                            th:onclick="'javascript:importVoteItems('+${item.id}+')'">
                         <span class="spinner-border spinner-border-sm hide" role="status" aria-hidden="true"></span>
                         <span>上传</span>
                     </button>
@@ -130,6 +130,7 @@
     var titleConfig =  [[${item.vote.excelHeader}]];
     var delVoteId = '';
     var turnNum = [[${item.turnNum}]];
+    var itemId = [[${item.id}]];
 
 
     $(function () {
@@ -190,11 +191,6 @@
                 }
             }
         })
-        function delFormatter (value, row, index) {
-            return [
-                '<button id="itemDelete" type="button" class="btn btn-outline-danger btn-sm">删除</button>'
-            ].join("")
-        }
         // 删除
         $('#saveDelBtn').click(function () {
             $.ajax({
@@ -246,6 +242,37 @@
             $("#alertMsg").html(innerDiv)
         }
     })
+    // 操作列
+    function delFormatter (value, row, index) {
+        return [
+            '<button id="itemDelete" type="button" class="btn btn-outline-danger btn-sm">删除</button>'
+        ].join("")
+    }
+    function importVoteItems (id) {
+        excelImport(id, loadFn)
+    }
+    function loadFn(evt) {
+        var response = JSON.parse(evt.currentTarget.response || '[]')
+        if (response.status === 200) {
+            initTable({
+                rules: rules,
+                titleConfig: initTitleConfig(response.excelHeader.excelHeader),
+                data: [],
+                url:'/voteItems/'+ itemId,
+                operateCol: true,
+                operateColFormat: delFormatter
+            })
+            $table.bootstrapTable('refresh');
+        }
+        $('#importModel').modal('hide');
+        showInfo (response.msg);
+        $('#copyCode').attr('disabled', false);
+        $('#copyCode').find('.spinner-border').addClass('hide')
+    }
+    function showInfo (info){
+        var innerDiv = '<div class="alert alert-success">'+ info +'</div>';
+        $("#alertMsg").html(innerDiv)
+    }
 </script>
 <script type="text/javascript" th:src="@{/js/voteItem.js}"></script>
 </body>
