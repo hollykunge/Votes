@@ -11,10 +11,6 @@
         <a class="navbar-brand" style="color: #ffffff;">二部投票系统</a>
     </div>
 </nav>
-<div>
-
-
-</div>
 <div class="container" th:if="${item.status}==2">
     <div class="jumbotron jumbotron-fluid mb-3">
         <div class="container">
@@ -338,11 +334,12 @@
             clickToSelect: false,
             rowStyle: rowStyle
         })
-
+        // 提交事件
         $('#voteDone').on('click', function (e) {
 
             var e = window.event || e
             var requestBody = []
+            // 排序校验
             if (voteOption.rules === '2') {
                 if (data.filter(function (item) {
                     if (!item.SerialNumber) {
@@ -357,7 +354,7 @@
                 }
             }
 
-            if ($._voteArr) {
+            if ($._voteArr) { // 格式投票数据
                 if ($._voteArr.length > 0) {
                     // passMin
                     var passMin = PassRules({
@@ -378,14 +375,14 @@
                         )
                     )
                 }
-            } else if ($._fraction) {
+            } else if ($._fraction) { // 格式打分数据
                 if ($._fraction.length === 0) {
                     $('body').message({
                         message: '请输入分数.',
                         type: 'danger'
                     })
                 }
-                if ($._fraction.length > 0) {
+                if ($._fraction.length > 0) { // 格式打分数据
 
                     if ($._fraction.length !== data.length) {
                         requestBody = $._fraction.concat(
@@ -397,54 +394,23 @@
                                 'score'
                             )
                         )
-                        $('.warning').show()
-                        $('.submit-fraction')
-                            .off('click')
-                            .on('click', function () {
-                                $(this).parents('.modal').hide()
-                                request({
-                                    url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),
-                                    data: JSON.stringify(requestBody)
-                                })
-                            })
-                        $('.close-btn')
-                            .off('click')
-                            .on('click', function () {
-                                $('.modal').hide();
-                            })
+                        tips($('.warning'), 'strong', requestBody)
                     } else {
                         requestBody = $._fraction
-                        $('.warning')
-                            .show()
-                            .find('strong').html('确定后将不可修改，确定提交吗？')
-
-                        $('.submit-fraction')
-                            .off('click')
-                            .on('click', function () {
-                                $(this).parents('.modal').hide()
-                                request({
-                                    url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),
-                                    data: JSON.stringify(requestBody)
-                                })
-                            })
-                        $('.close-btn')
-                            .off('click')
-                            .on('click', function () {
-                                $('.modal').hide();
-                            })
+                        tips($('.warning'), 'strong', requestBody)
                     }
                 }
                 return
-            } else {
+            } else { // 投票
                 requestBody = data.map(function (item, index) {
                     return initDataItem(item)
                 })
             }
-
-            request({
-                url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),
-                data: JSON.stringify(requestBody)
-            })
+            tips($('.warning'), 'strong', requestBody)
+            // request({
+            //     url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),
+            //     data: JSON.stringify(requestBody)
+            // })
 
         })
         // 点击进入下一轮投票
@@ -452,6 +418,7 @@
             var url = window.location.href;
             window.location.href = '/userVote/nextTurn' + url.substr(url.lastIndexOf('userVote') + 8);
         })
+
     })
 
     /**
