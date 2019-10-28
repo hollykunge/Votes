@@ -16,7 +16,6 @@ import com.hollykunge.model.VoteItem;
 import com.hollykunge.reflection.ReflectionUtils;
 import com.hollykunge.service.*;
 import com.hollykunge.util.Base64Utils;
-import com.hollykunge.util.ClientIpUtil;
 import com.hollykunge.util.ExceptionCommonUtil;
 import com.hollykunge.util.ExtApiTokenUtil;
 import com.hollykunge.vo.VoteItemVO;
@@ -229,8 +228,6 @@ public class ItemController {
             Item item = itemService.findById(id);
             Optional<List<VoteItem>> voteItems = voteItemService.findByItem(item);
             List<VoteItemVO> result = JSONArray.parseArray(JSONObject.toJSONString(voteItems.get()),VoteItemVO.class);
-            //重新生成幂等性token
-            extApiTokenUtil.extApiToken(ClientIpUtil.getClientIp(request),"/item/import");
             return result;
         }catch (Exception e){
             throw e;
