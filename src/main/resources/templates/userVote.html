@@ -13,6 +13,7 @@
 </nav>
 <div>
 
+
 </div>
 <div class="container" th:if="${item.status}==2">
     <div class="jumbotron jumbotron-fluid mb-3">
@@ -282,7 +283,8 @@
 
             },
             // 排序点击事件回调
-            'mousedown .selectVote': function (e, value, row, index) {
+            'focus .selectVote': function (e, value, row, index) {
+
                 // 点击排序时, 绘制option
                 var html = ''
                 allOrder = unique(allOrder)
@@ -335,6 +337,7 @@
         })
 
         $('#voteDone').on('click', function (e) {
+
             var e = window.event || e
             var requestBody = []
             if (voteOption.rules === '2') {
@@ -380,6 +383,7 @@
                     })
                 }
                 if ($._fraction.length > 0) {
+
                     if ($._fraction.length !== data.length) {
                         requestBody = $._fraction.concat(
                             delHasItem(
@@ -405,8 +409,24 @@
                             .on('click', function () {
                                 $('.modal').hide();
                             })
+                    } else {
+                        requestBody = $._fraction
+                        $('.warning').show()
+                        $('.submit-fraction')
+                            .off('click')
+                            .on('click', function () {
+                                $(this).parents('.modal').hide()
+                                request({
+                                    url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),
+                                    data: JSON.stringify(requestBody)
+                                })
+                            })
+                        $('.close-btn')
+                            .off('click')
+                            .on('click', function () {
+                                $('.modal').hide();
+                            })
                     }
-
                 }
                 return
             } else {
