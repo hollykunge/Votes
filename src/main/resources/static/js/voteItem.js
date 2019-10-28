@@ -21,8 +21,8 @@ var templateOption = {
 function showImportModel() {
     $('#importModel').modal('show');
     // 由于未刷新页面，需要对上一次上次内容初始化
-    document.getElementById("time").innerHTML='<div></div>';
-    document.getElementById("percentage").innerHTML='<div></div>';
+    document.getElementById("time").innerHTML = '<div></div>';
+    document.getElementById("percentage").innerHTML = '<div></div>';
     document.getElementById("progressBar").value = 0;
 }
 
@@ -51,7 +51,7 @@ function excelImport(voteId, fn) {
     ot = new Date().getTime(); //设置上传开始时间
     oloaded = 0; //设置上传开始时，以上传的文件大小为0
     var fileObj = document.getElementById("file").files[0]; // js 获取文件对象
-    if (!fileObj){
+    if (!fileObj) {
         alert('请选择一个Excel文件')
         return;
     }
@@ -74,6 +74,7 @@ function excelImport(voteId, fn) {
     xhr.setRequestHeader("itemId", voteId);
     xhr.send(form); //开始上传，发送form数据
 }
+
 // //上传成功响应
 // function uploadComplete(evt) {
 //     if (evt.target.status) {
@@ -243,11 +244,11 @@ function configOperation(rules, columnsOption) {
                     formatter: function (value, row, index) {
                         if (rules.isRead) {
                             return [
-                                '<input class="form-control-sm voteInput" readonly value="' + row.score + '" data-live-search="true" name="orgid" >',
+                                '<input type="number" class="form-control input-group-sm voteInput" readonly value="' + row.score + '" data-live-search="true" name="orgid" >',
                             ].join('')
                         }
                         return [
-                            '<input class="form-control-sm voteInput" data-live-search="true" name="orgid" >',
+                            '<input type="number" class="form-control input-group-sm voteInput" data-live-search="true" name="orgid" >',
                         ].join('')
                     }
                 })
@@ -307,25 +308,38 @@ function initTable(options) {
                     return item.field === key
                 })[0]
                 if (title) {
-                    if (value.indexOf(',') === -1) {
+                    if (value.indexOf && value.indexOf(',') === -1) {
                         html.push('<p><b style="display: inline-block; margin-right: 10px;">' + title.title + ':</b> ' + value.split(',')[0] + '</p>')
                     } else {
-                        html.push(
-                            [
-                                '<p>' ,
-                                '<b style="display: inline-block; margin-right: 10px;">' ,
-                                title.title ,
-                                ':</b> ' ,
-                                value.split(',')[0],
-                                '</p>',
-                                '<p>' ,
-                                '<b style="display: inline-block; margin-right: 10px;">' ,
-                                '其他' ,
-                                ':</b> ' ,
-                                value.split(',').slice(1).join(' '),
-                                '</p>'
-                            ].join('')
-                        )
+                        if (typeof value === 'number') {
+                            html.push(
+                                [
+                                    '<b style="display: inline-block; margin-right: 10px;">',
+                                    '结果',
+                                    ':</b> ',
+                                    value,
+                                    '</p>'
+                                ].join('')
+                            )
+                        } else {
+                            html.push(
+                                [
+                                    '<p>',
+                                    '<b style="display: inline-block; margin-right: 10px;">',
+                                    title.title,
+                                    ':</b> ',
+                                    value.split(',')[0],
+                                    '</p>',
+                                    '<p>',
+                                    '<b style="display: inline-block; margin-right: 10px;">',
+                                    '其他',
+                                    ':</b> ',
+                                    value.split(',').slice(1).join(' '),
+                                    '</p>'
+                                ].join('')
+                            )
+                        }
+
                     }
                 }
             })
@@ -434,7 +448,7 @@ function request(obj) {
             //请求前的处理
             // disabled="disabled"
             $('button[type=submit]').attr('disabled', 'disabled');
-            $('button[type=submit]').find('.hide').removeClass('hide')
+            $('button[type=submit]').find('.spinner-border').removeClass('hide')
             $('#loading').modal('show');
         },
         success: function (req) {
@@ -442,36 +456,42 @@ function request(obj) {
             // $('button[type=submit]').find('.hide').addClass('hide')
 
             //请求成功时处理
-            if (req == 'success') {
+            if (req.status == 200) {
                 $('body').message({
                     message: '提交成功！正在跳转，请稍等',
                     type: 'success'
                 })
-                setTimeout(function () {
-                    window.location.reload()
-                }, 500)
+                reloadPage()
                 return
             }
             $('body').message({
-                message: req,
+                message: req.message || JSON.stringify(req),
                 type: 'danger'
             })
-
-
         },
         complete: function (success) {
             //请求完成的处理
             $('button[type=submit]').removeAttr('disabled');
-            $('button[type=submit]').find('.hide').addClass('hide')
+            $('button[type=submit]').find('.spinner-border').addClass('hide')
             $('#loading').modal('hide');
         },
         error: function (error) {
             //请求出错处理
-            console.log(error)
+            if (error) {
+                $('body').message({
+                    message: '错误,响应状态码: ' + error.status,
+                    type: 'danger'
+                })
+                // reloadPage()
+            }
         }
     });
+}
 
-
+function reloadPage() {
+    setTimeout(function () {
+        window.location.reload()
+    }, 500)
 }
 
 /**
@@ -539,6 +559,13 @@ function initTitleConfig(titleConfig) {
  * @returns {boolean}
  */
 function isPass(val, min, max) {
+    if (isNaN(val * 1)) {
+        $('body').message({
+            message: '请输入正确格式数字.',
+            type: 'danger'
+        })
+        return
+    }
     if (max * 1 >= val * 1 && val * 1 >= min * 1) {
         return true
     }
@@ -601,6 +628,7 @@ $.fn.message = function (options) {
             $('#' + id).addClass('alert_message_fade_leave_active')
             timerRemoveTag = setTimeout(function () {
                 $('.alert_message_fade_leave_active').remove()
+                $('.alert_message_fade_leave_active').remove()
             }, 1000)
         }, 1000)
     }, 100)
@@ -645,4 +673,28 @@ function unique(arr) {
         }
     }
     return arr;
+}
+
+function tips(el, childName, requestBody) {
+    el
+        .show()
+        .find(childName)
+        .html('确定后将无法修改数据，确定提交吗？')
+    btnAction(requestBody);
+}
+function btnAction(requestBody) {
+    $('.submit-fraction')
+        .off('click')
+        .on('click', function () {
+            $(this).parents('.modal').hide()
+            request({
+                url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),
+                data: JSON.stringify(requestBody)
+            })
+        })
+    $('.close-btn')
+        .off('click')
+        .on('click', function () {
+            $('.modal').hide();
+        })
 }

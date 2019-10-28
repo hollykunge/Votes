@@ -4,8 +4,6 @@ import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.hollykunge.annotation.ExtApiIdempotent;
-import com.hollykunge.annotation.ExtApiToken;
 import com.hollykunge.config.*;
 import com.hollykunge.constants.VoteConstants;
 import com.hollykunge.exception.BaseException;
@@ -16,7 +14,6 @@ import com.hollykunge.model.VoteItem;
 import com.hollykunge.reflection.ReflectionUtils;
 import com.hollykunge.service.*;
 import com.hollykunge.util.Base64Utils;
-import com.hollykunge.util.ClientIpUtil;
 import com.hollykunge.util.ExceptionCommonUtil;
 import com.hollykunge.util.ExtApiTokenUtil;
 import com.hollykunge.vo.VoteItemVO;
@@ -198,7 +195,7 @@ public class ItemController {
      * @param model
      * @return
      */
-    @ExtApiToken(interfaceAdress = "/item/import")
+//    @ExtApiToken(interfaceAdress = "/item/import")
     @RequestMapping(value = "/voteItemsView/{id}", method = RequestMethod.GET)
     public String voteItemsView(@PathVariable Long id,
                            Model model)throws Exception {
@@ -229,8 +226,6 @@ public class ItemController {
             Item item = itemService.findById(id);
             Optional<List<VoteItem>> voteItems = voteItemService.findByItem(item);
             List<VoteItemVO> result = JSONArray.parseArray(JSONObject.toJSONString(voteItems.get()),VoteItemVO.class);
-            //重新生成幂等性token
-            extApiTokenUtil.extApiToken(ClientIpUtil.getClientIp(request),"/item/import");
             return result;
         }catch (Exception e){
             throw e;
@@ -288,7 +283,7 @@ public class ItemController {
      * @throws IOException
      */
     @RequestMapping(value = "/item/import", method = RequestMethod.POST)
-    @ExtApiIdempotent(value = VoteConstants.EXTAPIHEAD)
+//    @ExtApiIdempotent(value = VoteConstants.EXTAPIHEAD)
     public @ResponseBody Map<String,Object> excelImport(MultipartFile file, HttpServletRequest request,Model model) throws Exception {
         Map<String,Object> result = new HashMap<>();
         Map<String,Object> headerResult = new HashMap<>();

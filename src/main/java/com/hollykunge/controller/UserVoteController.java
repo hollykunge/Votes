@@ -6,15 +6,16 @@ import com.hollykunge.annotation.ExtApiIdempotent;
 import com.hollykunge.annotation.ExtApiToken;
 import com.hollykunge.config.ItemStatusConfig;
 import com.hollykunge.constants.VoteConstants;
+import com.hollykunge.dictionary.VoteHttpResponseStatus;
 import com.hollykunge.exception.BaseException;
 import com.hollykunge.model.Item;
 import com.hollykunge.model.UserVoteItem;
 import com.hollykunge.model.VoteItem;
+import com.hollykunge.msg.ObjectRestResponse;
 import com.hollykunge.service.ItemService;
 import com.hollykunge.service.UserVoteItemService;
 import com.hollykunge.service.VoteItemService;
 import com.hollykunge.util.Base64Utils;
-import com.hollykunge.util.ClientIpUtil;
 import com.hollykunge.util.ExtApiTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -82,6 +84,41 @@ public class UserVoteController {
     }
 
     /**
+     * 进入统计结果页面
+     * @param id
+     * @param code
+     * @param model
+     * @param request
+     * @param redirect
+     * @return
+     * @throws Exception
+     */
+    private String inviteCodeStatisticsView(Long id,
+                                 String code,
+                                 Model model,
+                                 HttpServletRequest request,
+                                 String redirect) throws Exception {
+        try{
+            Optional<Item> itemTemp = itemService.findByIdAndCode(id,code);
+            if(!itemTemp.isPresent()){
+                throw new BaseException("无效地址...");
+            }
+            Map<String, Object> statistics = userVoteItemService.getStatistics(itemTemp.get());
+            List<VoteItem> voteItems = (List<VoteItem>) statistics.get("voteItems");
+            String count =(String) statistics.get("coutips");
+            model.addAttribute("voteItems",voteItems);
+            model.addAttribute("count",count);
+            model.addAttribute("item",itemTemp.get());
+            if(!StringUtils.isEmpty(redirect)){
+                model.addAttribute("showAlertMessage", Base64Utils.decryption(redirect));
+            }
+            return "/userStat";
+        }catch (Exception e){
+            throw e;
+        }
+    }
+
+    /**
      * 用户投票点击下一轮接口（地址：/userVote/nextTurn/{id}/{code}）
      * @param id
      * @param code
@@ -91,18 +128,36 @@ public class UserVoteController {
     @RequestMapping(value = VoteConstants.INVITECODE_RPC+"nextTurn/"+"{id}/{code}", method = RequestMethod.GET)
     public String nextTurnItem(@PathVariable Long id,
                                @PathVariable String code,
+                               Model model,
+                               HttpServletRequest request,
                                RedirectAttributes redirectAttributes)throws Exception{
         Optional<Item> itemTemp = itemService.findByIdAndCode(id,code);
         if(!itemTemp.isPresent()){
             throw new BaseException("无效地址...");
         }
         List<Item> byPrevious = itemService.findByPrevious(String.valueOf(id));
-        if(byPrevious.size() == 0){
-            redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("没有下一轮投票！"));
-            return "redirect:"+VoteConstants.INVITECODE_RPC+id+"/"+code;
+        //当前轮为发起，进入当前轮投票
+        if(itemTemp.isPresent() && Objects.equals(itemTemp.get().getStatus(),VoteConstants.ITEM_SEND_STATUS)){
+            return this.inviteCodeView(id,code,model,request,null);
         }
-        Item item = byPrevious.get(0);
-        return "redirect:"+VoteConstants.INVITECODE_RPC+item.getId()+"/"+item.getCode();
+        if(itemTemp.isPresent()
+                && Objects.equals(itemTemp.get().getStatus(),VoteConstants.ITEM_FINAL_STATUS)){
+            //当前轮为结束，下一轮为没有，当前轮统计页面
+            if(byPrevious.size() == 0){
+                //当前轮的统计
+                return this.inviteCodeStatisticsView(id,code,model,request,"没有下一轮投票！");
+            }
+            Item item = byPrevious.get(0);
+            //当前轮为结束，下一轮为发起，下一轮投票页面
+            if(Objects.equals(item.getStatus(),VoteConstants.ITEM_SEND_STATUS)){
+                return this.inviteCodeView(item.getId(),item.getCode(),model,request,null);
+            }
+            //当前轮为结束，下一轮为结束，下一轮统计页面
+            if(Objects.equals(item.getStatus(),VoteConstants.ITEM_FINAL_STATUS)){
+                return this.inviteCodeStatisticsView(item.getId(),item.getCode(),model,request,null);
+            }
+        }
+        return "/403";
     }
 
     /**
@@ -114,12 +169,13 @@ public class UserVoteController {
     @ExtApiIdempotent(VoteConstants.EXTAPIHEAD)
     @RequestMapping(value = VoteConstants.INVITECODE_RPC+"add/{id}/{code}", method = RequestMethod.POST)
     @ResponseBody
-    public String add(@PathVariable Long id,
-            @PathVariable String code,
-            @RequestBody String userVoteItems,
-                      Model model,
-                      HttpServletRequest request) throws Exception {
+    public ObjectRestResponse add(@PathVariable Long id,
+                                  @PathVariable String code,
+                                  @RequestBody String userVoteItems,
+                                  Model model,
+                                  HttpServletRequest request) throws Exception {
         try{
+            ObjectRestResponse response = new ObjectRestResponse();
             String clientIp = getClientIp(request);
             List<UserVoteItem> userVoteItemlist = JSONArray.parseArray(userVoteItems, UserVoteItem.class);
             List<UserVoteItem> collect = userVoteItemlist.stream().filter(new Predicate<UserVoteItem>() {
@@ -136,9 +192,9 @@ public class UserVoteController {
             if(Objects.equals(item.getRules(),VoteConstants.ITEM_RULE_AGER)){
                 if(collect.size()>Integer.parseInt(item.getAgreeMax())||
                         collect.size()<Integer.parseInt(item.getAgreeMin())){
-                    //重新生成幂等性token
-                    extApiTokenUtil.extApiToken(ClientIpUtil.getClientIp(request),VoteConstants.INVITECODE_RPC+"add");
-                    return"投票数量低于投票轮设置的最低数量或高于最高数量...";
+                    response.setStatus(VoteHttpResponseStatus.INFORMATIONAL.getValue());
+                    response.setMessage("投票数量低于投票轮设置的最低数量或高于最高数量...");
+                    return response;
                 }
             }
             for (UserVoteItem userVoteItem:
@@ -150,7 +206,9 @@ public class UserVoteController {
             item.setMemberNum(Integer.parseInt(String.valueOf(memgerNum)));
             itemService.save(item);
             model.addAttribute("showMessage","操作成功！");
-            return "success";
+            response.setStatus(VoteHttpResponseStatus.SUCCESS.getValue());
+            response.setRel(true);
+            return response;
         }catch (Exception e){
             throw e;
         }
