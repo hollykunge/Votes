@@ -6,13 +6,18 @@
     <div th:replace="/fragments/header :: header-css"/>
 </head>
 <body class="bg-light">
-<div th:replace="/fragments/header :: header"/>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary" style="margin-bottom: 16px">
+    <div class="container">
+        <a class="navbar-brand" style="color: #ffffff;">二部投票系统</a>
+    </div>
+</nav>
 <div class="container">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item active" aria-current="page" th:text="'第'+${item.turnNum}+'轮投票统计结果'"></li>
         </ol>
     </nav>
+    <div class="alert alert-danger" th:if="${showAlertMessage}" th:utext="${showAlertMessage}"></div>
     <div class="card-deck mb-3 text-center">
         <div class="card border-dark mb-3 shadow-sm">
             <div class="card-header">
@@ -83,18 +88,19 @@
     </div>
     <div class="row">
         <div class="col-md-12 mb-3">
-            <button id="nextVote" class="btn btn-primary btn-block hide">
+            <button id="nextVote" class="btn btn-primary btn-block">
                 <span>进入下一轮投票</span>
             </button>
         </div>
     </div>
 </div>
-<script type="text/javascript" th:src="@{/js/voteItem.js}"></script>
+<script type="text/javascript" th:src="@{/js/voteStat.js}"></script>
 <script type="text/javascript"
         src="/webjars/bootstrap-table/1.15.4/dist/bootstrap-table.min.js"></script>
 <script th:inline="javascript">
-    var item = JSON.parse([[${item}]] || '[]');
-    var data = JSON.parse([[${voteItems}]] || '[]');
+    var item = JSON.parse([[${itemObj}]] || '[]');
+    var statistics = JSON.parse([[${statistics}]] || '[]');
+    var data = statistics.voteItems;
     var titleConfig = [[${ item.vote.excelHeader }]] ;
     var $table = $('#table') // 当前页面表格
     var resultName = '';
@@ -164,8 +170,7 @@
         // 点击进入下一轮投票
         $('#nextVote').on('click', function (e) {
             var url = window.location.href;
-
-            window.location.href = '/userVote/nextTurn'+url.substr(url.lastIndexOf('userVote')+8);
+            window.location.href = '/userVote/nextTurn/'+ [[${ item.id }]] + '/' + [[${ item.code }]];
         })
     })
 </script>

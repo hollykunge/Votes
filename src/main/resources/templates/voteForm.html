@@ -26,7 +26,7 @@
                 </div>
                 <div class="form-label-group">
                     <input type="number" th:field="*{memberSize}" placeholder="预计投票人数" autofocus="autofocus"
-                           th:value="${vote.memberSize}"
+                           th:value="${vote.memberSize}" min="1" step="1"
                            class="form-control input-lg" required="true"/>
                 </div>
                 <div class="form-label-group">
