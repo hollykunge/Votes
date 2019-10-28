@@ -298,6 +298,8 @@ function initTable(options) {
                 var title = options.titleConfig.filter(function (item, index) {
                     return item.field === key
                 })[0]
+                console.log('title', title)
+                console.log('value', value)
                 if (title) {
                     if (value.indexOf(',') === -1) {
                         html.push('<p><b style="display: inline-block; margin-right: 10px;">' + title.title + ':</b> ' + value.split(',')[0] + '</p>')
