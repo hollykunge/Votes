@@ -11,10 +11,6 @@
         <a class="navbar-brand" style="color: #ffffff;">二部投票系统</a>
     </div>
 </nav>
-<div>
-
-
-</div>
 <div class="container" th:if="${item.status}==2">
     <div class="jumbotron jumbotron-fluid mb-3">
         <div class="container">
@@ -107,7 +103,7 @@
     </div>
     <div class="row">
         <div class="col-md-12 mb-3">
-            <button id="nextVote" class="btn btn-primary btn-block hide">
+            <button id="nextVote" class="btn btn-outline-primary btn-block hide">
                 <span>进入下一轮投票</span>
             </button>
         </div>
@@ -162,6 +158,7 @@
         maxScore: [[${ item.maxScore }]], // 最大分数
         minScore: [[${ item.minScore }]], // 最小分数
     }
+    var colorMap = new Map();
     var hasVotes = JSON.parse([[${ userVoteItems }]] || '[]')
     var data = JSON.parse([[${ voteItems }]] || '[]') // voteItem
     var $table = $('#voteTable') // 当前页面表格
@@ -328,12 +325,14 @@
             $('#voteDone').text("已提交")
             $('#nextVote').show()
         }
+        handleRepeatData();
         initTable({
             rules: voteOption.rules,
             titleConfig: titleConfig,
             data: data,
             hasData: hasVotes,
-            clickToSelect: false
+            clickToSelect: false,
+            rowStyle: rowStyle
         })
         // 提交事件
         $('#voteDone').on('click', function (e) {
@@ -422,6 +421,44 @@
 
     })
 
+    /**
+     * 对重复投票结果做标记
+     */
+    function handleRepeatData() {
+        var randowColor = ['#52b1ff', '#7ac8ff', '#a3dcff', '#e6f6ff', '#ffffff'];
+        // 第一次循环，结果计数 (key:score,value:出现次数)
+        var countMap = new Map();
+        for (var i = 0; data.length > i; i++) {
+            var score = data[i][resultName];
+            var count = countMap.get(score)
+            if (count > 0) {
+                count = count + 1;
+                countMap.set(score, count);
+            } else {
+                countMap.set(score, 1);
+            }
+        }
+        // 第二次循环，出现次数超过一次且分数不为0的
+        for (var i = 0; data.length > i; i++) {
+            var score = data[i][resultName];
+            var count = countMap.get(score)
+            /*<![CDATA[*/
+            if (count > 1 && score !== 0) {
+                // 分数个位
+                var fix = parseInt(score % 10);
+                colorMap.set(score, randowColor[fix])
+            }
+            /*]]>*/
+        }
+    }
+
+    // 设置相同结果的行样式
+    function rowStyle(row, index) {
+        if (colorMap.get(row[resultName])) {
+            return {css: {'background-color': colorMap.get(row[resultName])}}
+        }
+        return {}
+    }
 </script>
 <script type="text/javascript" th:src="@{/js/voteItem.js}"></script>
 
