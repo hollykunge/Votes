@@ -138,7 +138,7 @@ public class UserVoteController {
         List<Item> byPrevious = itemService.findByPrevious(String.valueOf(id));
         //当前轮为发起，进入当前轮投票
         if(itemTemp.isPresent() && Objects.equals(itemTemp.get().getStatus(),VoteConstants.ITEM_SEND_STATUS)){
-            return this.inviteCodeView(id,code,model,request,null);
+            return this.inviteCodeView(id,code,model,request,"没有下一轮投票！");
         }
         if(itemTemp.isPresent()
                 && Objects.equals(itemTemp.get().getStatus(),VoteConstants.ITEM_FINAL_STATUS)){
@@ -148,6 +148,10 @@ public class UserVoteController {
                 return this.inviteCodeStatisticsView(id,code,model,request,"没有下一轮投票！");
             }
             Item item = byPrevious.get(0);
+            //当前轮为结束，下一轮为新建，当前轮统计页面
+            if(Objects.equals(item.getStatus(),VoteConstants.ITEM_ADD_STATUS)){
+                return this.inviteCodeStatisticsView(id,code,model,request,null);
+            }
             //当前轮为结束，下一轮为发起，下一轮投票页面
             if(Objects.equals(item.getStatus(),VoteConstants.ITEM_SEND_STATUS)){
                 return this.inviteCodeView(item.getId(),item.getCode(),model,request,null);

@@ -9,7 +9,10 @@ public class VoteConstants {
     public static final String AGREEMENT_LETTER = "http://";
     public static final String INVITECODE_RPC = "/userVote/";
 
-
+    /**
+     * 投票轮新建状态
+     */
+    public static final String ITEM_ADD_STATUS = "1";
     /**
      * 投票轮已发布状态
      */
