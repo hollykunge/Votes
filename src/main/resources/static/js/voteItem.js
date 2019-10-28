@@ -1,4 +1,7 @@
 'use strict';
+var submitcount = 0;// 提交次数
+var ot;
+var oloaded;
 var templateOption = {
     haveVoted: [
         '<div class="have-voted">',
@@ -17,6 +20,10 @@ var templateOption = {
 // 弹窗显示
 function showImportModel() {
     $('#importModel').modal('show');
+    // 由于未刷新页面，需要对上一次上次内容初始化
+    document.getElementById("time").innerHTML='<div></div>';
+    document.getElementById("percentage").innerHTML='<div></div>';
+    document.getElementById("progressBar").value = 0;
 }
 
 // 导入提示
@@ -41,6 +48,8 @@ function showAddModel() {
 
 //定义按钮事件
 function excelImport(voteId, fn) {
+    ot = new Date().getTime(); //设置上传开始时间
+    oloaded = 0; //设置上传开始时，以上传的文件大小为0
     var fileObj = document.getElementById("file").files[0]; // js 获取文件对象
     if (!fileObj) {
         alert('请选择一个Excel文件')
@@ -54,21 +63,17 @@ function excelImport(voteId, fn) {
         form.append("file", fileObj); // 文件对象
     }
     var xhr = new XMLHttpRequest(); // XMLHttpRequest 对象
-    xhr.open("post", url, false); //post方式，url为服务器请求地址，true 该参数规定请求是否异步处理。
+    xhr.open("post", url, true); //post方式，url为服务器请求地址，true 该参数规定请求是否异步处理。
     xhr.onload = fn; //请求完成
     xhr.onerror = uploadFailed; //请求失败
     xhr.upload.onprogress = progressFunction; //【上传进度调用方法实现】
     xhr.upload.onloadstart = function () { //上传开始执行方法
         ot = new Date().getTime(); //设置上传开始时间
-
-
         oloaded = 0; //设置上传开始时，以上传的文件大小为0
     };
     xhr.setRequestHeader("itemId", voteId);
     xhr.send(form); //开始上传，发送form数据
-
 }
-
 // //上传成功响应
 // function uploadComplete(evt) {
 //     if (evt.target.status) {
@@ -95,6 +100,7 @@ function uploadFailed(evt) {
 
 //上传进度实现方法，上传过程中会频繁调用该方法
 function progressFunction(evt) {
+
     var progressBar = document.getElementById("progressBar");
     var percentageDiv = document.getElementById("percentage");
     // event.total是需要传输的总字节，event.loaded是已经传输的字节。如果event.lengthComputable不为真，则event.total等于0
