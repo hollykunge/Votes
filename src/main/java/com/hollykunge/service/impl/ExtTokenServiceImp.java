@@ -46,13 +46,14 @@ public class ExtTokenServiceImp implements ExtTokenService {
     }
 
     @Override
-    public boolean findToken(String token) {
+    public List<ExtToken> findToken(String token) {
         List<ExtToken> listTokens = extTokenRepository.findByToken(token);
-        if (listTokens.isEmpty() || listTokens.size() == 0) {
-            return false;
-        }
+        return listTokens;
+    }
+    @Override
+    public boolean deleteToken(List<ExtToken> tokenList){
         //获取成功后删除key
-        listTokens.stream().forEach(extToken -> {
+        tokenList.stream().forEach(extToken -> {
             extTokenRepository.delete(extToken.getId());
         });
         return true;

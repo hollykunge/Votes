@@ -6,10 +6,12 @@ import com.hollykunge.annotation.ExtApiIdempotent;
 import com.hollykunge.annotation.ExtApiToken;
 import com.hollykunge.config.ItemStatusConfig;
 import com.hollykunge.constants.VoteConstants;
+import com.hollykunge.dictionary.VoteHttpResponseStatus;
 import com.hollykunge.exception.BaseException;
 import com.hollykunge.model.Item;
 import com.hollykunge.model.UserVoteItem;
 import com.hollykunge.model.VoteItem;
+import com.hollykunge.msg.ObjectRestResponse;
 import com.hollykunge.service.ItemService;
 import com.hollykunge.service.UserVoteItemService;
 import com.hollykunge.service.VoteItemService;
@@ -113,12 +115,13 @@ public class UserVoteController {
     @ExtApiIdempotent(VoteConstants.EXTAPIHEAD)
     @RequestMapping(value = VoteConstants.INVITECODE_RPC+"add/{id}/{code}", method = RequestMethod.POST)
     @ResponseBody
-    public String add(@PathVariable Long id,
-            @PathVariable String code,
-            @RequestBody String userVoteItems,
-                      Model model,
-                      HttpServletRequest request) throws Exception {
+    public ObjectRestResponse add(@PathVariable Long id,
+                                  @PathVariable String code,
+                                  @RequestBody String userVoteItems,
+                                  Model model,
+                                  HttpServletRequest request) throws Exception {
         try{
+            ObjectRestResponse response = new ObjectRestResponse();
             String clientIp = getClientIp(request);
             List<UserVoteItem> userVoteItemlist = JSONArray.parseArray(userVoteItems, UserVoteItem.class);
             List<UserVoteItem> collect = userVoteItemlist.stream().filter(new Predicate<UserVoteItem>() {
@@ -135,9 +138,9 @@ public class UserVoteController {
             if(Objects.equals(item.getRules(),VoteConstants.ITEM_RULE_AGER)){
                 if(collect.size()>Integer.parseInt(item.getAgreeMax())||
                         collect.size()<Integer.parseInt(item.getAgreeMin())){
-                    //重新生成幂等性token
-//                    extApiTokenUtil.extApiToken(ClientIpUtil.getClientIp(request),VoteConstants.INVITECODE_RPC+"add");
-                    return"投票数量低于投票轮设置的最低数量或高于最高数量...";
+                    response.setStatus(VoteHttpResponseStatus.INFORMATIONAL.getValue());
+                    response.setMessage("投票数量低于投票轮设置的最低数量或高于最高数量...");
+                    return response;
                 }
             }
             for (UserVoteItem userVoteItem:
@@ -149,7 +152,9 @@ public class UserVoteController {
             item.setMemberNum(Integer.parseInt(String.valueOf(memgerNum)));
             itemService.save(item);
             model.addAttribute("showMessage","操作成功！");
-            return "success";
+            response.setStatus(VoteHttpResponseStatus.SUCCESS.getValue());
+            response.setRel(true);
+            return response;
         }catch (Exception e){
             throw e;
         }
