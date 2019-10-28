@@ -42,7 +42,7 @@ function showAddModel() {
 //定义按钮事件
 function excelImport(voteId, fn) {
     var fileObj = document.getElementById("file").files[0]; // js 获取文件对象
-    if (!fileObj){
+    if (!fileObj) {
         alert('请选择一个Excel文件')
         return;
     }
@@ -60,7 +60,6 @@ function excelImport(voteId, fn) {
     xhr.upload.onprogress = progressFunction; //【上传进度调用方法实现】
     xhr.upload.onloadstart = function () { //上传开始执行方法
         ot = new Date().getTime(); //设置上传开始时间
-
 
 
         oloaded = 0; //设置上传开始时，以上传的文件大小为0
@@ -299,25 +298,38 @@ function initTable(options) {
                     return item.field === key
                 })[0]
                 if (title) {
-                    if (value.indexOf(',') === -1) {
+                    if (value.indexOf && value.indexOf(',') === -1) {
                         html.push('<p><b style="display: inline-block; margin-right: 10px;">' + title.title + ':</b> ' + value.split(',')[0] + '</p>')
                     } else {
-                        html.push(
-                            [
-                                '<p>' ,
-                                '<b style="display: inline-block; margin-right: 10px;">' ,
-                                title.title ,
-                                ':</b> ' ,
-                                value.split(',')[0],
-                                '</p>',
-                                '<p>' ,
-                                '<b style="display: inline-block; margin-right: 10px;">' ,
-                                '其他' ,
-                                ':</b> ' ,
-                                value.split(',').slice(1).join(' '),
-                                '</p>'
-                            ].join('')
-                        )
+                        if (typeof value === 'number') {
+                            html.push(
+                                [
+                                    '<b style="display: inline-block; margin-right: 10px;">',
+                                    '结果',
+                                    ':</b> ',
+                                    value,
+                                    '</p>'
+                                ].join('')
+                            )
+                        } else {
+                            html.push(
+                                [
+                                    '<p>',
+                                    '<b style="display: inline-block; margin-right: 10px;">',
+                                    title.title,
+                                    ':</b> ',
+                                    value.split(',')[0],
+                                    '</p>',
+                                    '<p>',
+                                    '<b style="display: inline-block; margin-right: 10px;">',
+                                    '其他',
+                                    ':</b> ',
+                                    value.split(',').slice(1).join(' '),
+                                    '</p>'
+                                ].join('')
+                            )
+                        }
+
                     }
                 }
             })
@@ -456,7 +468,7 @@ function request(obj) {
         },
         error: function (error) {
             //请求出错处理
-            if(error) {
+            if (error) {
                 $('body').message({
                     message: '错误,响应状态码: ' + error.status,
                     type: 'danger'
@@ -540,7 +552,7 @@ function initTitleConfig(titleConfig) {
  * @returns {boolean}
  */
 function isPass(val, min, max) {
-    if(isNaN(val * 1)) {
+    if (isNaN(val * 1)) {
         $('body').message({
             message: '请输入正确格式数字.',
             type: 'danger'

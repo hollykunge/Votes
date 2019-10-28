@@ -411,7 +411,10 @@
                             })
                     } else {
                         requestBody = $._fraction
-                        $('.warning').show()
+                        $('.warning')
+                            .show()
+                            .find('strong').html('确定后将不可修改，确定提交吗？')
+
                         $('.submit-fraction')
                             .off('click')
                             .on('click', function () {
