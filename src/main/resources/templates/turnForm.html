@@ -202,6 +202,12 @@
     }
 
     function saveVoteItem() {
+        var reg = /^[0-9]\d*$/;
+        var memberSize = $('#memberSize').val()
+        if (!reg.test(memberSize)){
+            showInfo("投票人数请输入整数");
+            return false;
+        }
         var rule = rule = $('input[type=radio]:checked').val();
         if (rule === '1') {
             /*<![CDATA[*/
@@ -223,12 +229,6 @@
                 return true;
             }
             /*]]>*/
-        }
-        var reg = /^[0-9]\d*$/;
-        var memberSize = $('#memberSize').val()
-        if (!reg.test(memberSize)){
-            showInfo("投票人数请输入整数");
-            return false;
         }
         if (submitcount == 0){
             submitcount++;
