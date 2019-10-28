@@ -105,12 +105,12 @@ public class UserVoteController {
             }
             Map<String, Object> statistics = userVoteItemService.getStatistics(itemTemp.get());
             List<VoteItem> voteItems = (List<VoteItem>) statistics.get("voteItems");
-            String count =(String) statistics.get("coutips");
+            Long count =(Long) statistics.get("coutips");
             model.addAttribute("voteItems",voteItems);
             model.addAttribute("count",count);
             model.addAttribute("item",itemTemp.get());
             if(!StringUtils.isEmpty(redirect)){
-                model.addAttribute("showAlertMessage", Base64Utils.decryption(redirect));
+                model.addAttribute("showAlertMessage", redirect);
             }
             return "/userStat";
         }catch (Exception e){
