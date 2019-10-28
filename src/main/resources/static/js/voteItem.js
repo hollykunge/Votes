@@ -238,11 +238,11 @@ function configOperation(rules, columnsOption) {
                     formatter: function (value, row, index) {
                         if (rules.isRead) {
                             return [
-                                '<input class="form-control-sm voteInput" readonly value="' + row.score + '" data-live-search="true" name="orgid" >',
+                                '<input type="number" class="form-control input-group-sm voteInput" readonly value="' + row.score + '" data-live-search="true" name="orgid" >',
                             ].join('')
                         }
                         return [
-                            '<input class="form-control-sm voteInput" data-live-search="true" name="orgid" >',
+                            '<input type="number" class="form-control input-group-sm voteInput" data-live-search="true" name="orgid" >',
                         ].join('')
                     }
                 })
