@@ -4,7 +4,8 @@ import com.hollykunge.annotation.ExtApiIdempotent;
 import com.hollykunge.annotation.ExtApiToken;
 import com.hollykunge.constants.VoteConstants;
 import com.hollykunge.service.ExtTokenService;
-import com.hollykunge.util.ExceptionCommonUtil;
+import com.hollykunge.util.ClientIpUtil;
+import com.hollykunge.util.ExtApiTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -28,6 +29,8 @@ import java.io.IOException;
 @Component
 public class ExtApiAopIdempotent {
 	@Autowired
+	private ExtApiTokenUtil extApiTokenUtil;
+	@Autowired
 	private ExtTokenService extTokenService;
 
 	@Pointcut("execution(public * com.hollykunge.controller.*.*(..))")
@@ -40,10 +43,10 @@ public class ExtApiAopIdempotent {
 		MethodSignature signature = (MethodSignature) point.getSignature();
 		ExtApiToken extApiToken = signature.getMethod().getDeclaredAnnotation(ExtApiToken.class);
 		if (extApiToken != null) {
-			HttpServletRequest request = getRequest();
-			String clientIp = getClientIp(request);
+			HttpServletRequest request = extApiTokenUtil.getRequest();
+			String clientIp = ClientIpUtil.getClientIp(request);
 			String interfaceAdress = extApiToken.interfaceAdress();
-			extApiToken(clientIp,interfaceAdress);
+			extApiTokenUtil.extApiToken(clientIp,interfaceAdress);
 		}
 	}
 
@@ -71,7 +74,7 @@ public class ExtApiAopIdempotent {
 		}
 		// 代码步骤：
 		// 1.获取令牌 存放在请求头中
-		HttpServletRequest request = getRequest();
+		HttpServletRequest request = extApiTokenUtil.getRequest();
 		String valueType = extApiIdempotent.value();
 		if (StringUtils.isEmpty(valueType)) {
 			response("参数错误!");
@@ -99,22 +102,6 @@ public class ExtApiAopIdempotent {
 		return proceed;
 	}
 
-	public void extApiToken(String clentIp,String interfaceAdress) {
-		String token = null;
-		try {
-			token = extTokenService.getToken(clentIp,interfaceAdress);
-		} catch (Exception e) {
-			log.error(ExceptionCommonUtil.getExceptionMessage(e));
-		}
-		getRequest().setAttribute("vote_token", token);
-		getRequest().getSession().setAttribute("vote_token",token);
-	}
-
-	public HttpServletRequest getRequest() {
-		ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-		HttpServletRequest request = attributes.getRequest();
-		return request;
-	}
 
 	public void response(String msg) throws IOException {
 		ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
@@ -125,16 +112,6 @@ public class ExtApiAopIdempotent {
 		response.setHeader("msg",msg);
 	}
 
-	public String getClientIp(HttpServletRequest request){
-		String clientIp = request.getHeader("clientIp");
-		//如果请求头中没有ip，则为本地测试，使用默认值了
-		if(StringUtils.isEmpty(clientIp)){
-			clientIp = request.getRemoteHost();
-		}
-		if(StringUtils.isEmpty(clientIp)){
-			clientIp = VoteConstants.DEFUALT_CLIENTIP;
-		}
-		return clientIp;
-	}
+
 
 }

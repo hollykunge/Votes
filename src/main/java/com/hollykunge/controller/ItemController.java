@@ -16,7 +16,9 @@ import com.hollykunge.model.VoteItem;
 import com.hollykunge.reflection.ReflectionUtils;
 import com.hollykunge.service.*;
 import com.hollykunge.util.Base64Utils;
+import com.hollykunge.util.ClientIpUtil;
 import com.hollykunge.util.ExceptionCommonUtil;
+import com.hollykunge.util.ExtApiTokenUtil;
 import com.hollykunge.vo.VoteItemVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,15 +53,17 @@ public class ItemController {
     private final ItemService itemService;
     private final VoteItemService voteItemService;
     private final UserVoteItemService userVoteItemService;
+    private final ExtApiTokenUtil extApiTokenUtil;
 
     @Autowired
     public ItemController(VoteService voteService, UserService userService,
-                          ItemService itemService, VoteItemService voteItemService, UserVoteItemService userVoteItemService) {
+                          ItemService itemService, VoteItemService voteItemService, UserVoteItemService userVoteItemService,ExtApiTokenUtil extApiTokenUtil) {
         this.voteService = voteService;
         this.userService = userService;
         this.itemService = itemService;
         this.voteItemService = voteItemService;
         this.userVoteItemService = userVoteItemService;
+        this.extApiTokenUtil = extApiTokenUtil;
     }
 
     /**
@@ -220,11 +224,13 @@ public class ItemController {
      * @throws Exception
      */
     @RequestMapping(value = "/voteItems/{id}", method = RequestMethod.GET)
-    public @ResponseBody List<VoteItemVO> voteItems(@PathVariable Long id)throws Exception {
+    public @ResponseBody List<VoteItemVO> voteItems(@PathVariable Long id,HttpServletRequest request)throws Exception {
         try {
             Item item = itemService.findById(id);
             Optional<List<VoteItem>> voteItems = voteItemService.findByItem(item);
             List<VoteItemVO> result = JSONArray.parseArray(JSONObject.toJSONString(voteItems.get()),VoteItemVO.class);
+            //重新生成幂等性token
+            extApiTokenUtil.extApiToken(ClientIpUtil.getClientIp(request),"/item/import");
             return result;
         }catch (Exception e){
             throw e;
