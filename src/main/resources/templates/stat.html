@@ -131,11 +131,10 @@
          * 对重复投票结果做标记
          */
         function handleRepeatData() {
-
             var randowColor = ['#52b1ff', '#7ac8ff', '#a3dcff', '#e6f6ff', '#ffffff'];
             // 第一次循环，结果计数 (key:score,value:出现次数)
             var countMap = new Map();
-            for(var i=0;data.length>i; i++){
+            for(var i=0; data.length>i; i++){
                 var score = data[i][resultName];
                 var count = countMap.get(score)
                 if (count > 0) {

@@ -19,12 +19,14 @@
     <div class="card border-dark mb-3 shadow-sm">
         <div class="card-header bg-secondary text-white">详情
             <div style="float: right" sec:authorize="isAuthenticated()" th:if="${username}">
-                <a th:href="@{'/editVote/{id}'(id=${vote.id})}" class="col-md-2">
-                    <button type="button" class="btn btn-secondary btn-sm" th:text="编辑">
-                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                        编辑
-                    </button>
-                </a>
+                <div th:if="${vote.getItems().size()==0}">
+                    <a th:href="@{'/editVote/{id}'(id=${vote.id})}" class="col-md-2">
+                        <button type="button" class="btn btn-secondary btn-sm" th:text="编辑">
+                            <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                            编辑
+                        </button>
+                    </a>
+                </div>
             </div>
         </div>
         <div class="card-body">
@@ -42,7 +44,7 @@
             <div sec:authorize="isAuthenticated()" style="float: right">
                 <a th:href="@{'/voteVote/{voteId}/{itemId}'(voteId=${vote.id},itemId=0)}" class="col-md-2">
                     <button type="button" class="btn btn-primary btn-sm">
-                        添加
+                        添加新一轮投票
                     </button>
                 </a>
             </div>
@@ -102,7 +104,8 @@
                         </a>
                     </td>
                     <!--邀请码-->
-                    <div class="modal fade code-model" th:id="${item.id}" tabindex="-1" role="dialog" aria-labelledby="codeTitle"
+                    <div class="modal fade code-model" th:id="${item.id}" tabindex="-1" role="dialog"
+                         aria-labelledby="codeTitle"
                          aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered" role="document">
                             <div class="modal-content">
@@ -119,9 +122,9 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
-                                    <button type="button" class="btn btn-primary copyCode" id="copyCode"
-                                            data-clipboard-target="#code">复制
-                                    </button>
+                                    <!--                                    <button type="button" class="btn btn-primary copyCode" id="copyCode"-->
+                                    <!--                                            data-clipboard-target="#code">复制-->
+                                    <!--                                    </button>-->
                                 </div>
                             </div>
                         </div>

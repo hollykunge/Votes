@@ -107,7 +107,7 @@
     </div>
     <div class="row">
         <div class="col-md-12 mb-3">
-            <button id="nextVote" class="btn btn-primary btn-block hide">
+            <button id="nextVote" class="btn btn-outline-primary btn-block hide">
                 <span>进入下一轮投票</span>
             </button>
         </div>
@@ -162,6 +162,7 @@
         maxScore: [[${ item.maxScore }]], // 最大分数
         minScore: [[${ item.minScore }]], // 最小分数
     }
+    var colorMap = new Map();
     var hasVotes = JSON.parse([[${ userVoteItems }]] || '[]')
     var data = JSON.parse([[${ voteItems }]] || '[]') // voteItem
     var $table = $('#voteTable') // 当前页面表格
@@ -170,17 +171,17 @@
     var rules = [[${parentItemRules}]];// 规则范围 1否同 2排序 3打分
 
     $(function () {
-        if(rules == '1'){
+        if (rules == '1') {
             resultName = "parentStatisticsNum";
-        }else if(rules == '2'){
+        } else if (rules == '2') {
             resultName = "parentStatisticsOrderScore";
-        }else{
+        } else {
             resultName = "parentStatisticsToalScore";
         }
         if (titleConfig) {
             titleConfig = initTitleConfig(titleConfig)
-            if ( [[${ item.turnNum }]] != '1' ){
-                titleConfig.splice(5,0,{'title':'上一轮投票结果（分数）','field': resultName})
+            if ([[${ item.turnNum }]] != '1') {
+                titleConfig.splice(5, 0, {'title': '上一轮投票结果（分数）', 'field': resultName})
             }
         } else {
             // null.map不存在的错误
@@ -328,12 +329,14 @@
             $('#voteDone').text("已提交")
             $('#nextVote').show()
         }
+        handleRepeatData();
         initTable({
             rules: voteOption.rules,
             titleConfig: titleConfig,
             data: data,
             hasData: hasVotes,
-            clickToSelect: false
+            clickToSelect: false,
+            rowStyle: rowStyle
         })
 
         $('#voteDone').on('click', function (e) {
@@ -376,7 +379,7 @@
                     )
                 }
             } else if ($._fraction) {
-                if($._fraction.length === 0) {
+                if ($._fraction.length === 0) {
                     $('body').message({
                         message: '请输入分数.',
                         type: 'danger'
@@ -447,10 +450,48 @@
         // 点击进入下一轮投票
         $('#nextVote').on('click', function (e) {
             var url = window.location.href;
-            window.location.href = '/userVote/nextTurn'+url.substr(url.lastIndexOf('userVote')+8);
+            window.location.href = '/userVote/nextTurn' + url.substr(url.lastIndexOf('userVote') + 8);
         })
     })
 
+    /**
+     * 对重复投票结果做标记
+     */
+    function handleRepeatData() {
+        var randowColor = ['#52b1ff', '#7ac8ff', '#a3dcff', '#e6f6ff', '#ffffff'];
+        // 第一次循环，结果计数 (key:score,value:出现次数)
+        var countMap = new Map();
+        for (var i = 0; data.length > i; i++) {
+            var score = data[i][resultName];
+            var count = countMap.get(score)
+            if (count > 0) {
+                count = count + 1;
+                countMap.set(score, count);
+            } else {
+                countMap.set(score, 1);
+            }
+        }
+        // 第二次循环，出现次数超过一次且分数不为0的
+        for (var i = 0; data.length > i; i++) {
+            var score = data[i][resultName];
+            var count = countMap.get(score)
+            /*<![CDATA[*/
+            if (count > 1 && score !== 0) {
+                // 分数个位
+                var fix = parseInt(score % 10);
+                colorMap.set(score, randowColor[fix])
+            }
+            /*]]>*/
+        }
+    }
+
+    // 设置相同结果的行样式
+    function rowStyle(row, index) {
+        if (colorMap.get(row[resultName])) {
+            return {css: {'background-color': colorMap.get(row[resultName])}}
+        }
+        return {}
+    }
 </script>
 <script type="text/javascript" th:src="@{/js/voteItem.js}"></script>
 
