@@ -294,6 +294,9 @@ function initTable(options) {
                 '<div class="card-body">',
             ]
             $.each(row, function (key, value) {
+                if (!value) {
+                    return;
+                }
                 var title = options.titleConfig.filter(function (item, index) {
                     return item.field === key
                 })[0]
