@@ -92,7 +92,7 @@ public class UserVoteController {
      * @return
      * @throws Exception
      */
-    private String inviteCodeStatisticsView(Long id,
+    public String inviteCodeStatisticsView(Long id,
                                  String code,
                                  Model model,
                                  HttpServletRequest request,
@@ -103,11 +103,9 @@ public class UserVoteController {
                 throw new BaseException("无效地址...");
             }
             Map<String, Object> statistics = userVoteItemService.getStatistics(itemTemp.get());
-            List<VoteItem> voteItems = (List<VoteItem>) statistics.get("voteItems");
-            Long count =(Long) statistics.get("coutips");
-            model.addAttribute("voteItems",JSONObject.toJSONString(voteItems));
-            model.addAttribute("count",count);
-            model.addAttribute("item",JSONObject.toJSONString(itemTemp.get()));
+            model.addAttribute("statistics", JSONObject.toJSONString(statistics));
+            model.addAttribute("item", itemTemp.get());
+            model.addAttribute("itemObj", JSONObject.toJSONString(itemTemp.get()));
             if(!StringUtils.isEmpty(redirect)){
                 model.addAttribute("showAlertMessage", redirect);
             }
