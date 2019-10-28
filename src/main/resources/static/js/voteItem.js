@@ -426,7 +426,7 @@ function request(obj) {
             //请求前的处理
             // disabled="disabled"
             $('button[type=submit]').attr('disabled', 'disabled');
-            $('button[type=submit]').find('.hide').removeClass('hide')
+            $('button[type=submit]').find('.spinner-border').removeClass('hide')
             $('#loading').modal('show');
         },
         success: function (req) {
@@ -439,31 +439,40 @@ function request(obj) {
                     message: '提交成功！正在跳转，请稍等',
                     type: 'success'
                 })
-                setTimeout(function () {
-                    window.location.reload()
-                }, 500)
+                reloadPage()
                 return
             }
             $('body').message({
                 message: req,
                 type: 'danger'
             })
-
-
+            reloadPage()
         },
         complete: function (success) {
             //请求完成的处理
             $('button[type=submit]').removeAttr('disabled');
-            $('button[type=submit]').find('.hide').addClass('hide')
+            $('button[type=submit]').find('.spinner-border').addClass('hide')
             $('#loading').modal('hide');
         },
         error: function (error) {
             //请求出错处理
-            console.log(error)
+            if(error) {
+                $('body').message({
+                    message: '错误,响应状态码: ' + error.status,
+                    type: 'danger'
+                })
+                reloadPage()
+            }
         }
     });
 
 
+}
+
+function reloadPage() {
+    setTimeout(function () {
+        window.location.reload()
+    }, 500)
 }
 
 /**
@@ -531,6 +540,13 @@ function initTitleConfig(titleConfig) {
  * @returns {boolean}
  */
 function isPass(val, min, max) {
+    if(isNaN(val * 1)) {
+        $('body').message({
+            message: '请输入正确格式数字.',
+            type: 'danger'
+        })
+        return
+    }
     if (max * 1 >= val * 1 && val * 1 >= min * 1) {
         return true
     }
@@ -592,6 +608,7 @@ $.fn.message = function (options) {
         timerAddTag = setTimeout(function () {
             $('#' + id).addClass('alert_message_fade_leave_active')
             timerRemoveTag = setTimeout(function () {
+                $('.alert_message_fade_leave_active').remove()
                 $('.alert_message_fade_leave_active').remove()
             }, 1000)
         }, 1000)
