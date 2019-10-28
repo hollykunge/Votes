@@ -27,6 +27,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -83,6 +84,41 @@ public class UserVoteController {
     }
 
     /**
+     * 进入统计结果页面
+     * @param id
+     * @param code
+     * @param model
+     * @param request
+     * @param redirect
+     * @return
+     * @throws Exception
+     */
+    private String inviteCodeStatisticsView(Long id,
+                                 String code,
+                                 Model model,
+                                 HttpServletRequest request,
+                                 String redirect) throws Exception {
+        try{
+            Optional<Item> itemTemp = itemService.findByIdAndCode(id,code);
+            if(!itemTemp.isPresent()){
+                throw new BaseException("无效地址...");
+            }
+            Map<String, Object> statistics = userVoteItemService.getStatistics(itemTemp.get());
+            List<VoteItem> voteItems = (List<VoteItem>) statistics.get("voteItems");
+            String count =(String) statistics.get("coutips");
+            model.addAttribute("voteItems",voteItems);
+            model.addAttribute("count",count);
+            model.addAttribute("item",itemTemp.get());
+            if(!StringUtils.isEmpty(redirect)){
+                model.addAttribute("showAlertMessage", Base64Utils.decryption(redirect));
+            }
+            return "/userStat";
+        }catch (Exception e){
+            throw e;
+        }
+    }
+
+    /**
      * 用户投票点击下一轮接口（地址：/userVote/nextTurn/{id}/{code}）
      * @param id
      * @param code
@@ -92,18 +128,36 @@ public class UserVoteController {
     @RequestMapping(value = VoteConstants.INVITECODE_RPC+"nextTurn/"+"{id}/{code}", method = RequestMethod.GET)
     public String nextTurnItem(@PathVariable Long id,
                                @PathVariable String code,
+                               Model model,
+                               HttpServletRequest request,
                                RedirectAttributes redirectAttributes)throws Exception{
         Optional<Item> itemTemp = itemService.findByIdAndCode(id,code);
         if(!itemTemp.isPresent()){
             throw new BaseException("无效地址...");
         }
         List<Item> byPrevious = itemService.findByPrevious(String.valueOf(id));
-        if(byPrevious.size() == 0){
-            redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("没有下一轮投票！"));
-            return "redirect:"+VoteConstants.INVITECODE_RPC+id+"/"+code;
+        //当前轮为发起，进入当前轮投票
+        if(itemTemp.isPresent() && Objects.equals(itemTemp.get().getStatus(),VoteConstants.ITEM_SEND_STATUS)){
+            return this.inviteCodeView(id,code,model,request,null);
         }
-        Item item = byPrevious.get(0);
-        return "redirect:"+VoteConstants.INVITECODE_RPC+item.getId()+"/"+item.getCode();
+        if(itemTemp.isPresent()
+                && Objects.equals(itemTemp.get().getStatus(),VoteConstants.ITEM_FINAL_STATUS)){
+            //当前轮为结束，下一轮为没有，当前轮统计页面
+            if(byPrevious.size() == 0){
+                //当前轮的统计
+                return this.inviteCodeStatisticsView(id,code,model,request,"没有下一轮投票！");
+            }
+            Item item = byPrevious.get(0);
+            //当前轮为结束，下一轮为发起，下一轮投票页面
+            if(Objects.equals(item.getStatus(),VoteConstants.ITEM_SEND_STATUS)){
+                return this.inviteCodeView(item.getId(),item.getCode(),model,request,null);
+            }
+            //当前轮为结束，下一轮为结束，下一轮统计页面
+            if(Objects.equals(item.getStatus(),VoteConstants.ITEM_FINAL_STATUS)){
+                return this.inviteCodeStatisticsView(item.getId(),item.getCode(),model,request,null);
+            }
+        }
+        return "/403";
     }
 
     /**
