@@ -14,6 +14,8 @@ import com.hollykunge.service.ItemService;
 import com.hollykunge.service.UserVoteItemService;
 import com.hollykunge.service.VoteItemService;
 import com.hollykunge.util.Base64Utils;
+import com.hollykunge.util.ClientIpUtil;
+import com.hollykunge.util.ExtApiTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -41,6 +43,8 @@ public class UserVoteController {
     private VoteItemService voteItemService;
     @Autowired
     private UserVoteItemService userVoteItemService;
+    @Autowired
+    private ExtApiTokenUtil extApiTokenUtil;
 
     @ExtApiToken(interfaceAdress = VoteConstants.INVITECODE_RPC+"add")
     @RequestMapping(value = VoteConstants.INVITECODE_RPC+"{id}/{code}", method = RequestMethod.GET)
@@ -132,6 +136,8 @@ public class UserVoteController {
             if(Objects.equals(item.getRules(),VoteConstants.ITEM_RULE_AGER)){
                 if(collect.size()>Integer.parseInt(item.getAgreeMax())||
                         collect.size()<Integer.parseInt(item.getAgreeMin())){
+                    //重新生成幂等性token
+                    extApiTokenUtil.extApiToken(ClientIpUtil.getClientIp(request),VoteConstants.INVITECODE_RPC+"add");
                     return"投票数量低于投票轮设置的最低数量或高于最高数量...";
                 }
             }
