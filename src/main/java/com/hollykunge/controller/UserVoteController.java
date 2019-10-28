@@ -8,10 +8,12 @@ import com.hollykunge.config.ItemStatusConfig;
 import com.hollykunge.constants.VoteConstants;
 import com.hollykunge.dictionary.VoteHttpResponseStatus;
 import com.hollykunge.exception.BaseException;
+import com.hollykunge.model.ExtToken;
 import com.hollykunge.model.Item;
 import com.hollykunge.model.UserVoteItem;
 import com.hollykunge.model.VoteItem;
 import com.hollykunge.msg.ObjectRestResponse;
+import com.hollykunge.service.ExtTokenService;
 import com.hollykunge.service.ItemService;
 import com.hollykunge.service.UserVoteItemService;
 import com.hollykunge.service.VoteItemService;
@@ -47,6 +49,8 @@ public class UserVoteController {
     private UserVoteItemService userVoteItemService;
     @Autowired
     private ExtApiTokenUtil extApiTokenUtil;
+    @Autowired
+    private ExtTokenService extTokenService;
 
     @ExtApiToken(interfaceAdress = VoteConstants.INVITECODE_RPC+"add")
     @RequestMapping(value = VoteConstants.INVITECODE_RPC+"{id}/{code}", method = RequestMethod.GET)
@@ -152,6 +156,9 @@ public class UserVoteController {
             }
             //当前轮为结束，下一轮为发起，下一轮投票页面
             if(Objects.equals(item.getStatus(),VoteConstants.ITEM_SEND_STATUS)){
+                List<ExtToken> vote_token = extTokenService.findToken((String) request.getSession().getAttribute("vote_token"));
+                extTokenService.deleteToken(vote_token);
+                //手动生成新的token
                 extApiTokenUtil.extApiToken(ClientIpUtil.getClientIp(request),VoteConstants.INVITECODE_RPC+"add");
                 return this.inviteCodeView(item.getId(),item.getCode(),model,request,null);
             }
