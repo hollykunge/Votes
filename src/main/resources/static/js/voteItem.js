@@ -21,8 +21,8 @@ var templateOption = {
 function showImportModel() {
     $('#importModel').modal('show');
     // 由于未刷新页面，需要对上一次上次内容初始化
-    document.getElementById("time").innerHTML='<div></div>';
-    document.getElementById("percentage").innerHTML='<div></div>';
+    document.getElementById("time").innerHTML = '<div></div>';
+    document.getElementById("percentage").innerHTML = '<div></div>';
     document.getElementById("progressBar").value = 0;
 }
 
@@ -74,6 +74,7 @@ function excelImport(voteId, fn) {
     xhr.setRequestHeader("itemId", voteId);
     xhr.send(form); //开始上传，发送form数据
 }
+
 // //上传成功响应
 // function uploadComplete(evt) {
 //     if (evt.target.status) {
@@ -455,7 +456,7 @@ function request(obj) {
             // $('button[type=submit]').find('.hide').addClass('hide')
 
             //请求成功时处理
-            if (req == 'success') {
+            if (req.status == 200) {
                 $('body').message({
                     message: '提交成功！正在跳转，请稍等',
                     type: 'success'
@@ -464,10 +465,9 @@ function request(obj) {
                 return
             }
             $('body').message({
-                message: req,
+                message: req.message || JSON.stringify(req),
                 type: 'danger'
             })
-            reloadPage()
         },
         complete: function (success) {
             //请求完成的处理
@@ -482,12 +482,10 @@ function request(obj) {
                     message: '错误,响应状态码: ' + error.status,
                     type: 'danger'
                 })
-                reloadPage()
+                // reloadPage()
             }
         }
     });
-
-
 }
 
 function reloadPage() {
@@ -675,4 +673,28 @@ function unique(arr) {
         }
     }
     return arr;
+}
+
+function tips(el, childName, requestBody) {
+    el
+        .show()
+        .find(childName)
+        .html('确定后将无法修改数据，确定提交吗？')
+    btnAction(requestBody);
+}
+function btnAction(requestBody) {
+    $('.submit-fraction')
+        .off('click')
+        .on('click', function () {
+            $(this).parents('.modal').hide()
+            request({
+                url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),
+                data: JSON.stringify(requestBody)
+            })
+        })
+    $('.close-btn')
+        .off('click')
+        .on('click', function () {
+            $('.modal').hide();
+        })
 }

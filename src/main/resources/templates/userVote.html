@@ -170,17 +170,17 @@
     var rules = [[${parentItemRules}]];// 规则范围 1否同 2排序 3打分
 
     $(function () {
-        if(rules == '1'){
+        if (rules == '1') {
             resultName = "parentStatisticsNum";
-        }else if(rules == '2'){
+        } else if (rules == '2') {
             resultName = "parentStatisticsOrderScore";
-        }else{
+        } else {
             resultName = "parentStatisticsToalScore";
         }
         if (titleConfig) {
             titleConfig = initTitleConfig(titleConfig)
-            if ( [[${ item.turnNum }]] != '1' ){
-                titleConfig.splice(5,0,{'title':'上一轮投票结果（分数）','field': resultName})
+            if ([[${ item.turnNum }]] != '1') {
+                titleConfig.splice(5, 0, {'title': '上一轮投票结果（分数）', 'field': resultName})
             }
         } else {
             // null.map不存在的错误
@@ -335,11 +335,12 @@
             hasData: hasVotes,
             clickToSelect: false
         })
-
+        // 提交事件
         $('#voteDone').on('click', function (e) {
 
             var e = window.event || e
             var requestBody = []
+            // 排序校验
             if (voteOption.rules === '2') {
                 if (data.filter(function (item) {
                     if (!item.SerialNumber) {
@@ -354,7 +355,7 @@
                 }
             }
 
-            if ($._voteArr) {
+            if ($._voteArr) { // 格式投票数据
                 if ($._voteArr.length > 0) {
                     // passMin
                     var passMin = PassRules({
@@ -375,14 +376,14 @@
                         )
                     )
                 }
-            } else if ($._fraction) {
-                if($._fraction.length === 0) {
+            } else if ($._fraction) { // 格式打分数据
+                if ($._fraction.length === 0) {
                     $('body').message({
                         message: '请输入分数.',
                         type: 'danger'
                     })
                 }
-                if ($._fraction.length > 0) {
+                if ($._fraction.length > 0) { // 格式打分数据
 
                     if ($._fraction.length !== data.length) {
                         requestBody = $._fraction.concat(
@@ -394,61 +395,31 @@
                                 'score'
                             )
                         )
-                        $('.warning').show()
-                        $('.submit-fraction')
-                            .off('click')
-                            .on('click', function () {
-                                $(this).parents('.modal').hide()
-                                request({
-                                    url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),
-                                    data: JSON.stringify(requestBody)
-                                })
-                            })
-                        $('.close-btn')
-                            .off('click')
-                            .on('click', function () {
-                                $('.modal').hide();
-                            })
+                        tips($('.warning'), 'strong', requestBody)
                     } else {
                         requestBody = $._fraction
-                        $('.warning')
-                            .show()
-                            .find('strong').html('确定后将不可修改，确定提交吗？')
-
-                        $('.submit-fraction')
-                            .off('click')
-                            .on('click', function () {
-                                $(this).parents('.modal').hide()
-                                request({
-                                    url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),
-                                    data: JSON.stringify(requestBody)
-                                })
-                            })
-                        $('.close-btn')
-                            .off('click')
-                            .on('click', function () {
-                                $('.modal').hide();
-                            })
+                        tips($('.warning'), 'strong', requestBody)
                     }
                 }
                 return
-            } else {
+            } else { // 投票
                 requestBody = data.map(function (item, index) {
                     return initDataItem(item)
                 })
             }
-
-            request({
-                url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),
-                data: JSON.stringify(requestBody)
-            })
+            tips($('.warning'), 'strong', requestBody)
+            // request({
+            //     url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),
+            //     data: JSON.stringify(requestBody)
+            // })
 
         })
         // 点击进入下一轮投票
         $('#nextVote').on('click', function (e) {
             var url = window.location.href;
-            window.location.href = '/userVote/nextTurn'+url.substr(url.lastIndexOf('userVote')+8);
+            window.location.href = '/userVote/nextTurn' + url.substr(url.lastIndexOf('userVote') + 8);
         })
+
     })
 
 </script>
