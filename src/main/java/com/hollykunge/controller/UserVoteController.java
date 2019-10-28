@@ -119,7 +119,6 @@ public class UserVoteController {
                       Model model,
                       HttpServletRequest request) throws Exception {
         try{
-            int i = 1/0;
             String clientIp = getClientIp(request);
             List<UserVoteItem> userVoteItemlist = JSONArray.parseArray(userVoteItems, UserVoteItem.class);
             List<UserVoteItem> collect = userVoteItemlist.stream().filter(new Predicate<UserVoteItem>() {
