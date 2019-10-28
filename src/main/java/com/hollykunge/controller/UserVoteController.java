@@ -147,7 +147,7 @@ public class UserVoteController {
             Item item = byPrevious.get(0);
             //当前轮为结束，下一轮为新建，当前轮统计页面
             if(Objects.equals(item.getStatus(),VoteConstants.ITEM_ADD_STATUS)){
-                return this.inviteCodeStatisticsView(id,code,model,request,null);
+                return this.inviteCodeStatisticsView(id,code,model,request,"下一轮没有发起！");
             }
             //当前轮为结束，下一轮为发起，下一轮投票页面
             if(Objects.equals(item.getStatus(),VoteConstants.ITEM_SEND_STATUS)){
