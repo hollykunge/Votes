@@ -15,6 +15,7 @@ import com.hollykunge.msg.ObjectRestResponse;
 import com.hollykunge.service.ItemService;
 import com.hollykunge.service.UserVoteItemService;
 import com.hollykunge.service.VoteItemService;
+import com.hollykunge.util.ClientIpUtil;
 import com.hollykunge.util.ExtApiTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -151,6 +152,7 @@ public class UserVoteController {
             }
             //当前轮为结束，下一轮为发起，下一轮投票页面
             if(Objects.equals(item.getStatus(),VoteConstants.ITEM_SEND_STATUS)){
+                extApiTokenUtil.extApiToken(ClientIpUtil.getClientIp(request),VoteConstants.INVITECODE_RPC+"add");
                 return this.inviteCodeView(item.getId(),item.getCode(),model,request,null);
             }
             //当前轮为结束，下一轮为结束，下一轮统计页面
