@@ -10,12 +10,7 @@
 <div class="container">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <a th:href="@{'/votes/' + ${#authentication.getName()}}">我的投票</a>
-            </li>
-            <li class="breadcrumb-item"><a th:href="@{'/vote/' + ${item.getVote().id}}"
-                                           th:text="${item.getVote().title}"></a></li>
-            <li class="breadcrumb-item active" aria-current="page" th:text="'第'+${item.turnNum}+'轮投票统计结果'">新建一轮投票</li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="'第'+${item.turnNum}+'轮投票统计结果'"></li>
         </ol>
     </nav>
     <div class="card-deck mb-3 text-center">
@@ -80,15 +75,17 @@
     <div class="card border-dark mb-3 shadow-sm">
         <div class="card-header">
             投票结果
-            <div style="float: right">
-                <a th:href="@{'/statistics/export/{itemId}'(itemId=${item.id})}" class="col-md-2">
-                    <button type="button" class="btn btn-primary btn-sm">导出</button>
-                </a>
-            </div>
         </div>
         <div class="card-body card-nopadding">
             <table id="table" class="table-striped table-sm"
             ></table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <button id="nextVote" class="btn btn-primary btn-block hide">
+                <span>进入下一轮投票</span>
+            </button>
         </div>
     </div>
 </div>
@@ -96,10 +93,9 @@
 <script type="text/javascript"
         src="/webjars/bootstrap-table/1.15.4/dist/bootstrap-table.min.js"></script>
 <script th:inline="javascript">
-    var item = JSON.parse([[${itemObj}]] || '[]');
-    var statistics = JSON.parse([[${statistics}]] || '[]');
+    var item = JSON.parse([[${item}]] || '[]');
+    var data = JSON.parse([[${voteItems}]] || '[]');
     var titleConfig = [[${ item.vote.excelHeader }]] ;
-    var data = statistics.voteItems;
     var $table = $('#table') // 当前页面表格
     var resultName = '';
     var colorMap = new Map();
@@ -131,10 +127,11 @@
          * 对重复投票结果做标记
          */
         function handleRepeatData() {
+
             var randowColor = ['#52b1ff', '#7ac8ff', '#a3dcff', '#e6f6ff', '#ffffff'];
             // 第一次循环，结果计数 (key:score,value:出现次数)
             var countMap = new Map();
-            for(var i=0; data.length>i; i++){
+            for(var i=0;data.length>i; i++){
                 var score = data[i][resultName];
                 var count = countMap.get(score)
                 if (count > 0) {
@@ -164,8 +161,12 @@
             }
             return {}
         }
+        // 点击进入下一轮投票
+        $('#nextVote').on('click', function (e) {
+            var url = window.location.href;
 
-
+            window.location.href = '/userVote/nextTurn'+url.substr(url.lastIndexOf('userVote')+8);
+        })
     })
 </script>
 

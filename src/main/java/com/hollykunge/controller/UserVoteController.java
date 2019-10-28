@@ -15,7 +15,6 @@ import com.hollykunge.msg.ObjectRestResponse;
 import com.hollykunge.service.ItemService;
 import com.hollykunge.service.UserVoteItemService;
 import com.hollykunge.service.VoteItemService;
-import com.hollykunge.util.Base64Utils;
 import com.hollykunge.util.ExtApiTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +70,7 @@ public class UserVoteController {
             //用户投完票项目，前台展示可采用如果userVoteItems没有数据，则为第一次投票列表使用voteItems
             model.addAttribute("userVoteItems",JSONObject.toJSONString(userVoteItems));
             if(!StringUtils.isEmpty(redirect)){
-                model.addAttribute("showAlertMessage", Base64Utils.decryption(redirect));
+                model.addAttribute("showAlertMessage",redirect);
             }
             if(!StringUtils.isEmpty(itemTemp.get().getPreviousId())){
                 Item parent = itemService.findById(Long.valueOf(itemTemp.get().getPreviousId()));
@@ -105,12 +104,12 @@ public class UserVoteController {
             }
             Map<String, Object> statistics = userVoteItemService.getStatistics(itemTemp.get());
             List<VoteItem> voteItems = (List<VoteItem>) statistics.get("voteItems");
-            String count =(String) statistics.get("coutips");
-            model.addAttribute("voteItems",voteItems);
+            Long count =(Long) statistics.get("coutips");
+            model.addAttribute("voteItems",JSONObject.toJSONString(voteItems));
             model.addAttribute("count",count);
-            model.addAttribute("item",itemTemp.get());
+            model.addAttribute("item",JSONObject.toJSONString(itemTemp.get()));
             if(!StringUtils.isEmpty(redirect)){
-                model.addAttribute("showAlertMessage", Base64Utils.decryption(redirect));
+                model.addAttribute("showAlertMessage", redirect);
             }
             return "/userStat";
         }catch (Exception e){
@@ -138,7 +137,7 @@ public class UserVoteController {
         List<Item> byPrevious = itemService.findByPrevious(String.valueOf(id));
         //当前轮为发起，进入当前轮投票
         if(itemTemp.isPresent() && Objects.equals(itemTemp.get().getStatus(),VoteConstants.ITEM_SEND_STATUS)){
-            return this.inviteCodeView(id,code,model,request,null);
+            return this.inviteCodeView(id,code,model,request,"没有下一轮投票！");
         }
         if(itemTemp.isPresent()
                 && Objects.equals(itemTemp.get().getStatus(),VoteConstants.ITEM_FINAL_STATUS)){
@@ -148,6 +147,10 @@ public class UserVoteController {
                 return this.inviteCodeStatisticsView(id,code,model,request,"没有下一轮投票！");
             }
             Item item = byPrevious.get(0);
+            //当前轮为结束，下一轮为新建，当前轮统计页面
+            if(Objects.equals(item.getStatus(),VoteConstants.ITEM_ADD_STATUS)){
+                return this.inviteCodeStatisticsView(id,code,model,request,null);
+            }
             //当前轮为结束，下一轮为发起，下一轮投票页面
             if(Objects.equals(item.getStatus(),VoteConstants.ITEM_SEND_STATUS)){
                 return this.inviteCodeView(item.getId(),item.getCode(),model,request,null);

@@ -11,7 +11,10 @@
         <a class="navbar-brand" style="color: #ffffff;">二部投票系统</a>
     </div>
 </nav>
-<div class="container" th:if="${item.status}==2">
+<div>
+
+</div>
+<div class="container">
     <div class="jumbotron jumbotron-fluid mb-3">
         <div class="container">
             <h1 class="display-5" th:text="${item.getVote().title}">无标题</h1>
@@ -103,38 +106,12 @@
     </div>
     <div class="row">
         <div class="col-md-12 mb-3">
-            <button id="nextVote" class="btn btn-outline-primary btn-block hide">
+            <button id="nextVote" class="btn btn-primary btn-block hide">
                 <span>进入下一轮投票</span>
             </button>
         </div>
     </div>
 </div>
-
-<div class="row" th:if="${item.status}!=2">
-    <div class="col-md-4"></div>
-    <div class="col-md-4 text-center">
-        <div class="jumbotron">
-            <h1>
-                <span th:text="'' + ${item.vote.title} + ''" style="font-family: 黑体;"></span><br/>
-            </h1>
-            <h3>
-                <span th:text="'第' + ${item.turnNum} + '轮投票状态：'"></span>
-                <span th:text="${itemStatus}" style="color: #F44336;"></span>
-            </h3>
-            <a th:href="@{'/userVote/nextTurn/{id}/{code}'(id=${item.id}, code=${item.code})}">
-                <button class="btn btn-primary" style="margin: 20px 0px 40px">
-                    <span>进入下一轮投票</span>
-                </button>
-            </a>
-            <div class="alert alert-danger" th:if="${showAlertMessage}" th:utext="${showAlertMessage}"></div>
-        </div>
-    </div>
-    <div class="col-md-4"></div>
-</div>
-<!-- <div class="row" th:if="${item.status}==2">
-投票项列表
-</div> -->
-
 
 <div th:replace="/fragments/footer :: footer"/>
 <!-- loading -->
@@ -158,7 +135,6 @@
         maxScore: [[${ item.maxScore }]], // 最大分数
         minScore: [[${ item.minScore }]], // 最小分数
     }
-    var colorMap = new Map();
     var hasVotes = JSON.parse([[${ userVoteItems }]] || '[]')
     var data = JSON.parse([[${ voteItems }]] || '[]') // voteItem
     var $table = $('#voteTable') // 当前页面表格
@@ -167,17 +143,17 @@
     var rules = [[${parentItemRules}]];// 规则范围 1否同 2排序 3打分
 
     $(function () {
-        if (rules == '1') {
+        if(rules == '1'){
             resultName = "parentStatisticsNum";
-        } else if (rules == '2') {
+        }else if(rules == '2'){
             resultName = "parentStatisticsOrderScore";
-        } else {
+        }else{
             resultName = "parentStatisticsToalScore";
         }
         if (titleConfig) {
             titleConfig = initTitleConfig(titleConfig)
-            if ([[${ item.turnNum }]] != '1') {
-                titleConfig.splice(5, 0, {'title': '上一轮投票结果（分数）', 'field': resultName})
+            if ( [[${ item.turnNum }]] != '1' ){
+                titleConfig.splice(5,0,{'title':'上一轮投票结果（分数）','field': resultName})
             }
         } else {
             // null.map不存在的错误
@@ -280,8 +256,7 @@
 
             },
             // 排序点击事件回调
-            'focus .selectVote': function (e, value, row, index) {
-
+            'mousedown .selectVote': function (e, value, row, index) {
                 // 点击排序时, 绘制option
                 var html = ''
                 allOrder = unique(allOrder)
@@ -325,21 +300,17 @@
             $('#voteDone').text("已提交")
             $('#nextVote').show()
         }
-        handleRepeatData();
         initTable({
             rules: voteOption.rules,
             titleConfig: titleConfig,
             data: data,
             hasData: hasVotes,
-            clickToSelect: false,
-            rowStyle: rowStyle
+            clickToSelect: false
         })
-        // 提交事件
-        $('#voteDone').on('click', function (e) {
 
+        $('#voteDone').on('click', function (e) {
             var e = window.event || e
             var requestBody = []
-            // 排序校验
             if (voteOption.rules === '2') {
                 if (data.filter(function (item) {
                     if (!item.SerialNumber) {
@@ -354,7 +325,7 @@
                 }
             }
 
-            if ($._voteArr) { // 格式投票数据
+            if ($._voteArr) {
                 if ($._voteArr.length > 0) {
                     // passMin
                     var passMin = PassRules({
@@ -375,15 +346,8 @@
                         )
                     )
                 }
-            } else if ($._fraction) { // 格式打分数据
-                if ($._fraction.length === 0) {
-                    $('body').message({
-                        message: '请输入分数.',
-                        type: 'danger'
-                    })
-                }
-                if ($._fraction.length > 0) { // 格式打分数据
-
+            } else if ($._fraction) {
+                if ($._fraction.length > 0) {
                     if ($._fraction.length !== data.length) {
                         requestBody = $._fraction.concat(
                             delHasItem(
@@ -394,71 +358,44 @@
                                 'score'
                             )
                         )
-                        tips($('.warning'), 'strong', requestBody)
-                    } else {
-                        requestBody = $._fraction
-                        tips($('.warning'), 'strong', requestBody)
+                        $('.warning').show()
+                        $('.submit-fraction')
+                            .off('click')
+                            .on('click', function () {
+                                $(this).parents('.modal').hide()
+                                request({
+                                    url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),
+                                    data: JSON.stringify(requestBody)
+                                })
+                            })
+                        $('.close-btn')
+                            .off('click')
+                            .on('click', function () {
+                                $('.modal').hide();
+                            })
                     }
+
                 }
                 return
-            } else { // 投票
+            } else {
                 requestBody = data.map(function (item, index) {
                     return initDataItem(item)
                 })
             }
-            tips($('.warning'), 'strong', requestBody)
-            // request({
-            //     url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),
-            //     data: JSON.stringify(requestBody)
-            // })
+            request({
+                url: window.location.origin+"/userVote/add/"+ [[${ item.id }]] + '/' + [[${ item.code }]],
+                data: JSON.stringify(requestBody)
+            })
 
         })
         // 点击进入下一轮投票
         $('#nextVote').on('click', function (e) {
             var url = window.location.href;
-            window.location.href = '/userVote/nextTurn' + url.substr(url.lastIndexOf('userVote') + 8);
+            alert('/userVote/nextTurn/'+ [[${ item.id }]] + '/' + [[${ item.code }]])
+            window.location.href = '/userVote/nextTurn/'+ [[${ item.id }]] + '/' + [[${ item.code }]];
         })
-
     })
 
-    /**
-     * 对重复投票结果做标记
-     */
-    function handleRepeatData() {
-        var randowColor = ['#52b1ff', '#7ac8ff', '#a3dcff', '#e6f6ff', '#ffffff'];
-        // 第一次循环，结果计数 (key:score,value:出现次数)
-        var countMap = new Map();
-        for (var i = 0; data.length > i; i++) {
-            var score = data[i][resultName];
-            var count = countMap.get(score)
-            if (count > 0) {
-                count = count + 1;
-                countMap.set(score, count);
-            } else {
-                countMap.set(score, 1);
-            }
-        }
-        // 第二次循环，出现次数超过一次且分数不为0的
-        for (var i = 0; data.length > i; i++) {
-            var score = data[i][resultName];
-            var count = countMap.get(score)
-            /*<![CDATA[*/
-            if (count > 1 && score !== 0) {
-                // 分数个位
-                var fix = parseInt(score % 10);
-                colorMap.set(score, randowColor[fix])
-            }
-            /*]]>*/
-        }
-    }
-
-    // 设置相同结果的行样式
-    function rowStyle(row, index) {
-        if (colorMap.get(row[resultName])) {
-            return {css: {'background-color': colorMap.get(row[resultName])}}
-        }
-        return {}
-    }
 </script>
 <script type="text/javascript" th:src="@{/js/voteItem.js}"></script>
 
