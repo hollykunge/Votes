@@ -373,6 +373,12 @@
                     )
                 }
             } else if ($._fraction) {
+                if($._fraction.length === 0) {
+                    $('body').message({
+                        message: '请输入分数.',
+                        type: 'danger'
+                    })
+                }
                 if ($._fraction.length > 0) {
                     if ($._fraction.length !== data.length) {
                         requestBody = $._fraction.concat(
