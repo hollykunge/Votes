@@ -64,6 +64,10 @@ public class UserVoteController {
             if(!itemTemp.isPresent()){
                 throw new BaseException("无效地址...");
             }
+            //如果当前轮的状态为结束，则进入当前轮的统计页面
+            if(itemTemp.isPresent() && Objects.equals(itemTemp.get().getStatus(),VoteConstants.ITEM_FINAL_STATUS)){
+                return this.inviteCodeStatisticsView(id,code,model,request,null);
+            }
             Optional<List<VoteItem>> optVoteItems = voteItemService.findByItem(itemTemp.get());
             model.addAttribute("item",itemTemp.get());
             model.addAttribute("itemStatus", ItemStatusConfig.getEnumByValue(itemTemp.get().getStatus()).getName());
