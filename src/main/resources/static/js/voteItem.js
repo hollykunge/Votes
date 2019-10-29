@@ -489,9 +489,13 @@ function request(obj) {
 }
 
 function reloadPage() {
-    setTimeout(function () {
+
+    var timer = setTimeout(function () {
+        timer = null
         window.location.reload()
     }, 500)
+
+
 }
 
 /**
@@ -608,7 +612,6 @@ function delHasItem(data, hasItemIndex, keys) {
  * 弹窗
  * @param object
  */
-var seed = 1
 $.fn.message = function (options) {
     options = options || {};
     if (typeof options === 'string') {
@@ -617,26 +620,23 @@ $.fn.message = function (options) {
             type: options.type || 'success'
         };
     }
-
+    var template = [
+        '<div class="alert alert-dismissible fade show alert alert-' + (options.type || 'success') + ' position_alert position_message"  data-message="message" role="alert">',
+        '<span class="mr30">',
+        options.message,
+        '</span>',
+        '<button type="button" class="close closeButton" data-dismiss="alert" aria-label="Close">',
+        '<span aria-hidden="true">&times;</span>',
+        '</button>',
+        '</div>',
+    ].join('')
+    if ($('.position_message').length > 0 && $('.position_message').data('message') === "message") {
+        $('.position_message').replaceWith($(template))
+        return
+    }
     var userOnClose = options.onClose;
-    var id = 'message_' + seed++
-    $('<div id="' + id + '" class="alert alert-' + (options.type || 'success') + ' position_alert fade-in-linear-enter">' + options.message + '</div>').appendTo($('body'))
-    var timerTag, timerAddTag, timerRemoveTag;
-    timerTag = setTimeout(function () {
-        $('.alert').removeClass('fade-in-linear-enter')
-        timerAddTag = setTimeout(function () {
-            $('#' + id).addClass('alert_message_fade_leave_active')
-            timerRemoveTag = setTimeout(function () {
-                $('.alert_message_fade_leave_active').remove()
-                $('.alert_message_fade_leave_active').remove()
-            }, 1000)
-        }, 1000)
-    }, 100)
-    timerTag = null
-    timerAddTag = null
-    timerRemoveTag = null
-
-//      lihai
+    $(template).appendTo('body')
+    // $('<div data-message="message" class="alert alert-' + (options.type || 'success') + ' position_alert position_message" aria-label="Close">' + options.message + '  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>').appendTo($('body'))
 }
 
 function PassRules(option, minOrMax) {
@@ -682,15 +682,16 @@ function tips(el, childName, requestBody) {
         .html('确定后将无法修改数据，确定提交吗？')
     btnAction(requestBody);
 }
+
 function btnAction(requestBody) {
-    var url =window.location.href
+    var url = window.location.href
     var arr = url.split('/');
     $('.submit-fraction')
         .off('click')
         .on('click', function () {
             $(this).parents('.modal').hide()
             request({
-                url: window.location.origin + "/userVote/add/" + arr[arr.length-2] + '/' +arr[arr.length-1],
+                url: window.location.origin + "/userVote/add/" + arr[arr.length - 2] + '/' + arr[arr.length - 1],
                 data: JSON.stringify(requestBody)
             })
         })

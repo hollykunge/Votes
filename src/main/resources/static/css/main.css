@@ -219,3 +219,15 @@ a:hover, a:focus, a:active {
     display: inline-block;
     margin-right: 15px;
 }
+.mr30{
+    display: inline-block;
+    margin-right: 30px;
+}
+
+.closeButton{
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: .75rem 1.25rem;
+    color: inherit;
+}
