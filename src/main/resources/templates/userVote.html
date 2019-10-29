@@ -141,7 +141,11 @@
     // 表头 column title
     var titleConfig = [[${ item.vote.excelHeader }]] // excelHeader
     var rules = [[${parentItemRules}]];// 规则范围 1否同 2排序 3打分
-
+    // add 地址
+    var urlOption = [
+            [[${ item.id }]],
+            [[${ item.code }]]
+    ].join('/')
     $(function () {
         if(rules == '1'){
             resultName = "parentStatisticsNum";
@@ -361,7 +365,7 @@
                     } else {
                         requestBody = $._fraction
                     }
-                    tips($('.warning'), 'strong', requestBody)
+                    tips($('.warning'), 'strong', requestBody, urlOption)
                 }
                 return
             } else { // 排序
@@ -370,7 +374,7 @@
                 })
             }
 
-            tips($('.warning'), 'strong', requestBody)
+            tips($('.warning'), 'strong', requestBody, urlOption)
 
         })
         // 点击进入下一轮投票
