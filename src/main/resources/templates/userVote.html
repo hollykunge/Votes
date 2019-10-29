@@ -324,8 +324,8 @@
                     return;
                 }
             }
-
-            if ($._voteArr) {
+            //
+            if ($._voteArr) { // 投票
                 if ($._voteArr.length > 0) {
                     // passMin
                     var passMin = PassRules({
@@ -346,7 +346,7 @@
                         )
                     )
                 }
-            } else if ($._fraction) {
+            } else if ($._fraction) { // 打分
                 if ($._fraction.length > 0) {
                     if ($._fraction.length !== data.length) {
                         requestBody = $._fraction.concat(
@@ -358,34 +358,19 @@
                                 'score'
                             )
                         )
-                        $('.warning').show()
-                        $('.submit-fraction')
-                            .off('click')
-                            .on('click', function () {
-                                $(this).parents('.modal').hide()
-                                request({
-                                    url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),
-                                    data: JSON.stringify(requestBody)
-                                })
-                            })
-                        $('.close-btn')
-                            .off('click')
-                            .on('click', function () {
-                                $('.modal').hide();
-                            })
+                    } else {
+                        requestBody = $._fraction
                     }
-
+                    tips($('.warning'), 'strong', requestBody)
                 }
                 return
-            } else {
+            } else { // 排序
                 requestBody = data.map(function (item, index) {
                     return initDataItem(item)
                 })
             }
-            request({
-                url: window.location.origin+"/userVote/add/"+ [[${ item.id }]] + '/' + [[${ item.code }]],
-                data: JSON.stringify(requestBody)
-            })
+
+            tips($('.warning'), 'strong', requestBody)
 
         })
         // 点击进入下一轮投票
