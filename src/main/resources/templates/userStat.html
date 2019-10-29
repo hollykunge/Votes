@@ -12,11 +12,7 @@
     </div>
 </nav>
 <div class="container">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item active" aria-current="page" th:text="'第'+${item.turnNum}+'轮投票统计结果'"></li>
-        </ol>
-    </nav>
+    <h3 class="text-center"><span th:text="'第'+${item.turnNum}+'轮投票统计结果'"></span></h3>
     <div class="alert alert-danger" th:if="${showAlertMessage}" th:utext="${showAlertMessage}"></div>
     <div class="card-deck mb-3 text-center">
         <div class="card border-dark mb-3 shadow-sm">
@@ -132,12 +128,14 @@
         /**
          * 对重复投票结果做标记
          */
+        /**
+         * 对重复投票结果做标记
+         */
         function handleRepeatData() {
-
-            var randowColor = ['#52b1ff', '#7ac8ff', '#a3dcff', '#e6f6ff', '#ffffff'];
+            var randowColor = ['#52b1ff', '#7ac8ff', '#a3dcff', '#e6f6ff', '#86bdf3'];
             // 第一次循环，结果计数 (key:score,value:出现次数)
             var countMap = new Map();
-            for(var i=0;data.length>i; i++){
+            for(var i=0; data.length>i; i++){
                 var score = data[i][resultName];
                 var count = countMap.get(score)
                 if (count > 0) {
@@ -148,13 +146,13 @@
                 }
             }
             // 第二次循环，出现次数超过一次且分数不为0的
-            for(var i=0;data.length>i; i++){
+            for(var i=0; data.length>i; i++){
                 var score = data[i][resultName];
                 var count = countMap.get(score)
                 /*<![CDATA[*/
                 if (count > 1 && score!==0) {
                     // 分数个位
-                    var fix = parseInt(score%10);
+                    var fix = parseInt(score%5);
                     colorMap.set(score,randowColor[fix])
                 }
                 /*]]>*/

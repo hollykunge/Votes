@@ -494,8 +494,6 @@ function reloadPage() {
         timer = null
         window.location.reload()
     }, 500)
-
-
 }
 
 /**
@@ -637,6 +635,7 @@ $.fn.message = function (options) {
     var userOnClose = options.onClose;
     $(template).appendTo('body')
     // $('<div data-message="message" class="alert alert-' + (options.type || 'success') + ' position_alert position_message" aria-label="Close">' + options.message + '  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>').appendTo($('body'))
+
 }
 
 function PassRules(option, minOrMax) {
@@ -675,12 +674,12 @@ function unique(arr) {
     return arr;
 }
 
-function tips(el, childName, requestBody) {
+function tips(el, childName, requestBody, urlOption) {
     el
         .show()
         .find(childName)
         .html('确定后将无法修改数据，确定提交吗？')
-    btnAction(requestBody);
+    btnAction(requestBody, urlOption);
 }
 
 function btnAction(requestBody) {
