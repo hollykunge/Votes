@@ -683,12 +683,14 @@ function tips(el, childName, requestBody) {
     btnAction(requestBody);
 }
 function btnAction(requestBody) {
+    var url =window.location.href
+    var arr = url.split('/');
     $('.submit-fraction')
         .off('click')
         .on('click', function () {
             $(this).parents('.modal').hide()
             request({
-                url: window.location.origin + "/userVote/add" + window.location.pathname.replace('/userVote', ''),
+                url: window.location.origin + "/userVote/add/" + arr[arr.length-2] + '/' +arr[arr.length-1],
                 data: JSON.stringify(requestBody)
             })
         })
