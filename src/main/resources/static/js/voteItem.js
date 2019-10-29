@@ -491,7 +491,7 @@ function request(obj) {
 function reloadPage() {
     setTimeout(function () {
         window.location.reload()
-    }, 500)
+    }, 1000)
 }
 
 /**
@@ -629,9 +629,9 @@ $.fn.message = function (options) {
             timerRemoveTag = setTimeout(function () {
                 $('.alert_message_fade_leave_active').remove()
                 $('.alert_message_fade_leave_active').remove()
-            }, 1000)
-        }, 1000)
-    }, 100)
+            }, 3000)
+        }, 3000)
+    }, 200)
     timerTag = null
     timerAddTag = null
     timerRemoveTag = null
@@ -675,22 +675,21 @@ function unique(arr) {
     return arr;
 }
 
-function tips(el, childName, requestBody) {
+function tips(el, childName, requestBody, urlOption) {
     el
         .show()
         .find(childName)
         .html('确定后将无法修改数据，确定提交吗？')
-    btnAction(requestBody);
+    btnAction(requestBody, urlOption);
 }
-function btnAction(requestBody) {
-    var url =window.location.href
-    var arr = url.split('/');
+function btnAction(requestBody, urlOption) {
+    console.log(window.location.origin + "/userVote/add/" + urlOption)
     $('.submit-fraction')
         .off('click')
         .on('click', function () {
             $(this).parents('.modal').hide()
             request({
-                url: window.location.origin + "/userVote/add/" + arr[arr.length-2] + '/' +arr[arr.length-1],
+                url: window.location.origin + "/userVote/add/" + urlOption,
                 data: JSON.stringify(requestBody)
             })
         })
