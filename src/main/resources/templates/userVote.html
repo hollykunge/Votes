@@ -143,21 +143,21 @@
     var rules = [[${parentItemRules}]];// 规则范围 1否同 2排序 3打分
     // add 地址
     var urlOption = [
-            [[${ item.id }]],
-            [[${ item.code }]]
+        [[${ item.id }]],
+        [[${ item.code }]]
     ].join('/')
     $(function () {
-        if(rules == '1'){
+        if (rules == '1') {
             resultName = "parentStatisticsNum";
-        }else if(rules == '2'){
+        } else if (rules == '2') {
             resultName = "parentStatisticsOrderScore";
-        }else{
+        } else {
             resultName = "parentStatisticsToalScore";
         }
         if (titleConfig) {
             titleConfig = initTitleConfig(titleConfig)
-            if ( [[${ item.turnNum }]] != '1' ){
-                titleConfig.splice(5,0,{'title':'上一轮投票结果（分数）','field': resultName})
+            if ([[${ item.turnNum }]] != '1') {
+                titleConfig.splice(5, 0, {'title': '上一轮投票结果（分数）', 'field': resultName})
             }
         } else {
             // null.map不存在的错误
@@ -170,7 +170,34 @@
             delOrder = [];
         var currentVal = '';
         var currentValue = ''
+        // 键盘切换 input
+        document.onkeyup = function (event) {
+            event = event || window.event;
+            if (event.keyCode === 13) {
+                // 存在警告回弹
+                if($('.focus_input').hasClass('warning_input')) {
+                    return
+                }
+                $('.focus_input')
+                    .blur()
+                    .removeClass('focus_input')
+                    .parents('tr')
+                    .next()
+                    .find('input')
+                    .addClass('focus_input')
+                    .focus()
+                $('input').each(function (index, item) {
+                    console.log($(item).attr('focused'))
+                })
+            }
+
+        }
         window.operateEvents = {
+            //
+            'click .voteInput': function (e, value, row, index) {
+                $(e.target).addClass('focus_input')
+
+            },
             // 打分
             'change .voteInput': function (e, value, row, index) {
                 var isRepeat = {
@@ -178,7 +205,8 @@
                     index: index
                 };
                 if (!isPass($(e.target).val(), row.item.minScore, row.item.maxScore)) {
-                    $(e.target).focus().addClass('warning_input')
+                    $('.focus_input').removeClass('focus_input')
+                    $(e.target).focus().addClass('warning_input focus_input')
                     return
                 }
 
@@ -260,7 +288,7 @@
 
             },
             // 排序点击事件回调
-            'mousedown .selectVote': function (e, value, row, index) {
+            'focus .selectVote': function (e, value, row, index) {
                 // 点击排序时, 绘制option
                 var html = ''
                 allOrder = unique(allOrder)
@@ -380,7 +408,7 @@
         // 点击进入下一轮投票
         $('#nextVote').on('click', function (e) {
             var url = window.location.href;
-            window.location.href = '/userVote/nextTurn/'+ [[${ item.id }]] + '/' + [[${ item.code }]];
+            window.location.href = '/userVote/nextTurn/' + [[${ item.id }]] + '/' + [[${ item.code }]];
         })
     })
 
