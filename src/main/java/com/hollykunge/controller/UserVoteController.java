@@ -207,7 +207,7 @@ public class UserVoteController {
                 if(collect.size()>Integer.parseInt(item.getAgreeMax())||
                         collect.size()<Integer.parseInt(item.getAgreeMin())){
                     response.setStatus(VoteHttpResponseStatus.INFORMATIONAL.getValue());
-                    response.setMessage("投票数量低于投票轮设置的最低数量或高于最高数量...");
+                    response.setMessage("投票数量小于最低数量或大于最高数量...");
                     return response;
                 }
             }
