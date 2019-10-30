@@ -106,7 +106,7 @@
     </div>
     <div class="row">
         <div class="col-md-12 mb-3">
-            <button id="nextVote" class="btn btn-primary btn-block hide">
+            <button id="nextVote" class="btn btn-outline-primary btn-block hide">
                 <span>进入下一轮投票</span>
             </button>
         </div>
@@ -260,7 +260,7 @@
 
             },
             // 排序点击事件回调
-            'mousedown .selectVote': function (e, value, row, index) {
+            'focus .selectVote': function (e, value, row, index) {
                 // 点击排序时, 绘制option
                 var html = ''
                 allOrder = unique(allOrder)

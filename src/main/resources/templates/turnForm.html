@@ -143,7 +143,7 @@
         showRuleDiv();
     });
     var rule = 0;
-    var submitcount=0;
+    var submitcount = 0;
 
     /**
      * 根据规则范围的选择
@@ -205,7 +205,7 @@
     function saveVoteItem() {
         var reg = /^[0-9]\d*$/;
         var memberSize = $('#memberSize').val()
-        if (!reg.test(memberSize)){
+        if (!reg.test(memberSize)) {
             showInfo("投票人数请输入整数");
             return false;
         }
@@ -231,11 +231,11 @@
             }
             /*]]>*/
         }
-        if (submitcount == 0){
+        if (submitcount == 0) {
             submitcount++;
             $('button[type=submit]').find('.hide').removeClass('hide');
             return true;
-        }else{
+        } else {
             alert("正在操作，请不要重复提交");
             return false;
         }
