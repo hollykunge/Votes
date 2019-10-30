@@ -690,7 +690,7 @@ function btnAction(requestBody) {
         .on('click', function () {
             $(this).parents('.modal').hide()
             request({
-                url: window.location.origin + "/userVote/add/" + arr[arr.length - 2] + '/' + arr[arr.length - 1],
+                url: window.location.origin + "/userVote/add/" + urlOption,
                 data: JSON.stringify(requestBody)
             })
         })
