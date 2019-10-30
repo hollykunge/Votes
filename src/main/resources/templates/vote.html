@@ -156,23 +156,6 @@
 <script th:src="@{/webjars/clipboard.js/2.0.4/clipboard.min.js}"></script>
 <script>
     function showModel(id) {
-        // $.ajax({
-        //     url:"",
-        //     async:true,
-        //     data:JSON.stringify(allData),
-        //     type:"post",
-        //     dataType:"json",
-        //     contentType:"application/json;charset=utf-8",
-        //     success:function(data){
-        //         var b= JSON.stringify(data)
-        //         console.log(b);
-        //         alert(data);
-        //
-        //     },
-        //     error:function(){
-        //         alert("数据没有成功返回!")
-        //     }
-        // });
         $('#' + id).modal('show');
     }
 

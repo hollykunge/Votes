@@ -6,19 +6,21 @@
 <head>
     <div th:replace="/fragments/header :: header-css"/>
 </head>
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary" style="margin-bottom: 16px">
+<nav class="navbar navbar-expand-lg shadow-sm rounded mb-5">
     <div class="container">
-        <a class="navbar-brand" style="color: #ffffff;">二部投票系统</a>
+        <img th:src="@{/erbu_logo.png}" style="width: 300px;height: 38px"/>
+        <div class="navbar-brand text-dark font-weight-bolder text-muted">云雀投票系统</div>
     </div>
 </nav>
-<div>
-
-</div>
 <div class="container">
     <div class="jumbotron jumbotron-fluid mb-3">
         <div class="container">
-            <h1 class="display-5" th:text="${item.getVote().title}">无标题</h1>
-            <p class="lead" th:text="${item.getVote().body}">无描述</p>
+            <h1 class="display-5">
+                <div class="d-inline" th:text="${item.getVote().title}">
+                </div>
+                <span class="badge badge-primary d-inline" th:text="'第'+${item.turnNum}+'轮'"></span>
+            </h1>
+            <p class="lead text-muted" th:text="${item.getVote().body}">无描述</p>
         </div>
     </div>
     <div class="modal warning">
@@ -143,21 +145,21 @@
     var rules = [[${parentItemRules}]];// 规则范围 1否同 2排序 3打分
     // add 地址
     var urlOption = [
-            [[${ item.id }]],
-            [[${ item.code }]]
+        [[${ item.id }]],
+        [[${ item.code }]]
     ].join('/')
     $(function () {
-        if(rules == '1'){
+        if (rules == '1') {
             resultName = "parentStatisticsNum";
-        }else if(rules == '2'){
+        } else if (rules == '2') {
             resultName = "parentStatisticsOrderScore";
-        }else{
+        } else {
             resultName = "parentStatisticsToalScore";
         }
         if (titleConfig) {
             titleConfig = initTitleConfig(titleConfig)
-            if ( [[${ item.turnNum }]] != '1' ){
-                titleConfig.splice(5,0,{'title':'上一轮投票结果（分数）','field': resultName})
+            if ([[${ item.turnNum }]] != '1') {
+                titleConfig.splice(5, 0, {'title': '上一轮投票结果（分数）', 'field': resultName})
             }
         } else {
             // null.map不存在的错误
@@ -170,7 +172,34 @@
             delOrder = [];
         var currentVal = '';
         var currentValue = ''
+        // 键盘切换 input
+        document.onkeyup = function (event) {
+            event = event || window.event;
+            if (event.keyCode === 13) {
+                // 存在警告回弹
+                if($('.focus_input').hasClass('warning_input')) {
+                    return
+                }
+                $('.focus_input')
+                    .blur()
+                    .removeClass('focus_input')
+                    .parents('tr')
+                    .next()
+                    .find('input')
+                    .addClass('focus_input')
+                    .focus()
+                $('input').each(function (index, item) {
+                    console.log($(item).attr('focused'))
+                })
+            }
+
+        }
         window.operateEvents = {
+            //
+            'click .voteInput': function (e, value, row, index) {
+                $(e.target).addClass('focus_input')
+
+            },
             // 打分
             'change .voteInput': function (e, value, row, index) {
                 var isRepeat = {
@@ -178,7 +207,8 @@
                     index: index
                 };
                 if (!isPass($(e.target).val(), row.item.minScore, row.item.maxScore)) {
-                    $(e.target).focus().addClass('warning_input')
+                    $('.focus_input').removeClass('focus_input')
+                    $(e.target).focus().addClass('warning_input focus_input')
                     return
                 }
 
@@ -380,7 +410,7 @@
         // 点击进入下一轮投票
         $('#nextVote').on('click', function (e) {
             var url = window.location.href;
-            window.location.href = '/userVote/nextTurn/'+ [[${ item.id }]] + '/' + [[${ item.code }]];
+            window.location.href = '/userVote/nextTurn/' + [[${ item.id }]] + '/' + [[${ item.code }]];
         })
     })
 
