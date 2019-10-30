@@ -682,7 +682,7 @@ function tips(el, childName, requestBody, urlOption) {
     btnAction(requestBody, urlOption);
 }
 
-function btnAction(requestBody) {
+function btnAction(requestBody, urlOption) {
     var url = window.location.href
     var arr = url.split('/');
     $('.submit-fraction')
