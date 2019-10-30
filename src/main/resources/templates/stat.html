@@ -127,45 +127,6 @@
             clickToSelect: false,
             rowStyle: rowStyle
         })
-        /**
-         * 对重复投票结果做标记
-         */
-        function handleRepeatData() {
-            var randowColor = ['#52b1ff', '#7ac8ff', '#a3dcff', '#e6f6ff', '#86bdf3'];
-            // 第一次循环，结果计数 (key:score,value:出现次数)
-            var countMap = new Map();
-            for(var i=0; data.length>i; i++){
-                var score = data[i][resultName];
-                var count = countMap.get(score)
-                if (count > 0) {
-                    count = count + 1;
-                    countMap.set(score,count);
-                } else {
-                    countMap.set(score,1);
-                }
-            }
-            // 第二次循环，出现次数超过一次且分数不为0的
-            for(var i=0;data.length>i; i++){
-                var score = data[i][resultName];
-                var count = countMap.get(score)
-                /*<![CDATA[*/
-                if (count > 1 && score!==0) {
-                    // 分数个位
-                    var fix = parseInt(score%5);
-                    colorMap.set(score,randowColor[fix])
-                }
-                /*]]>*/
-            }
-        }
-        // 设置相同结果的行样式
-        function rowStyle(row, index) {
-            if (colorMap.get(row[resultName])){
-                return {css:{'background-color':colorMap.get(row[resultName])}}
-            }
-            return {}
-        }
-
-
     })
 </script>
 

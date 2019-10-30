@@ -700,3 +700,39 @@ function btnAction(requestBody, urlOption) {
             $('.modal').hide();
         })
 }
+var colorMap = new Map();
+/**
+ * 对重复投票结果做标记
+ */
+function handleRepeatData() {
+    var randowColor = ['#2789ff' ,'#52b1ff', '#7ac8ff', '#a3dcff', '#e6f6ff'];
+    // 第一次循环，结果计数 (key:score,value:出现次数)
+    var countMap = new Map();
+    for(var i=0; data.length>i; i++){
+        var score = data[i][resultName];
+        var count = countMap.get(score)
+        if (count > 0) {
+            count = count + 1;
+            countMap.set(score,count);
+        } else {
+            countMap.set(score,1);
+        }
+    }
+    // 第二次循环，出现次数超过一次且分数不为0的
+    var i = 0;
+    for (var [key, value] of countMap) {
+        /*<![CDATA[*/
+        if (value > 1 && key != 0 && key != undefined) {
+            colorMap.set(key, randowColor[i]);
+            i++;
+        }
+        /*]]>*/
+    }
+}
+// 设置相同结果的行样式
+function rowStyle(row, index) {
+    if (colorMap.get(row[resultName])){
+        return {css:{'background-color':colorMap.get(row[resultName])}}
+    }
+    return {}
+}

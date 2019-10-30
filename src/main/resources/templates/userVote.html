@@ -158,9 +158,12 @@
         }
         if (titleConfig) {
             titleConfig = initTitleConfig(titleConfig)
-            if ([[${ item.turnNum }]] != '1') {
-                titleConfig.splice(5, 0, {'title': '上一轮投票结果（分数）', 'field': resultName})
+            // 当投票已提交时，隐藏上一轮投票结果，且相同投票结果行不显示同一颜色
+            /*<![CDATA[*/
+            if ( [[${ item.turnNum }]] != '1' && hasVotes.length == 0){
+                titleConfig.splice(5,0,{'title':'上一轮投票结果（分数）','field': resultName})
             }
+            /*]]>*/
         } else {
             // null.map不存在的错误
             titleConfig = []
