@@ -128,6 +128,7 @@
 </div>
 </body>
 <script type="text/javascript" th:inline="javascript">
+    'use strict';
     var voteOption = {
         rules: [[${ item.rules }]], // 规则范围 1否同 2排序 3打分
         agreeRule: [[${ item.agreeRule }]], // 1为同意 0为否决
@@ -149,6 +150,7 @@
         [[${ item.code }]]
     ].join('/')
     $(function () {
+        var resultName = '';
         if (rules == '1') {
             resultName = "parentStatisticsNum";
         } else if (rules == '2') {
@@ -160,9 +162,10 @@
             titleConfig = initTitleConfig(titleConfig)
             // 当投票已提交时，隐藏上一轮投票结果，且相同投票结果行不显示同一颜色
             /*<![CDATA[*/
-            if ( [[${ item.turnNum }]] != '1' && hasVotes.length == 0){
-                titleConfig.splice(5,0,{'title':'上一轮投票结果（分数）','field': resultName})
+            if ([[${ item.turnNum }]] != '1' && hasVotes.length == 0) {
+                titleConfig.splice(5, 0, {'title': '上一轮投票结果（分数）', 'field': resultName})
             }
+
             /*]]>*/
         } else {
             // null.map不存在的错误
@@ -180,7 +183,7 @@
             event = event || window.event;
             if (event.keyCode === 13) {
                 // 存在警告回弹
-                if($('.focus_input').hasClass('warning_input')) {
+                if ($('.focus_input').hasClass('warning_input')) {
                     return
                 }
                 $('.focus_input')
@@ -294,9 +297,13 @@
             },
             // 排序点击事件回调
             'focus .selectVote': function (e, value, row, index) {
+
                 // 点击排序时, 绘制option
                 var html = ''
                 allOrder = unique(allOrder)
+                if ($(e.target).data('select') != '') {
+                    allOrder = unique(String($(e.target).data('select')).split(','))
+                }
                 if (value) {
                     currentVal = value;
                     currentValue = '<option selected="true" value="' + value + '">' + value + '</option>'
@@ -306,16 +313,27 @@
                     currentVal = '';
                     currentValue = ''
                 }
+
+                console.log(data)
                 html = [
                     '<option value="">请选择</option>',
                     currentValue
                 ].concat(
                     sorts(allOrder)
+                        .filter(
+                            function (item) {
+                                if(value === item) {
+                                    return false
+                                }
+                                return item
+                            }
+                        )
                         .map(
                             function (item) {
                                 return '<option value="' + item + '">' + item + '</option>'
                             }
                         )
+
                 )
                     .join('')
                 $(e.target).html(html)
@@ -342,7 +360,8 @@
             titleConfig: titleConfig,
             data: data,
             hasData: hasVotes,
-            clickToSelect: false
+            clickToSelect: false,
+            resultName: resultName
         })
 
         $('#voteDone').on('click', function (e) {
