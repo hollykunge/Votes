@@ -33,10 +33,13 @@
             <h5 class="card-title" th:text="${vote.title}">Title</h5>
             <hr class="my-4"/>
             <p class="card-text" th:text="${vote.body}">body</p>
-
         </div>
     </div>
-    <div class="alert alert-danger" th:if="${showAlertMessage}" th:utext="${showAlertMessage}"></div>
+    <div class="alert alert-danger" th:if="${showAlertMessage}" th:utext="${showAlertMessage}">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
     <div class="card border-dark mb-3 shadow-sm" style="margin-top: 16px">
         <div class="card-header bg-secondary text-white">投票轮
             <!--添加投票轮按钮-->

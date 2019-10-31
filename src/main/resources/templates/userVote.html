@@ -32,7 +32,11 @@
             </div>
         </div>
     </div>
-    <div class="alert alert-danger" th:if="${showAlertMessage}" th:utext="${showAlertMessage}"></div>
+    <div class="alert alert-danger" th:if="${showAlertMessage}" th:utext="${showAlertMessage}">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
     <div class="card-deck mb-3 text-center">
         <div class="card border-dark mb-3 shadow-sm">
             <div class="card-header">
@@ -160,8 +164,8 @@
             titleConfig = initTitleConfig(titleConfig)
             // 当投票已提交时，隐藏上一轮投票结果，且相同投票结果行不显示同一颜色
             /*<![CDATA[*/
-            if ( [[${ item.turnNum }]] != '1' && hasVotes.length == 0){
-                titleConfig.splice(5,0,{'title':'上一轮投票结果（分数）','field': resultName})
+            if ([[${ item.turnNum }]] != '1' && hasVotes.length == 0) {
+                titleConfig.splice(5, 0, {'title': '上一轮投票结果（分数）', 'field': resultName})
             }
             /*]]>*/
         } else {
@@ -180,7 +184,7 @@
             event = event || window.event;
             if (event.keyCode === 13) {
                 // 存在警告回弹
-                if($('.focus_input').hasClass('warning_input')) {
+                if ($('.focus_input').hasClass('warning_input')) {
                     return
                 }
                 $('.focus_input')
