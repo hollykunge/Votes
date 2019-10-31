@@ -273,6 +273,9 @@ function configOperation(rules, columnsOption) {
  * @param options { Object }
  */
 function initTable(options) {
+    console.log(options.data.map(function (item) {
+        return Object.assign({}, item, {item: options.data[0].item})
+    }))
     $table.bootstrapTable('destroy').bootstrapTable({
         url: options.url,
         clickToSelect: options.clickToSelect,
@@ -716,7 +719,7 @@ function handleRepeatData() {
             countMap.set(score,count);
         } else {
             countMap.set(score,1);
-        }
+        }parentStatisticsToalScore
     }
     // 第二次循环，出现次数超过一次且分数不为0的
     var i = 0;

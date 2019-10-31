@@ -416,8 +416,7 @@
             window.location.href = '/userVote/nextTurn/' + [[${ item.id }]] + '/' + [[${ item.code }]];
         })
     })
-
 </script>
 <script type="text/javascript" th:src="@{/js/voteItem.js}"></script>
-
+<script type="text/javascript" th:if=" ${item.rules} eq '2'"  th:src="@{/js/voteSort.js}"></script>
 </html>
