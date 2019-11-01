@@ -16,6 +16,7 @@ import com.hollykunge.service.*;
 import com.hollykunge.util.Base64Utils;
 import com.hollykunge.util.ExceptionCommonUtil;
 import com.hollykunge.util.ExtApiTokenUtil;
+import com.hollykunge.util.VoteItemPassRuleUtil;
 import com.hollykunge.vo.VoteItemVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -294,8 +295,11 @@ public class ItemController {
             }
             Item item = new Item();
             item.setId(Long.parseLong(itemIdTemp));
-            EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadDataListener(item, voteItemService,result)).sheet().doRead();
             EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadHeaderDataListener(item,voteService,itemService,headerResult)).sheet().doRead();
+            if((Integer) headerResult.get("status") == 500){
+                return headerResult;
+            }
+            EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadDataListener(item, voteItemService,result)).sheet().doRead();
             result.put("excelHeader",headerResult);
             return result;
         } catch (Exception e) {
@@ -528,7 +532,8 @@ public class ItemController {
             }
             voteItemService.deleteByItem(dataItem);
             List<VoteItem> tempData = JSONArray.parseArray(JSONObject.toJSONString(byItem.get()), VoteItem.class);
-            for (VoteItem vote : tempData) {
+            List<VoteItem> voteItems = VoteItemPassRuleUtil.passVoteItems(tempData);
+            for (VoteItem vote : voteItems) {
                 this.resetVoteItem(vote);
                 vote.setItem(dataItem);
                 vote.setTurnNum(String.valueOf(dataItem.getTurnNum()));
