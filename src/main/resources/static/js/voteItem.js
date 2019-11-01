@@ -194,11 +194,6 @@ function columnConfig(rules, callback) {
         cellStyle: cellStyle
     })
     callback(rules, columnsOption, rules.resultName, rules.fraction)
-
-
-    // console.log(columnsOption)
-
-
     return columnsOption
 }
 
@@ -239,11 +234,16 @@ function configOperation(rules, columnsOption, resultName, fraction) {
                     events: window.operateEvents,
                     cellStyle: cellStyle,
                     formatter: function (value, row, index) {
+                        var attribute = ''
                         if (rules.isRead) {
                             return '<a>' + row.order + '</a>'
                         }
+                        if (Object.keys(fraction).length > 0) {
+                            attribute = 'data-select="' + fraction[row[resultName]] + '"'
+                        }
                         return [
-                            '<select data-select="' + fraction[row[resultName]] + '" class="form-control-sm selectpicker selectVote" data-live-search="true" name="orgid" >',
+
+                            '<select ' + attribute + ' class="form-control-sm selectpicker selectVote" data-live-search="true" name="orgid" >',
                             '<option value="">请选择</option>',
                             '</select>'
                         ].join('')
@@ -298,13 +298,18 @@ function initTable(options) {
         options.hasData.map(function (item) {
             return Object.assign({}, item, item.voteItem, {order: item.order, item: item.item})
         }) :
-        options.data.map(function (item) {
-            return Object.assign({}, item, {item: options.data[0].item})
+        options.data.map(function (item, index) {
+            return Object.assign({}, item, {item: options.data[0].item, index: index})
         });
 
     // 根据分数做分类
     var fraction = {}
     $(bootStrapDataOption).each(function (index, item) {
+        // 不存在序列，此值不存在内容
+        if (!item[options.resultName]) {
+            return
+        }
+        // 存在则赋值
         if (fraction[item[options.resultName]]) {
             fraction[item[options.resultName]] = fraction[item[options.resultName]].concat(index * 1 + 1)
             return
@@ -404,6 +409,19 @@ function initTable(options) {
         },
         onLoadSuccess: function () {
             console.log('success')
+        }
+    })
+
+    $(bootStrapDataOption).each(function (index, item) {
+        if (item.fraction) {
+            $table.bootstrapTable('mergeCells', {index: index, colspan: 9})
+
+            $table.find('tbody').find('tr').eq(index).find('td').eq(0).text(item.contentTitle).css({
+                textAlign: 'center',
+                verticalAlign: 'middle',
+                // fontWeight: 'bold',
+                fontSize: '18px'
+            })
         }
     })
 
@@ -801,15 +819,14 @@ function handleRepeatData() {
     }
 }
 
-// 设置相同结果的行样式
-function rowStyle(row, index) {
-    if (colorMap.get(row[resultName])) {
-        return {css: {'background-color': colorMap.get(row[resultName])}}
-    }
-    return {}
-}
-
-
+/**
+ * 序列分类
+ * @param data
+ * @param orderData
+ * @param keyName
+ * @param sequence
+ * @returns {*}
+ */
 function orderDataTest(data, orderData, keyName, sequence) {
 
     for (var i = 0; i < orderData.length; i++) {
@@ -830,7 +847,7 @@ function orderDataTest(data, orderData, keyName, sequence) {
 }
 
 /**
- *
+ * 表格行样式
  * @param value
  * @param row
  * @param index
@@ -849,3 +866,18 @@ function cellStyle(value, row, index) {
     return false
 }
 
+/**
+ * 分别为各个序列去掉已存在的序号
+ * @param dataArr
+ * @param selectArr
+ * @returns {string[]}
+ */
+function removal(dataArr, selectArr) {
+    selectArr = selectArr.split(',')
+    $.each(dataArr, function (index, item) {
+        if (selectArr.indexOf(item.SerialNumber) !== -1) {
+            selectArr.splice(selectArr.indexOf(item.SerialNumber), 1)
+        }
+    })
+    return selectArr
+}

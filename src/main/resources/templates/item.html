@@ -20,12 +20,15 @@
         </ol>
     </nav>
     <div id="alertMsg"></div>
-    <div class="alert alert-danger" th:if="${showAlertMessage}" th:utext="${showAlertMessage}"></div>
+    <div class="alert alert-danger" th:if="${showAlertMessage}" th:utext="${showAlertMessage}">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
     <div class="card border-dark mb-3">
         <div class="card-header">
             <div style="float: right">
                 <a href="/item/export" class="btn btn-link">下载模板</a>
-
 
                 <button type="button" class="btn btn-primary btn-sm" id="importExcel" th:onclick="|showImportModel()|">导入</button>
                 <a th:href="@{'/useParentItem/{itemId}'(itemId=${item.id})}" class="col-md-2" th:if="${item.turnNum != 1}">
@@ -55,7 +58,11 @@
                     <h5 class="modal-title" id="importTitle">导入投票选项</h5>
                 </div>
                 <div class="modal-body">
-                    <div class="alert alert-danger tips-hide" role="alert" id="customerTips">文件格式错误，仅限 <strong>XLSX</strong>或<strong>CVS</strong>格式！</div>
+                    <div class="alert alert-danger tips-hide" role="alert" id="customerTips">文件格式错误，仅限 <strong>XLSX</strong>或<strong>CVS</strong>格式！
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
                     <div class="input-group mb-3">
                         <input type="file" id="file" name="myfile"/>
                         <label for="file" hidden="hidden">选择文件</label>

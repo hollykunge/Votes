@@ -19,7 +19,7 @@
             </span>
 
             <span th:if="${pager.getTotalPages() != 1}"
-                  th:text="'第' + ${pager.getPageIndex()} + '页，共' + ${pager.getTotalPages()} + '.'">
+                  th:text="'第' + ${pager.getPageIndex()} + '页，共' + ${pager.getTotalPages()} + '页'">
             </span>
 
             <span th:if="${pager.hasNext()}">

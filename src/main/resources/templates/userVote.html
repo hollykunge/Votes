@@ -32,7 +32,11 @@
             </div>
         </div>
     </div>
-    <div class="alert alert-danger" th:if="${showAlertMessage}" th:utext="${showAlertMessage}"></div>
+    <div class="alert alert-danger" th:if="${showAlertMessage}" th:utext="${showAlertMessage}">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
     <div class="card-deck mb-3 text-center">
         <div class="card border-dark mb-3 shadow-sm">
             <div class="card-header">
@@ -194,9 +198,6 @@
                     .find('input')
                     .addClass('focus_input')
                     .focus()
-                $('input').each(function (index, item) {
-                    console.log($(item).attr('focused'))
-                })
             }
 
         }
@@ -204,7 +205,6 @@
             //
             'click .voteInput': function (e, value, row, index) {
                 $(e.target).addClass('focus_input')
-
             },
             // 打分
             'change .voteInput': function (e, value, row, index) {
@@ -301,8 +301,10 @@
                 // 点击排序时, 绘制option
                 var html = ''
                 allOrder = unique(allOrder)
-                if ($(e.target).data('select') != '') {
-                    allOrder = unique(String($(e.target).data('select')).split(','))
+
+                // 自定义 data-select 属性,区分是否存在序列
+                if ($(e.target).data('select')) {
+                    allOrder = removal(data, String($(e.target).data('select'))) // unique(String($(e.target).data('select')).split(','))
                 }
                 if (value) {
                     currentVal = value;
@@ -322,7 +324,7 @@
                     sorts(allOrder)
                         .filter(
                             function (item) {
-                                if(value === item) {
+                                if (value === item) {
                                     return false
                                 }
                                 return item
@@ -344,11 +346,12 @@
                 $(e.target)[0].blur()
                 currentValue = ''
                 row.SerialNumber = $(e.target).val()
-                data[index] = row
+                data[row.index] = row
                 columnOperation(data, $(e.target).val(), delOrder, allOrder, currentVal)
                 currentVal = ''
             }
         }
+
         // 已提交
         if (hasVotes.length > 0) {
             $('#voteDone').attr('disabled', 'disabled')
