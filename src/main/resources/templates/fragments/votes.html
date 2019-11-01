@@ -3,7 +3,11 @@
 </head>
 <body>
 <div th:fragment="votes">
-    <div class="alert alert-danger" th:if="${showAlertMessage}" th:utext="${showAlertMessage}"></div>
+    <div class="alert alert-danger" th:if="${showAlertMessage}" th:utext="${showAlertMessage}">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
     <div class="card border-dark mb-3 shadow-sm">
         <div class="card-header bg-secondary text-white">我的投票</div>
         <div class="card-body card-nopadding">
@@ -38,7 +42,6 @@
                     </td>
                 </tr>
                 </tbody>
-
             </table>
         </div>
     </div>

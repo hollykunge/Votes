@@ -206,28 +206,42 @@
         var reg = /^[0-9]\d*$/;
         var memberSize = $('#memberSize').val()
         if (!reg.test(memberSize)) {
-            showInfo("投票人数请输入整数");
+            showInfo("投票人数请输入正整数");
             return false;
         }
         var rule = rule = $('input[type=radio]:checked').val();
         if (rule === '1') {
+            var max = $("#max").val();
+            var min = $("#min").val();
             /*<![CDATA[*/
-            if (parseInt($("#max").val()) < parseInt($("#min").val())) {
-                showInfo("最大范围应大于最小范围");
+            if (!reg.test(max) || !reg.test(min)) {
+                showInfo("范围请输入正整数");
                 return false;
             } else {
-                hideInfo();
-                return true;
+                if (max < min) {
+                    showInfo("最大范围应大于最小范围");
+                    return false;
+                } else {
+                    hideInfo();
+                    return true;
+                }
             }
             /*]]>*/
         } else if (rule === '3') {
+            var maxSort = $("#maxSort").val();
+            var minSort = $("#minSort").val();
             /*<![CDATA[*/
-            if (parseInt($("#maxSort").val()) < parseInt($("#minSort").val())) {
-                showInfo("最大分数应大于最小分数");
+            if (!reg.test(maxSort) || !reg.test(minSort)) {
+                showInfo("分数请输入正整数");
                 return false;
             } else {
-                hideInfo();
-                return true;
+                if (maxSort < minSort) {
+                    showInfo("最大分数应大于最小分数");
+                    return false;
+                } else {
+                    hideInfo();
+                    return true;
+                }
             }
             /*]]>*/
         }
