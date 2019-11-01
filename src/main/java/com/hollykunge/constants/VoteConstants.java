@@ -41,4 +41,8 @@ public class VoteConstants {
     public static final String ITEM_RULE_SCORE = "3";
 
     public static final String EXTAPIHEAD = "extapihead";
+    /**
+     * 确认投票项通过的百分比
+     */
+    public static final String VOTE_PASS_PERSENT = "2/3";
 }
