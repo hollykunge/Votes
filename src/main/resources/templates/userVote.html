@@ -132,6 +132,7 @@
 </div>
 </body>
 <script type="text/javascript" th:inline="javascript">
+    'use strict';
     var voteOption = {
         rules: [[${ item.rules }]], // 规则范围 1否同 2排序 3打分
         agreeRule: [[${ item.agreeRule }]], // 1为同意 0为否决
@@ -153,6 +154,7 @@
         [[${ item.code }]]
     ].join('/')
     $(function () {
+        var resultName = '';
         if (rules == '1') {
             resultName = "parentStatisticsNum";
         } else if (rules == '2') {
@@ -167,6 +169,7 @@
             if ([[${ item.turnNum }]] != '1' && hasVotes.length == 0) {
                 titleConfig.splice(5, 0, {'title': '上一轮投票结果（分数）', 'field': resultName})
             }
+
             /*]]>*/
         } else {
             // null.map不存在的错误
@@ -195,9 +198,6 @@
                     .find('input')
                     .addClass('focus_input')
                     .focus()
-                $('input').each(function (index, item) {
-                    console.log($(item).attr('focused'))
-                })
             }
 
         }
@@ -205,7 +205,6 @@
             //
             'click .voteInput': function (e, value, row, index) {
                 $(e.target).addClass('focus_input')
-
             },
             // 打分
             'change .voteInput': function (e, value, row, index) {
@@ -301,6 +300,10 @@
                 // 点击排序时, 绘制option
                 var html = ''
                 allOrder = unique(allOrder)
+                // 自定义 data-select 属性,区分是否存在序列
+                if ($(e.target).data('select')) {
+                    allOrder = removal(data, String($(e.target).data('select'))) // unique(String($(e.target).data('select')).split(','))
+                }
                 if (value) {
                     currentVal = value;
                     currentValue = '<option selected="true" value="' + value + '">' + value + '</option>'
@@ -315,6 +318,14 @@
                     currentValue
                 ].concat(
                     sorts(allOrder)
+                        .filter(
+                            function (item) {
+                                if (value === item) {
+                                    return false
+                                }
+                                return item
+                            }
+                        )
                         .map(
                             function (item) {
                                 return '<option value="' + item + '">' + item + '</option>'
@@ -330,11 +341,12 @@
                 $(e.target)[0].blur()
                 currentValue = ''
                 row.SerialNumber = $(e.target).val()
-                data[index] = row
+                data[row.index] = row
                 columnOperation(data, $(e.target).val(), delOrder, allOrder, currentVal)
                 currentVal = ''
             }
         }
+
         // 已提交
         if (hasVotes.length > 0) {
             $('#voteDone').attr('disabled', 'disabled')
@@ -346,7 +358,8 @@
             titleConfig: titleConfig,
             data: data,
             hasData: hasVotes,
-            clickToSelect: false
+            clickToSelect: false,
+            resultName: resultName
         })
 
         $('#voteDone').on('click', function (e) {
@@ -420,7 +433,8 @@
             window.location.href = '/userVote/nextTurn/' + [[${ item.id }]] + '/' + [[${ item.code }]];
         })
     })
+
 </script>
 <script type="text/javascript" th:src="@{/js/voteItem.js}"></script>
-<script type="text/javascript" th:if=" ${item.rules} eq '2'"  th:src="@{/js/voteSort.js}"></script>
+
 </html>
