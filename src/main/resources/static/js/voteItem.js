@@ -143,6 +143,7 @@ function showModel(id) {
     $(id).modal('show');
 }
 
+
 /**
  * columnConfig
  * @param rules { Object } 格式化后的excelHeader
@@ -152,16 +153,21 @@ function columnConfig(rules, callback) {
     // 根据 excelHeader 修改头部格式
     var columnsOption = rules.titleConfig
         .map(function (item, index) {
-            if (rules.isRead) {
-                // ...
-            }
             return Object.assign(
                 {},
                 item,
                 {
                     // field: rules.isRead ? 'voteItem.' + item.field : item.field,
                     align: 'center',
-                    valign: 'middle'
+                    valign: 'middle',
+                    cellStyle: cellStyle,
+                    formatter: function (value, row, index) {
+                        //格式化条件
+                        if (row.fraction) {
+                            return ''
+                        }
+                        return value
+                    }
                 }
             )
 
@@ -179,10 +185,14 @@ function columnConfig(rules, callback) {
         align: 'center',
         valign: 'middle',
         formatter: function (value, row, index) {
-            return index + 1;
-        }
+            if (value) {
+                return value
+            }
+            return ''
+        },
+        cellStyle: cellStyle
     })
-    callback(rules, columnsOption)
+    callback(rules, columnsOption, rules.resultName, rules.fraction)
     return columnsOption
 }
 
@@ -191,7 +201,7 @@ function columnConfig(rules, callback) {
  * @param rules
  * @param columnsOption
  */
-function configOperation(rules, columnsOption) {
+function configOperation(rules, columnsOption, resultName, fraction) {
     // 是否是编辑页面
     if (window.location.href.indexOf('userVote') !== -1) {
         switch (rules.rules) {
@@ -221,12 +231,17 @@ function configOperation(rules, columnsOption) {
                     align: 'center',
                     valign: 'middle',
                     events: window.operateEvents,
+                    cellStyle: cellStyle,
                     formatter: function (value, row, index) {
+                        var attribute = ''
                         if (rules.isRead) {
                             return '<a>' + row.order + '</a>'
                         }
+                        if (Object.keys(fraction).length > 0) {
+                            attribute = 'data-select="' + fraction[row[resultName]] + '"'
+                        }
                         return [
-                            '<select class="form-control-sm selectpicker selectVote" data-live-search="true" name="orgid" >',
+                            '<select ' + attribute + ' class="form-control-sm selectpicker selectVote" data-live-search="true" name="orgid" >',
                             '<option value="">请选择</option>',
                             '</select>'
                         ].join('')
@@ -240,6 +255,7 @@ function configOperation(rules, columnsOption) {
                     field: "SerialNumber",
                     align: 'center',
                     valign: 'middle',
+                    cellStyle: cellStyle,
                     events: window.operateEvents,
                     formatter: function (value, row, index) {
                         if (rules.isRead) {
@@ -258,6 +274,8 @@ function configOperation(rules, columnsOption) {
     if (rules.operateCol) {
         columnsOption.push({
             title: '操作',
+            cellStyle: cellStyle,
+
             field: "Button",
             align: 'center',
             valign: 'middle',
@@ -273,29 +291,67 @@ function configOperation(rules, columnsOption) {
  * @param options { Object }
  */
 function initTable(options) {
+    var bootStrapDataOption = options.hasData && options.hasData.length > 0
+        ?
+        options.hasData.map(function (item) {
+            return Object.assign({}, item, item.voteItem, {order: item.order, item: item.item})
+        }) :
+        options.data.map(function (item, index) {
+            return Object.assign({}, item, {item: options.data[0].item, index: index})
+        });
+
+    // 根据分数做分类
+    var fraction = {}
+    $(bootStrapDataOption).each(function (index, item) {
+        // 不存在序列，此值不存在内容
+        if (!item[options.resultName]) {
+            return
+        }
+        // 存在则赋值
+        if (fraction[item[options.resultName]]) {
+            fraction[item[options.resultName]] = fraction[item[options.resultName]].concat(index * 1 + 1)
+            return
+        }
+        fraction[item[options.resultName]] = [].concat(index * 1 + 1)
+    })
+    bootStrapDataOption = orderDataTest(bootStrapDataOption, Object.keys(fraction), options.resultName, Object.keys(fraction).length)
+
+    // parentStatisticsToalScore
     $table.bootstrapTable('destroy').bootstrapTable({
         url: options.url,
         clickToSelect: options.clickToSelect,
         minimumCountColumns: 2,
         idField: 'id',
         sidePagination: 'server',
-        rowStyle: options.rowStyle,
         // 列操作栏
         columns: columnConfig({
             isRead: options.hasData && options.hasData.length > 0 ? true : false,
             rules: options.rules,
             titleConfig: options.titleConfig,
             operateCol: options.operateCol,
-            operateColFormat: options.operateColFormat
+            operateColFormat: options.operateColFormat,
+            resultName: options.resultName,
+            fraction: fraction
         }, configOperation),
-        data: options.hasData && options.hasData.length > 0 ? options.hasData.map(function (item) {
-            return Object.assign({}, item, item.voteItem, {order: item.order, item: item.item})
-        }) : options.data.map(function (item) {
-            return Object.assign({}, item, {item: options.data[0].item})
-        }),
+        data: bootStrapDataOption,
+        rowAttributes: function (row, index) {
+            // 条件
+            // if (row.fraction) {
+            //     return {
+            //         class: 'cell'
+            //     }
+            // }
+        },
         detailView: true,
         detailViewIcon: true,
+        detailFilter: function (index, row, element) {
+            if (row.fraction) {
+                return false
+            }
+            return true
+        },
         detailFormatter: function (index, row, element) {
+
             var html = [
                 '<div class="card">',
                 '<div class="card-body">',
@@ -348,6 +404,19 @@ function initTable(options) {
                 '</div>'
             ])
             return html.join('')
+        }
+    })
+
+    $(bootStrapDataOption).each(function (index, item) {
+        if (item.fraction) {
+            $table.bootstrapTable('mergeCells', {index: index, colspan: 9})
+
+            $table.find('tbody').find('tr').eq(index).find('td').eq(0).text(item.contentTitle).css({
+                textAlign: 'center',
+                verticalAlign: 'middle',
+                // fontWeight: 'bold',
+                fontSize: '18px'
+            })
         }
     })
 }
@@ -700,22 +769,24 @@ function btnAction(requestBody, urlOption) {
             $('.modal').hide();
         })
 }
+
 var colorMap = new Map();
+
 /**
  * 对重复投票结果做标记
  */
 function handleRepeatData() {
-    var randowColor = ['#2789ff' ,'#52b1ff', '#7ac8ff', '#a3dcff', '#e6f6ff'];
+    var randowColor = ['#2789ff', '#52b1ff', '#7ac8ff', '#a3dcff', '#e6f6ff'];
     // 第一次循环，结果计数 (key:score,value:出现次数)
     var countMap = new Map();
-    for(var i=0; data.length>i; i++){
+    for (var i = 0; data.length > i; i++) {
         var score = data[i][resultName];
         var count = countMap.get(score)
         if (count > 0) {
             count = count + 1;
-            countMap.set(score,count);
+            countMap.set(score, count);
         } else {
-            countMap.set(score,1);
+            countMap.set(score, 1);
         }
     }
     // 第二次循环，出现次数超过一次且分数不为0的
@@ -729,10 +800,67 @@ function handleRepeatData() {
         /*]]>*/
     }
 }
-// 设置相同结果的行样式
-function rowStyle(row, index) {
-    if (colorMap.get(row[resultName])){
-        return {css:{'background-color':colorMap.get(row[resultName])}}
+
+
+/**
+ * 序列分类
+ * @param data
+ * @param orderData
+ * @param keyName
+ * @param sequence
+ * @returns {*}
+ */
+function orderDataTest(data, orderData, keyName, sequence) {
+
+    for (var i = 0; i < orderData.length; i++) {
+        for (var j = 0; j < data.length; j++) {
+            if (orderData[i] == data[j][keyName]) {
+                data.splice(j, 0, {
+                    fraction: orderData[i],
+                    contentTitle: '(第' + sequence + '序列)'
+                })
+                orderData.splice(i, 1)
+
+                return orderDataTest(data, orderData, keyName, --sequence)
+
+            }
+        }
     }
-    return {}
+    return data
+}
+
+/**
+ * 表格行样式
+ * @param value
+ * @param row
+ * @param index
+ * @returns {*}
+ */
+function cellStyle(value, row, index) {
+    if (row.fraction) {
+        return {
+            classes: '',
+            css: {
+                background: '#fff'
+
+            }
+        }
+    }
+    return false
+}
+
+/**
+ * 分别为各个序列去掉已存在的序号
+ * @param dataArr
+ * @param selectArr
+ * @returns {string[]}
+ */
+function removal(dataArr, selectArr) {
+    selectArr = selectArr.split(',')
+    $.each(dataArr, function (index, item) {
+        if (selectArr.indexOf(item.SerialNumber) !== -1) {
+            selectArr.splice(selectArr.indexOf(item.SerialNumber), 1)
+        }
+    })
+    return selectArr
 }
