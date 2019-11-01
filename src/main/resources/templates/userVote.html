@@ -297,9 +297,11 @@
             },
             // 排序点击事件回调
             'focus .selectVote': function (e, value, row, index) {
+
                 // 点击排序时, 绘制option
                 var html = ''
                 allOrder = unique(allOrder)
+
                 // 自定义 data-select 属性,区分是否存在序列
                 if ($(e.target).data('select')) {
                     allOrder = removal(data, String($(e.target).data('select'))) // unique(String($(e.target).data('select')).split(','))
@@ -313,6 +315,8 @@
                     currentVal = '';
                     currentValue = ''
                 }
+
+                console.log(data)
                 html = [
                     '<option value="">请选择</option>',
                     currentValue
@@ -331,6 +335,7 @@
                                 return '<option value="' + item + '">' + item + '</option>'
                             }
                         )
+
                 )
                     .join('')
                 $(e.target).html(html)

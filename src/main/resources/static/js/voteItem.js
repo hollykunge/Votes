@@ -178,6 +178,7 @@ function columnConfig(rules, callback) {
             }
             return item
         })
+    // console.log(columnsOption)
     // 添加 序号 表头与 voteItemId 关联
     columnsOption.unshift({
         title: '序号',
@@ -241,6 +242,7 @@ function configOperation(rules, columnsOption, resultName, fraction) {
                             attribute = 'data-select="' + fraction[row[resultName]] + '"'
                         }
                         return [
+
                             '<select ' + attribute + ' class="form-control-sm selectpicker selectVote" data-live-search="true" name="orgid" >',
                             '<option value="">请选择</option>',
                             '</select>'
@@ -404,6 +406,22 @@ function initTable(options) {
                 '</div>'
             ])
             return html.join('')
+        },
+        onLoadSuccess: function () {
+            console.log('success')
+        }
+    })
+
+    $(bootStrapDataOption).each(function (index, item) {
+        if (item.fraction) {
+            $table.bootstrapTable('mergeCells', {index: index, colspan: 9})
+
+            $table.find('tbody').find('tr').eq(index).find('td').eq(0).text(item.contentTitle).css({
+                textAlign: 'center',
+                verticalAlign: 'middle',
+                // fontWeight: 'bold',
+                fontSize: '18px'
+            })
         }
     })
 
@@ -800,7 +818,6 @@ function handleRepeatData() {
         /*]]>*/
     }
 }
-
 
 /**
  * 序列分类
