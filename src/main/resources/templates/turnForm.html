@@ -64,9 +64,9 @@
                     </div>
                 </div>
                 <div id="isNotDiv" class="row">
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-3 mb-3">
                         <label for="agreeRule">规则</label>
-                        <select class="custom-select d-block w-100" id="agreeRule"
+                        <select class="custom-select d-block w-100" id="agreeRule" name="agreeRule"
                                 th:field="*{agreeRule}">
                             <option value="">选择...</option>
                             <option value="1">同意</option>
@@ -76,7 +76,7 @@
                             选择一项规则
                         </div>
                     </div>
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-3 mb-3">
                         <label for="min">范围（最小）</label>
                         <input type="number" class="form-control" id="min" placeholder=""
                                th:field="*{agreeMin}"/>
@@ -84,12 +84,24 @@
                             填写最小数量
                         </div>
                     </div>
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-3 mb-3">
                         <label for="max">范围（最大）</label>
                         <input type="number" class="form-control" id="max" placeholder=""
                                th:field="*{agreeMax}"/>
                         <div class="invalid-feedback">
                             填写最大数量
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="rate">通过系数</label>
+                        <select class="custom-select d-block w-100" id="rate"
+                                th:field="*{agreePassPersent}">
+                            <option value="">选择...</option>
+                            <option value="1/3">1/3</option>
+                            <option value="2/3">2/3</option>
+                        </select>
+                        <div class="invalid-feedback">
+                            填写通过系数
                         </div>
                     </div>
                 </div>
@@ -166,7 +178,6 @@
         }
         setRequired(rule)
     }
-
     /**
      * 根据规则范围的选择
      * 必填项限制调整
@@ -176,18 +187,21 @@
             $("#agreeRule").attr("required", true);
             $("#max").attr("required", true);
             $("#min").attr("required", true);
+            $("#rate").attr("required", true);
             $("#maxSort").attr("required", false);
             $("#minSort").attr("required", false);
         } else if (rule === '2') {
             $("#agreeRule").attr("required", false);
             $("#max").attr("required", false);
             $("#min").attr("required", false);
+            $("#rate").attr("required", false);
             $("#maxSort").attr("required", false);
             $("#minSort").attr("required", false);
         } else if (rule === '3') {
             $("#agreeRule").attr("required", false);
             $("#max").attr("required", false);
             $("#min").attr("required", false);
+            $("#rate").attr("required", false);
             $("#maxSort").attr("required", true);
             $("#minSort").attr("required", true);
         }
@@ -218,7 +232,7 @@
                 showInfo("范围请输入正整数");
                 return false;
             } else {
-                if (max < min) {
+                if (parseInt(max) < parseInt(min)) {
                     showInfo("最大范围应大于最小范围");
                     return false;
                 } else {
@@ -235,7 +249,7 @@
                 showInfo("分数请输入正整数");
                 return false;
             } else {
-                if (maxSort < minSort) {
+                if (parseInt(maxSort) < parseInt(minSort)) {
                     showInfo("最大分数应大于最小分数");
                     return false;
                 } else {
