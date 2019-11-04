@@ -16,7 +16,7 @@ import com.hollykunge.service.*;
 import com.hollykunge.util.Base64Utils;
 import com.hollykunge.util.ExceptionCommonUtil;
 import com.hollykunge.util.ExtApiTokenUtil;
-import com.hollykunge.util.VoteItemPassRuleUtil;
+import com.hollykunge.util.VoteItemPassRuleUtils;
 import com.hollykunge.vo.VoteItemVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -535,7 +535,7 @@ public class ItemController {
             //规则为否同的时候，按百分比规则确定进入下一轮人数
             if(Objects.equals(item.getRules(),VoteConstants.ITEM_RULE_AGER)){
                 Long totalNum = userVoteItemService.countIpByItem(item);
-                tempData = VoteItemPassRuleUtil.passVoteItems(tempData,item,Integer.parseInt(String.valueOf(totalNum)));
+                tempData = VoteItemPassRuleUtils.passVoteItems(tempData,item,Integer.parseInt(String.valueOf(totalNum)));
             }
             for (VoteItem vote : tempData) {
                 this.resetVoteItem(vote);

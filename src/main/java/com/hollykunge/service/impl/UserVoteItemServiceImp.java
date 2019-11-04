@@ -9,6 +9,8 @@ import com.hollykunge.repository.UserVoteItemRepository;
 import com.hollykunge.repository.VoteItemRepository;
 import com.hollykunge.service.UserVoteItemService;
 import com.hollykunge.util.ExceptionCommonUtil;
+import com.hollykunge.util.MarkToDecimalsUtil;
+import com.hollykunge.util.VoteItemPassRuleUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -94,12 +96,24 @@ public class UserVoteItemServiceImp implements UserVoteItemService {
         if (itemData.size() == 0) {
             throw new BaseException("没有投票项...");
         }
+        Long agreeRuleCount = null;
+        double decimal = 0;
+        if(Objects.equals(item.getRules(),VoteConstants.ITEM_RULE_AGER)){
+            agreeRuleCount = userVoteItemRepository.countIp(item.getId());
+            decimal = MarkToDecimalsUtil.transfer(item);
+        }
         List<VoteItem> voteItems = new ArrayList<>();
         for (Object[] objects :
                 projections) {
             VoteItem one = voteItemRepository.findOne(Long.parseLong(String.valueOf(objects[1])));
             if (Objects.equals(flag, VoteConstants.ITEM_RULE_AGER)) {
                 one.setCurrentStatisticsNum(Integer.parseInt(String.valueOf(objects[0])));
+                //确定这个投票项是否通过
+                if(VoteItemPassRuleUtils.caculate(one.getCurrentStatisticsNum(),
+                        decimal,
+                        Integer.parseInt(String.valueOf(agreeRuleCount)))){
+                    one.setAgreeRulePassFlag("1");
+                }
             }
             if (Objects.equals(flag, VoteConstants.ITEM_RULE_SCORE)) {
                 one.setCurrentStatisticsToalScore(Integer.parseInt(String.valueOf(objects[0])));
