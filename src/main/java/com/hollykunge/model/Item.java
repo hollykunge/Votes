@@ -73,7 +73,6 @@ public class Item {
      * 同意规则，进入下一轮的百分比
      */
     @Column(name = "agree_pass_persent")
-    @NotEmpty(message = "百分数不能为空")
     private String agreePassPersent;
     /**
      * 说明
