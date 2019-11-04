@@ -2,7 +2,6 @@
 var submitcount = 0;// 提交次数
 var ot;
 var oloaded;
-var voteRule;
 var unpassMap = new Map();
 var templateOption = {
     haveVoted: [
@@ -858,12 +857,12 @@ function orderDataTest(data, orderData, keyName, sequence) {
 }
 // 设置相同结果的行样式
 function rowStyle(row, index) {
-    if (colorMap.get(row[resultName])){
-        return {css:{'background-color':colorMap.get(row[resultName])}}
-    }
     // 根据“通过系数”判断，不能通过的行，背景色显示红色
     if (unpassMap.get(row.voteItemId) === 1) {
         return {css:{'background-color': '#FF4040'}}
+    }
+    if (colorMap.get(row[resultName])){
+        return {css:{'background-color':colorMap.get(row[resultName])}}
     }
     return {}
 }
