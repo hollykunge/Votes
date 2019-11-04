@@ -44,6 +44,11 @@ public class UploadHeaderDataListener extends AnalysisEventListener<ItemUploadDa
     @Override
     public void invokeHeadMap(Map<Integer, String> headMap, AnalysisContext context) {
         log.info("解析到一条头数据:{}", JSON.toJSONString(headMap));
+        if(headMap.size() == 0){
+            result.put("status",500);
+            result.put("msg","excel没有标题头..");
+            return;
+        }
         Vote vote = null;
         try {
             Item itemtemp = itemService.findById(item.getId());
