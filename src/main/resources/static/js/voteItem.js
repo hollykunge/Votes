@@ -335,6 +335,7 @@ function initTable(options) {
             resultName: options.resultName,
             fraction: fraction
         }, configOperation),
+        rowStyle: options.rowStyle,
         data: bootStrapDataOption,
         rowAttributes: function (row, index) {
             // 条件
@@ -845,7 +846,13 @@ function orderDataTest(data, orderData, keyName, sequence) {
     }
     return data
 }
-
+// 设置相同结果的行样式
+function rowStyle(row, index) {
+    if (colorMap.get(row[resultName])){
+        return {css:{'background-color':colorMap.get(row[resultName])}}
+    }
+    return {}
+}
 /**
  * 表格行样式
  * @param value
