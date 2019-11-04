@@ -1,4 +1,5 @@
 'use strict';
+var unpassMap = new Map();
 /**
  * columnConfig
  * @param rules { Object } 格式化后的excelHeader
@@ -54,6 +55,14 @@ function configOperation(rules, columnsOption) {
  * @param options { Object }
  */
 function initTable(options) {
+    // 根据“通过系数”判断，不能通过的行，背景色显示红色
+    if (options.rules === '1') {
+        options.data.forEach(function(item){
+            if (item.agreeRulePassFlag == undefined) {
+                unpassMap.set(item.voteItemId,1)
+            }
+        })
+    }
     $table.bootstrapTable('destroy').bootstrapTable({
         url: options.url,
         clickToSelect: options.clickToSelect,
@@ -240,6 +249,10 @@ function handleRepeatData() {
 }
 // 设置相同结果的行样式
 function rowStyle(row, index) {
+    // 根据“通过系数”判断，不能通过的行，背景色显示红色
+    if (unpassMap.get(row.voteItemId) === 1) {
+        return {css:{'background-color': '#FF4040'}}
+    }
     if (colorMap.get(row[resultName])){
         return {css:{'background-color':colorMap.get(row[resultName])}}
     }
