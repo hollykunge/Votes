@@ -16,7 +16,7 @@ import com.hollykunge.service.*;
 import com.hollykunge.util.Base64Utils;
 import com.hollykunge.util.ExceptionCommonUtil;
 import com.hollykunge.util.ExtApiTokenUtil;
-import com.hollykunge.util.VoteItemPassRuleUtil;
+import com.hollykunge.util.VoteItemPassRuleUtils;
 import com.hollykunge.vo.VoteItemVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -498,6 +498,16 @@ public class ItemController {
                         ReflectionUtils.setFieldValue(data, (String) key, "无");
                     }
                 });
+                if(Objects.equals(item.getRules(),VoteConstants.ITEM_RULE_AGER)){
+                    if(data.getCurrentStatisticsNum() == null){
+                        ReflectionUtils.setFieldValue(data,"currentStatisticsNum", "0");
+                    }
+                    if(Objects.equals(data.getAgreeRulePassFlag(),"1")){
+                        ReflectionUtils.setFieldValue(data,"agreeRulePassFlag", "通过");
+                    }else{
+                        ReflectionUtils.setFieldValue(data,"agreeRulePassFlag", "未通过");
+                    }
+                }
             });
             EasyExcel.write(response.getOutputStream())
                     .head(head(jsonObject,item.getRules()))
@@ -532,8 +542,12 @@ public class ItemController {
             }
             voteItemService.deleteByItem(dataItem);
             List<VoteItem> tempData = JSONArray.parseArray(JSONObject.toJSONString(byItem.get()), VoteItem.class);
-            List<VoteItem> voteItems = VoteItemPassRuleUtil.passVoteItems(tempData);
-            for (VoteItem vote : voteItems) {
+            //规则为否同的时候，按百分比规则确定进入下一轮人数
+            if(Objects.equals(item.getRules(),VoteConstants.ITEM_RULE_AGER)){
+                Long totalNum = userVoteItemService.countIpByItem(item);
+                tempData = VoteItemPassRuleUtils.passVoteItems(tempData,item,Integer.parseInt(String.valueOf(totalNum)));
+            }
+            for (VoteItem vote : tempData) {
                 this.resetVoteItem(vote);
                 vote.setItem(dataItem);
                 vote.setTurnNum(String.valueOf(dataItem.getTurnNum()));
@@ -554,6 +568,7 @@ public class ItemController {
         voteItem.setCurrentStatisticsOrderScore(null);
         voteItem.setCurrentStatisticsToalScore(null);
         voteItem.setVoteItemOrder(null);
+        voteItem.setAgreeRulePassFlag(null);
     }
 
     private List<List<String>> head(LinkedHashMap jsonObject,String flag) {
@@ -584,6 +599,11 @@ public class ItemController {
                 fina.add("总得分结果");
             }
             list.add(fina);
+            if(Objects.equals(flag,"1")){
+                List<String> pass = new ArrayList<>();
+                pass.add("是否通过");
+                list.add(pass);
+            }
             return list;
         } catch (Exception e) {
             log.error(ExceptionCommonUtil.getExceptionMessage(e));

@@ -70,6 +70,11 @@ public class Item {
     @Column(name = "agree_min")
     private String agreeMin;
     /**
+     * 同意规则，进入下一轮的百分比
+     */
+    @Column(name = "agree_pass_persent")
+    private String agreePassPersent;
+    /**
      * 说明
      */
     @Column(name = "description")
@@ -247,5 +252,13 @@ public class Item {
 
     public void setMinScore(String minScore) {
         this.minScore = minScore;
+    }
+
+    public String getAgreePassPersent() {
+        return agreePassPersent;
+    }
+
+    public void setAgreePassPersent(String agreePassPersent) {
+        this.agreePassPersent = agreePassPersent;
     }
 }

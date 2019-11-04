@@ -83,6 +83,20 @@ public class VoteItem {
      */
     @Column(name = "vote_item_order")
     private Integer voteItemOrder;
+    /**
+     * 否同规则的时候，确定该投票项是否按确定的通过率通过标识
+     * 1为通过，0为不通过
+     */
+    @Column(name = "agree_rule_pass_flag")
+    private String agreeRulePassFlag;
+
+    public String getAgreeRulePassFlag() {
+        return agreeRulePassFlag;
+    }
+
+    public void setAgreeRulePassFlag(String agreeRulePassFlag) {
+        this.agreeRulePassFlag = agreeRulePassFlag;
+    }
 
     public Integer getCurrentStatisticsNum() {
         return currentStatisticsNum;
