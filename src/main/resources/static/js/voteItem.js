@@ -2,6 +2,8 @@
 var submitcount = 0;// 提交次数
 var ot;
 var oloaded;
+var voteRule;
+var unpassMap = new Map();
 var templateOption = {
     haveVoted: [
         '<div class="have-voted">',
@@ -317,7 +319,14 @@ function initTable(options) {
         fraction[item[options.resultName]] = [].concat(index * 1 + 1)
     })
     bootStrapDataOption = orderDataTest(bootStrapDataOption, Object.keys(fraction), options.resultName, Object.keys(fraction).length)
-
+    // 根据“通过系数”判断，不能通过的行，背景色显示红色
+    if (options.rules === '1') {
+        bootStrapDataOption.forEach(function(item){
+            if (item.agreeRulePassFlag == undefined) {
+                unpassMap.set(item.voteItemId,1)
+            }
+        })
+    }
     // parentStatisticsToalScore
     $table.bootstrapTable('destroy').bootstrapTable({
         url: options.url,
@@ -438,6 +447,7 @@ function initTable(options) {
             })
         }
     })
+
 }
 
 /**
@@ -850,6 +860,10 @@ function orderDataTest(data, orderData, keyName, sequence) {
 function rowStyle(row, index) {
     if (colorMap.get(row[resultName])){
         return {css:{'background-color':colorMap.get(row[resultName])}}
+    }
+    // 根据“通过系数”判断，不能通过的行，背景色显示红色
+    if (unpassMap.get(row.voteItemId) === 1) {
+        return {css:{'background-color': '#FF4040'}}
     }
     return {}
 }
