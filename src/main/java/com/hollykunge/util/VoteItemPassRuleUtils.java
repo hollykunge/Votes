@@ -11,7 +11,7 @@ import java.util.List;
  * @description: 确定通过结果
  * @since: Create in 9:26 2019/11/1
  */
-public class VoteItemPassRuleUtil {
+public class VoteItemPassRuleUtils {
 
     public static List<VoteItem> passVoteItems(List<VoteItem> voteItems, Item item, Integer totalNum){
         double decimal = MarkToDecimalsUtil.transfer(item);
@@ -24,7 +24,7 @@ public class VoteItemPassRuleUtil {
        return result;
     }
 
-    private static boolean caculate(Integer num,
+    public static boolean caculate(Integer num,
                                    Double decimal,
                                    Integer totalNum){
         Integer temp = num;
