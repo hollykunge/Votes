@@ -35,4 +35,6 @@ public class StatisticsDownloadData {
     private String currentStatisticsToalScore;
 
     private Integer currentStatisticsOrderScore;
+
+    private String agreeRulePassFlag;
 }

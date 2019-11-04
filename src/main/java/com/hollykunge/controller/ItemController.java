@@ -498,6 +498,16 @@ public class ItemController {
                         ReflectionUtils.setFieldValue(data, (String) key, "无");
                     }
                 });
+                if(Objects.equals(item.getRules(),VoteConstants.ITEM_RULE_AGER)){
+                    if(data.getCurrentStatisticsNum() == null){
+                        ReflectionUtils.setFieldValue(data,"currentStatisticsNum", "0");
+                    }
+                    if(Objects.equals(data.getAgreeRulePassFlag(),"1")){
+                        ReflectionUtils.setFieldValue(data,"agreeRulePassFlag", "通过");
+                    }else{
+                        ReflectionUtils.setFieldValue(data,"agreeRulePassFlag", "未通过");
+                    }
+                }
             });
             EasyExcel.write(response.getOutputStream())
                     .head(head(jsonObject,item.getRules()))
@@ -558,6 +568,7 @@ public class ItemController {
         voteItem.setCurrentStatisticsOrderScore(null);
         voteItem.setCurrentStatisticsToalScore(null);
         voteItem.setVoteItemOrder(null);
+        voteItem.setAgreeRulePassFlag(null);
     }
 
     private List<List<String>> head(LinkedHashMap jsonObject,String flag) {
@@ -588,6 +599,11 @@ public class ItemController {
                 fina.add("总得分结果");
             }
             list.add(fina);
+            if(Objects.equals(flag,"1")){
+                List<String> pass = new ArrayList<>();
+                pass.add("是否通过");
+                list.add(pass);
+            }
             return list;
         } catch (Exception e) {
             log.error(ExceptionCommonUtil.getExceptionMessage(e));
