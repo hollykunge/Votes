@@ -532,8 +532,12 @@ public class ItemController {
             }
             voteItemService.deleteByItem(dataItem);
             List<VoteItem> tempData = JSONArray.parseArray(JSONObject.toJSONString(byItem.get()), VoteItem.class);
-            List<VoteItem> voteItems = VoteItemPassRuleUtil.passVoteItems(tempData);
-            for (VoteItem vote : voteItems) {
+            //规则为否同的时候，按百分比规则确定进入下一轮人数
+            if(Objects.equals(item.getRules(),VoteConstants.ITEM_RULE_AGER)){
+                Long totalNum = userVoteItemService.countIpByItem(item);
+                tempData = VoteItemPassRuleUtil.passVoteItems(tempData,item,Integer.parseInt(String.valueOf(totalNum)));
+            }
+            for (VoteItem vote : tempData) {
                 this.resetVoteItem(vote);
                 vote.setItem(dataItem);
                 vote.setTurnNum(String.valueOf(dataItem.getTurnNum()));
