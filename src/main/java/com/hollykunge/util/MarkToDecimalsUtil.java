@@ -33,6 +33,9 @@ public class MarkToDecimalsUtil {
         if(split.length > 2 || split.length < 1){
             throw new BaseException("分数不符合要求...");
         }
+        if(Integer.parseInt(split[0]) > Integer.parseInt(split[1])){
+            throw new BaseException("分子不能大于分母");
+        }
         return true;
     }
 
