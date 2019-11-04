@@ -42,6 +42,7 @@
                 <ul class="list-unstyled mt-3 mb-4">
                     <div th:switch="*{item.rules}">
                         <div th:case="1">
+                            <li th:text="${'通过系数：'+ item.agreePassPersent}"></li>
                             <li th:text="${'大于'+ item.agreeMin}"></li>
                             <li th:text="${'小于'+ item.agreeMax}"></li>
                         </div>
