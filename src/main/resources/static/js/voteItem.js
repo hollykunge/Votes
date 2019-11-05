@@ -280,7 +280,7 @@ function configOperation(rules, columnsOption, resultName, fraction) {
                             ].join('')
                         }
                         return [
-                            '<input type="number" class="form-control input-group-sm voteInput" data-live-search="true" name="orgid" >',
+                            '<input type="number" class="form-control input-group-sm voteInput" data-live-search="true" name="orgid" onKeypress="return (/[\\d]/.test(String.fromCharCode(event.keyCode)))">',
                         ].join('')
                     }
                 })
