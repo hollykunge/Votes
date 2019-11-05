@@ -20,6 +20,19 @@ var templateOption = {
 
 // 弹窗显示
 function showImportModel() {
+    // 添加约束：如果使用上一轮投票项，限制导入新的投票项
+    // 判断依据：如果有结果列即为使用上一轮投票项
+    var tableData = $table.bootstrapTable('getData');
+    var disImport = tableData.some(function (item) {
+        if (item.parentStatisticsNum != null || item.parentStatisticsToalScore != null || item.parentStatisticsOrderScore != null){
+            return true;
+        }
+    })
+    if (disImport) {
+        $('#importExcel').attr('disabled', 'disabled');
+        showInfo ('提醒：由于已使用上一轮投票项，不能导入新的投票项');
+        return;
+    }
     $('#importModel').modal('show');
     // 由于未刷新页面，需要对上一次上次内容初始化
     document.getElementById("time").innerHTML = '<div></div>';
