@@ -213,25 +213,37 @@
                     repeat: false,
                     index: index
                 };
+                // 未通过
                 if (!isPass($(e.target).val(), row.item.minScore, row.item.maxScore)) {
                     $('.focus_input').removeClass('focus_input')
                     $(e.target).focus().addClass('warning_input focus_input')
+                    // 不符合规则也需要修改数据内容
+                    $.each($._fraction, function (index, item) {
+                        if(item.voteItem.index === isRepeat.index) {
+                            $._fraction[index].score = $(e.target).val()
+                            $._fraction[index].ispass = false // 添加一个未通过的tag
+                        }
+                    })
                     return
                 }
-
                 row.score = $(e.target).val()
                 $(e.target).removeClass('warning_input')
                 // 判断是否已存在该项内容，存在则修改，不存在push
                 $.each($._fraction, function (index, item) {
-                    if (item.voteItem.voteItemId === row.voteItemId) {
+                    // 当前分数行已经有值
+                    if (item.voteItem.index === row.index) {
                         isRepeat = {
                             repeat: true,
-                            index: index
+                            index: item.voteItem.index
                         }
                     }
                 })
                 if (isRepeat.repeat) {
-                    $._fraction[isRepeat.index].score = $(e.target).val()
+                    $.each($._fraction, function (index, item) {
+                        if(item.voteItem.index === isRepeat.index) {
+                            $._fraction[index].score = $(e.target).val()
+                        }
+                    })
                     return
                 }
 
@@ -317,7 +329,6 @@
                     currentValue = ''
                 }
 
-                console.log(data)
                 html = [
                     '<option value="">请选择</option>',
                     currentValue
@@ -423,6 +434,7 @@
                     }
                     tips($('.warning'), 'strong', requestBody, urlOption)
                 }
+
                 return
             } else { // 排序
                 requestBody = data.map(function (item, index) {
