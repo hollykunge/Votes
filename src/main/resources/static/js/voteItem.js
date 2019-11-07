@@ -192,7 +192,6 @@ function columnConfig(rules, callback) {
             }
             return item
         })
-    // console.log(columnsOption)
     // 添加 序号 表头与 voteItemId 关联
     columnsOption.unshift({
         title: '序号',
@@ -671,7 +670,8 @@ function initTitleConfig(titleConfig) {
  * @returns {boolean}
  */
 function isPass(val, min, max) {
-    if (isNaN(val * 1)) {
+    // 判断input数字与整数
+    if (isNaN(val * 1) || val % 1 !== 0) {
         $('body').message({
             message: '请输入正确格式数字.',
             type: 'danger'
@@ -799,6 +799,17 @@ function btnAction(requestBody, urlOption) {
         .off('click')
         .on('click', function () {
             $(this).parents('.modal').hide()
+            // 打分存在不符合范围的分数
+            var noPass = requestBody.filter(function (item) {
+               return item.ispass === false
+            })
+            if(noPass.length > 0) {
+                $('body').message({
+                    type: 'danger',
+                    message: '填写内容不符合规则，请正确填写.'
+                })
+                return
+            }
             request({
                 url: window.location.origin + "/userVote/add/" + urlOption,
                 data: JSON.stringify(requestBody)
