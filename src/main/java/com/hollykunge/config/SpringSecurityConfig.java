@@ -1,6 +1,7 @@
 package com.hollykunge.config;
 
 import com.hollykunge.constants.VoteConstants;
+import com.hollykunge.filter.TaskLoginSecurityFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.sql.DataSource;
 
@@ -69,6 +71,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().accessDeniedHandler(accessDeniedHandler)
                 // Fix for H2 console
                 .and().headers().frameOptions().disable();
+        //用重写的Filter替换掉原有的UsernamePasswordAuthenticationFilter
+        http.addFilterAt(taskAuthenticationFilter(),
+                UsernamePasswordAuthenticationFilter.class);
     }
 
     @Autowired
@@ -90,6 +95,15 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    TaskLoginSecurityFilter taskAuthenticationFilter() throws Exception {
+        TaskLoginSecurityFilter filter = new TaskLoginSecurityFilter();
+
+        //这句很关键，重用WebSecurityConfigurerAdapter配置的AuthenticationManager，不然要自己组装AuthenticationManager
+        filter.setAuthenticationManager(authenticationManagerBean());
+        return filter;
     }
 
 }
