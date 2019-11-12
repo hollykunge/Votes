@@ -32,12 +32,12 @@
             </div>
 
             <div class="form-label-group">
-                <input type="text" name="username" id="username" class="form-control input-lg"
+                <input type="text" name="username" id="username" class="form-control input-lg" value="user"
                        placeholder="用户名" required="true" autofocus="true"/>
             </div>
 
             <div class="form-label-group">
-                <input type="password" name="password" id="password" class="form-control input-lg"
+                <input type="password" name="password" id="password" class="form-control input-lg" value="123456"
                        placeholder="密码" required="true"/>
             </div>
 
@@ -48,6 +48,28 @@
 </div>
 
 <div th:replace="/fragments/footer :: footer"/>
-
+<script>
+    $(function () {
+        $.ajax({
+            //提交数据的类型 POST GET
+            type:"POST",
+            url:"/login",
+            //提交的数据
+            data:{username:"user",password:"123456"},
+            //返回数据的格式
+            dataType: "html",//"xml", "html", "script", "json", "jsonp", "text".
+            //成功返回之后调用的函数
+            success:function(data){
+            }   ,
+            //调用执行后调用的函数
+            complete: function(XMLHttpRequest, textStatus){
+            },
+            //调用出错执行的函数
+            error: function(){
+                //请求出错处理
+            }
+        });
+    })
+</script>
 </body>
 </html>
