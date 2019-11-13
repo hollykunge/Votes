@@ -9,7 +9,7 @@
     <packaging>jar</packaging>
 
     <name>vote</name>
-    <description>二部投票系统</description>
+    <description>投票系统</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
