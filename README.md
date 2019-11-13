@@ -57,3 +57,19 @@ IntelliJ IDEA、JDK 1.8、apache-maven-3.3.9
 3、一个用户电脑只能投一次，确保没有刷票。
 
 4、投票创建人可以导出每一轮次的投票统计结果。
+
+## demo
+### 主页
+https://raw.githubusercontent.com/hollykunge/Votes/master/img/home.png
+### 列表
+https://raw.githubusercontent.com/hollykunge/Votes/master/img/list.png
+### 编辑
+https://raw.githubusercontent.com/hollykunge/Votes/master/img/edit.png
+### 邀请码
+https://raw.githubusercontent.com/hollykunge/Votes/master/img/code.png
+### 投票1
+https://raw.githubusercontent.com/hollykunge/Votes/master/img/vote1.png
+### 投票2
+https://raw.githubusercontent.com/hollykunge/Votes/master/img/vote2.png
+### 投票3
+https://raw.githubusercontent.com/hollykunge/Votes/master/img/vote3.png
