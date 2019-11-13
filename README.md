@@ -60,9 +60,9 @@ IntelliJ IDEA、JDK 1.8、apache-maven-3.3.9
 
 ## demo
 ### 主页
-https://raw.githubusercontent.com/hollykunge/Votes/master/img/home.png
+![image](https://raw.githubusercontent.com/hollykunge/Votes/master/img/home.png)
 ### 列表
-https://raw.githubusercontent.com/hollykunge/Votes/master/img/list.png
+![image](https://raw.githubusercontent.com/hollykunge/Votes/master/img/list.png)
 ### 编辑
 https://raw.githubusercontent.com/hollykunge/Votes/master/img/edit.png
 ### 邀请码
