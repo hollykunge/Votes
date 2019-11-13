@@ -64,12 +64,12 @@ IntelliJ IDEA、JDK 1.8、apache-maven-3.3.9
 ### 列表
 ![image](https://raw.githubusercontent.com/hollykunge/Votes/master/img/list.png)
 ### 编辑
-https://raw.githubusercontent.com/hollykunge/Votes/master/img/edit.png
+![image](https://raw.githubusercontent.com/hollykunge/Votes/master/img/edit.png)
 ### 邀请码
-https://raw.githubusercontent.com/hollykunge/Votes/master/img/code.png
+![image](https://raw.githubusercontent.com/hollykunge/Votes/master/img/code.png)
 ### 投票1
-https://raw.githubusercontent.com/hollykunge/Votes/master/img/vote1.png
+![image](https://raw.githubusercontent.com/hollykunge/Votes/master/img/vote1.png)
 ### 投票2
-https://raw.githubusercontent.com/hollykunge/Votes/master/img/vote2.png
+![image](https://raw.githubusercontent.com/hollykunge/Votes/master/img/vote2.png)
 ### 投票3
-https://raw.githubusercontent.com/hollykunge/Votes/master/img/vote3.png
+![image](https://raw.githubusercontent.com/hollykunge/Votes/master/img/vote3.png)
