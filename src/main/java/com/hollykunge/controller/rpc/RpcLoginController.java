@@ -25,7 +25,7 @@ public class RpcLoginController {
     private AuthenticationManager authenticationManager;
 
     /**
-     * 提供云雀登录rpc接口
+     * 提供登录rpc接口
      * @return
      * @throws Exception
      */
