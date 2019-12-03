@@ -32,12 +32,12 @@
             </div>
 
             <div class="form-label-group">
-                <input type="text" name="username" id="username" class="form-control input-lg" value="user"
+                <input type="text" name="username" id="username" class="form-control input-lg"
                        placeholder="用户名" required="true" autofocus="true"/>
             </div>
 
             <div class="form-label-group">
-                <input type="password" name="password" id="password" class="form-control input-lg" value="123456"
+                <input type="password" name="password" id="password" class="form-control input-lg"
                        placeholder="密码" required="true"/>
             </div>
 
@@ -45,22 +45,31 @@
 
         </fieldset>
     </form>
+<!--    <button onclick="fasong()">123123</button>-->
 </div>
 
 <div th:replace="/fragments/footer :: footer"/>
-<script>
+<script type="text/javascript" th:inline="javascript">
+    'use strict';
+    var username = [[${username}]];
+    var password = [[${password}]];
+    // function fasong(){
+    //     window.parent.postMessage('fasongxinxi', '*');
+    // }
     $(function () {
+
         $.ajax({
             //提交数据的类型 POST GET
             type:"POST",
             url:"/login",
             //提交的数据
-            data:{username:"user",password:"123456"},
+            data:{username:username,password:password},
             //返回数据的格式
             dataType: "html",//"xml", "html", "script", "json", "jsonp", "text".
             //成功返回之后调用的函数
             success:function(data){
-            }   ,
+                window.location.href="/home"
+            },
             //调用执行后调用的函数
             complete: function(XMLHttpRequest, textStatus){
             },
@@ -69,6 +78,7 @@
                 //请求出错处理
             }
         });
+
     })
 </script>
 </body>

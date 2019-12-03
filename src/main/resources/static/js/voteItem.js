@@ -24,13 +24,13 @@ function showImportModel() {
     // 判断依据：如果有结果列即为使用上一轮投票项
     var tableData = $table.bootstrapTable('getData');
     var disImport = tableData.some(function (item) {
-        if (item.parentStatisticsNum != null || item.parentStatisticsToalScore != null || item.parentStatisticsOrderScore != null){
+        if (item.parentStatisticsNum != null || item.parentStatisticsToalScore != null || item.parentStatisticsOrderScore != null) {
             return true;
         }
     })
     if (disImport) {
         $('#importExcel').attr('disabled', 'disabled');
-        showInfo ('提醒：由于已使用上一轮投票项，不能导入新的投票项');
+        showInfo('提醒：由于已使用上一轮投票项，不能导入新的投票项');
         return;
     }
     $('#importModel').modal('show');
@@ -199,10 +199,15 @@ function columnConfig(rules, callback) {
         align: 'center',
         valign: 'middle',
         formatter: function (value, row, index) {
-            if (value) {
-                return value
+            if (value.contentTitle.indexOf("(序号") != -1) {
+                return index
             }
-            return ''
+            return index + 1
+
+            // if (value) {
+            //     return value
+            // }
+            // return ''
         },
         cellStyle: cellStyle
     })
@@ -332,9 +337,9 @@ function initTable(options) {
     bootStrapDataOption = orderDataTest(bootStrapDataOption, Object.keys(fraction), options.resultName, Object.keys(fraction).length)
     // 根据“通过系数”判断，不能通过的行，背景色显示红色
     if (options.rules === '1') {
-        bootStrapDataOption.forEach(function(item){
+        bootStrapDataOption.forEach(function (item) {
             if (item.agreeRulePassFlag == undefined) {
-                unpassMap.set(item.voteItemId,1)
+                unpassMap.set(item.voteItemId, 1)
             }
         })
     }
@@ -801,9 +806,9 @@ function btnAction(requestBody, urlOption) {
             $(this).parents('.modal').hide()
             // 打分存在不符合范围的分数
             var noPass = requestBody.filter(function (item) {
-               return item.ispass === false
+                return item.ispass === false
             })
-            if(noPass.length > 0) {
+            if (noPass.length > 0) {
                 $('body').message({
                     type: 'danger',
                     message: '填写内容不符合规则，请正确填写.'
@@ -879,17 +884,19 @@ function orderDataTest(data, orderData, keyName, sequence) {
     }
     return data
 }
+
 // 设置相同结果的行样式
 function rowStyle(row, index) {
     // 根据“通过系数”判断，不能通过的行，背景色显示红色
     if (unpassMap.get(row.voteItemId) === 1) {
-        return {css:{'background-color': '#FF4040'}}
+        return {css: {'background-color': '#FF4040'}}
     }
-    if (colorMap.get(row[resultName])){
-        return {css:{'background-color':colorMap.get(row[resultName])}}
+    if (colorMap.get(row[resultName])) {
+        return {css: {'background-color': colorMap.get(row[resultName])}}
     }
     return {}
 }
+
 /**
  * 表格行样式
  * @param value
