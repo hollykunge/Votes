@@ -1,5 +1,6 @@
 'use strict';
 var submitcount = 0;// 提交次数
+var hasSort = 0;
 var ot;
 var oloaded;
 var unpassMap = new Map();
@@ -44,7 +45,7 @@ function showImportModel() {
 function showAddModel() {
     if (titleConfig == null) {
         $('body').message({
-            message: '请先操作导入',
+            message: '请先导入',
             type: 'warning'
         })
         return;
@@ -89,21 +90,6 @@ function excelImport(voteId, fn) {
     xhr.send(form); //开始上传，发送form数据
 }
 
-// //上传成功响应
-// function uploadComplete(evt) {
-//     if (evt.target.status) {
-//         setInterval(function () {
-//             window.location.reload();
-//         }, 1000)
-//
-//     } else {
-//         $('body').message({
-//             message: '上传失败',
-//             type: 'danger'
-//         })
-//     }
-//
-// }
 
 //上传失败
 function uploadFailed(evt) {
@@ -199,10 +185,12 @@ function columnConfig(rules, callback) {
         align: 'center',
         valign: 'middle',
         formatter: function (value, row, index) {
-            if (value.contentTitle.indexOf("(序号") != -1) {
-                return index
+            if (row.hasOwnProperty("contentTitle")) {
+                if (row.contentTitle.indexOf("序列") !== -1) {
+                    hasSort++
+                }
             }
-            return index + 1
+            return index + 1 - hasSort
 
             // if (value) {
             //     return value
@@ -889,7 +877,7 @@ function orderDataTest(data, orderData, keyName, sequence) {
 function rowStyle(row, index) {
     // 根据“通过系数”判断，不能通过的行，背景色显示红色
     if (unpassMap.get(row.voteItemId) === 1) {
-        return {css: {'background-color': '#FF4040'}}
+        return {css: {'background-color': '#ff6975'}}
     }
     if (colorMap.get(row[resultName])) {
         return {css: {'background-color': colorMap.get(row[resultName])}}
