@@ -126,6 +126,7 @@ public class UserVoteItemServiceImp implements UserVoteItemService {
                 .stream()
                 .filter(voteItem -> !voteItems.stream().anyMatch(vote -> (long) vote.getVoteItemId() == voteItem.getVoteItemId()))
                 .collect(Collectors.toList());
+        collect.forEach(voteItem -> voteItem.setAgreeRulePassFlag("0"));
         voteItems.addAll(collect);
         this.setVoteItemOrder(voteItems);
         return voteItems;
