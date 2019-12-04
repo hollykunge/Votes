@@ -60,6 +60,56 @@ public class VoteItem {
 
     @Column(name = "attr6")
     private String attr6;
+    @Column(name = "attr7")
+    private String attr7;
+    @Column(name = "attr8")
+    private String attr8;
+    @Column(name = "attr9")
+    private String attr9;
+    @Column(name = "attr10")
+    private String attr10;
+    @Column(name = "attr11")
+    private String attr11;
+    @Column(name = "attr12")
+    private String attr12;
+    @Column(name = "attr13")
+    private String attr13;
+    @Column(name = "attr14")
+    private String attr14;
+    @Column(name = "attr15")
+    private String attr15;
+    @Column(name = "attr16")
+    private String attr16;
+    @Column(name = "attr17")
+    private String attr17;
+    @Column(name = "attr18")
+    private String attr18;
+    @Column(name = "attr19")
+    private String attr19;
+    @Column(name = "attr20")
+    private String attr20;
+    @Column(name = "attr21")
+    private String attr21;
+    @Column(name = "attr22")
+    private String attr22;
+    @Column(name = "attr23")
+    private String attr23;
+    @Column(name = "attr24")
+    private String attr24;
+    @Column(name = "attr25")
+    private String attr25;
+    @Column(name = "attr26")
+    private String attr26;
+    @Column(name = "attr27")
+    private String attr27;
+    @Column(name = "attr28")
+    private String attr28;
+    @Column(name = "attr29")
+    private String attr29;
+    @Column(name = "attr30")
+    private String attr30;
+    @Column(name = "attr31")
+    private String attr31;
     /**
      * 当前轮统计结果
      */
