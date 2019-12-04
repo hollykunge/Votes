@@ -49,6 +49,11 @@ public class UploadHeaderDataListener extends AnalysisEventListener<ItemUploadDa
             result.put("msg","excel没有标题头..");
             return;
         }
+        if(headMap.size() > 32){
+            result.put("status",500);
+            result.put("msg","导入失败！excel表头限制在32个以内..");
+            return;
+        }
         Vote vote = null;
         try {
             Item itemtemp = itemService.findById(item.getId());
