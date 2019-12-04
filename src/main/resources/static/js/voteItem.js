@@ -326,7 +326,7 @@ function initTable(options) {
     // 根据“通过系数”判断，不能通过的行，背景色显示红色
     if (options.rules === '1') {
         bootStrapDataOption.forEach(function (item) {
-            if (item.agreeRulePassFlag == undefined) {
+            if (item.agreeRulePassFlag === '0') {
                 unpassMap.set(item.voteItemId, 1)
             }
         })
