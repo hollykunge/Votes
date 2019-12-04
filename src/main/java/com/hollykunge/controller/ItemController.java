@@ -491,7 +491,7 @@ public class ItemController {
                 AtomicInteger index = new AtomicInteger();
                 jsonObject.forEach((key, value) -> {
                     index.getAndIncrement();
-                    if (index.intValue() > 7) {
+                    if (index.intValue() > 32) {
                         return;
                     }
                     if (StringUtils.isEmpty(ReflectionUtils.getFieldValue(data, (String) key))) {
@@ -581,7 +581,7 @@ public class ItemController {
             AtomicInteger index = new AtomicInteger();
             values.forEach((Object ob) -> {
                 index.getAndIncrement();
-                if (index.intValue() > 7) {
+                if (index.intValue() > 32) {
                     return;
                 }
                 List<String> head = new ArrayList<String>();
