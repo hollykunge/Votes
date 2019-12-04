@@ -6,10 +6,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.hollykunge.model.Item;
 import com.hollykunge.model.VoteItem;
+import com.hollykunge.reflection.ReflectionUtils;
 import com.hollykunge.service.VoteItemService;
 import com.hollykunge.util.ExceptionCommonUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +26,8 @@ public class UploadDataListener extends AnalysisEventListener<ItemUploadData> {
     private final VoteItemService voteItemService;
 
     private final Item item;
+
+    private static final String ATTR = "attr";
 
     public UploadDataListener(Item item, VoteItemService voteItemService,Map<String,Object> resultMsg) {
         this.voteItemService = voteItemService;
@@ -84,33 +86,12 @@ public class UploadDataListener extends AnalysisEventListener<ItemUploadData> {
     private void setAttr6(VoteItem voteItem, ItemUploadData itemUploadData) {
         String attr6 = "";
         String comma = ",";
-        if (!StringUtils.isEmpty(itemUploadData.getAttr6())) {
-            attr6 += itemUploadData.getAttr6();
-            attr6 += comma;
-        }
-        if (!StringUtils.isEmpty(itemUploadData.getAttr7())) {
-            attr6 += itemUploadData.getAttr7();
-            attr6 += comma;
-        }
-        if (!StringUtils.isEmpty(itemUploadData.getAttr8())) {
-            attr6 += itemUploadData.getAttr8();
-            attr6 += comma;
-        }
-        if (!StringUtils.isEmpty(itemUploadData.getAttr9())) {
-            attr6 += itemUploadData.getAttr9();
-            attr6 += comma;
-        }
-        if (!StringUtils.isEmpty(itemUploadData.getAttr10())) {
-            attr6 += itemUploadData.getAttr10();
-            attr6 += comma;
-        }
-        if (!StringUtils.isEmpty(itemUploadData.getAttr11())) {
-            attr6 += itemUploadData.getAttr11();
-            attr6 += comma;
-        }
-        if (!StringUtils.isEmpty(itemUploadData.getAttr12())) {
-            attr6 += itemUploadData.getAttr12();
-            attr6 += comma;
+        for(int i = 6; i<=31 ; i++){
+            Object o = ReflectionUtils.invokeGetter(itemUploadData, ATTR + i);
+            if(o != null && o instanceof String){
+                attr6 += (String)o;
+                attr6 += comma;
+            }
         }
         voteItem.setAttr6(attr6);
         if("".equals(attr6)){
