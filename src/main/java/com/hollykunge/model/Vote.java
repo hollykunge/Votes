@@ -30,7 +30,7 @@ public class Vote {
     @Column(name = "body", columnDefinition = "TEXT")
     private String body;
 
-    @Column(name = "excel_header")
+    @Column(name = "excel_header", length = 2000)
     private String excelHeader;
 
     @Column(columnDefinition = "int(6) COMMENT '预计投票人数'")

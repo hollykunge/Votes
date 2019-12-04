@@ -70,6 +70,7 @@ function initTable(options) {
         idField: 'id',
         sidePagination: 'server',
         rowStyle: options.rowStyle,
+
         // 列操作栏
         columns: columnConfig({
             isRead: options.hasData && options.hasData.length > 0 ? true : false,
@@ -78,6 +79,7 @@ function initTable(options) {
             operateCol: options.operateCol,
             operateColFormat: options.operateColFormat
         }, configOperation),
+
         data: options.hasData && options.hasData.length > 0 ? options.hasData.map(function (item) {
             return Object.assign({}, item, item.voteItem, {order: item.order, item: item.item})
         }) : options.data.map(function (item) {
@@ -85,6 +87,8 @@ function initTable(options) {
         }),
         detailView: true,
         detailViewIcon: true,
+        // fixedColumns: true,
+        // fixedNumber: 1,
         detailFormatter: function (index, row, element) {
             var html = [
                 '<div class="card">',
@@ -252,7 +256,7 @@ function handleRepeatData() {
 function rowStyle(row, index) {
     // 根据“通过系数”判断，不能通过的行，背景色显示红色
     if (unpassMap.get(row.voteItemId) === 1) {
-        return {css:{'background-color': '#ff7b79'}}
+        return {css:{'background-color': '#FF4040'}}
     }
     if (colorMap.get(row[resultName])){
         return {css:{'background-color':colorMap.get(row[resultName])}}
