@@ -113,6 +113,8 @@ public class UserVoteItemServiceImp implements UserVoteItemService {
                         decimal,
                         Integer.parseInt(String.valueOf(agreeRuleCount)))){
                     one.setAgreeRulePassFlag("1");
+                }else{
+                    one.setAgreeRulePassFlag("0");
                 }
             }
             if (Objects.equals(flag, VoteConstants.ITEM_RULE_SCORE)) {

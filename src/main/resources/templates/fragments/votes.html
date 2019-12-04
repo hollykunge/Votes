@@ -25,7 +25,7 @@
                 </thead>
                 <tbody>
                 <tr th:each="vote : ${pager.votes}">
-                    <th scope="row"></th>
+                    <th scope="row" th:text="${voteStat.index}+1"></th>
                     <td th:text="${vote.title}">--</td>
                     <td th:text="${#dates.format(vote.createDate, 'yyyy-MM-dd')}">--/--/--</td>
                     <td th:text="${vote.getItems().size()}">-</td>

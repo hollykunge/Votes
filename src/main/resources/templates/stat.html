@@ -78,11 +78,15 @@
     <div class="card border-dark mb-3 shadow-sm">
         <div class="card-header">
             <span style="margin-right: 30px">投票结果</span>
-            <span class="badge badge-primary" style="background-color: #2789ff;width: 5px;height: 5px"> </span>并列
-            <span class="badge badge-primary" style="background-color: #FF4040;" th:if="${item.rules == '1'}"> </span>未通过
+            <div class="color-lump-1"></div>
+            <div class="color-lump-2"></div>
+            <div class="color-lump-3"></div>
+            <div class="color-lump-4"></div>
+            <div class="color-lump-5"></div> 并列
+            <div class="color-lump-6" th:if="${item.rules == '1'}"></div> 未通过
             <div style="float: right">
                 <a th:href="@{'/statistics/export/{itemId}'(itemId=${item.id})}" class="col-md-2">
-                    <button type="button" class="btn btn-primary btn-sm">导出</button>
+                    <button type="button" class="btn btn-outline-primary btn-sm">导出</button>
                 </a>
             </div>
         </div>

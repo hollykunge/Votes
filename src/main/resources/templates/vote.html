@@ -57,7 +57,7 @@
                    align='right'>
                 <thead class="thead-light">
                 <tr>
-                    <th scope="col">序号</th>
+<!--                    <th scope="col">序号</th>-->
                     <th scope="col">轮数</th>
                     <th scope="col">创建时间</th>
                     <th scope="col">投票情况</th>
@@ -67,7 +67,7 @@
                 </thead>
                 <tbody>
                 <tr th:each="item : ${vote.items}">
-                    <th scope="row"></th>
+<!--                    <th scope="row"></th>-->
                     <td><strong th:text="'第'+${item.turnNum}+'轮'">Title</strong></td>
                     <td th:text="${#dates.format(item.createDate, 'yyyy-MM-dd')}">--/--/--</td>
                     <td th:text="${item.memberNum}+'/'+${item.memberSize}">-/-</td>
