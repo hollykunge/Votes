@@ -193,7 +193,7 @@ public class UserVoteController {
             Item item = itemService.findById(id);
             if(Objects.equals(item.getStatus(),VoteConstants.ITEM_FINAL_STATUS)){
                 response.setStatus(500);
-                response.setMessage("该轮次投票已经结束，不能再进行投票了，点击下一轮次投票");
+                response.setMessage("该轮次投票已经结束，不能再进行投票了,请刷新当前页面观看统计结果");
                 response.setRel(false);
                 return response;
             }
