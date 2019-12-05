@@ -3,6 +3,8 @@ package com.hollykunge.util;
 import com.hollykunge.exception.BaseException;
 import com.hollykunge.model.Item;
 
+import java.util.Objects;
+
 /**
  * @author: zhhongyu
  * @description: 字符串分数转为小数
@@ -11,6 +13,10 @@ import com.hollykunge.model.Item;
 public class MarkToDecimalsUtil {
 
     public static double transfer(Item item) {
+        if(Objects.equals(item.getAgreePassPersent(),"1") ||
+                Objects.equals(item.getAgreePassPersent(),"0")){
+            return Double.parseDouble(item.getAgreePassPersent());
+        }
         if(judgeParams(item)){
             String[] split = item.getAgreePassPersent().split("/");
             double aa = Double.parseDouble(split[0])/Integer.parseInt(split[1]);
