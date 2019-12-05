@@ -43,6 +43,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${spring.queries.roles-query}")
     private String rolesQuery;
 
+    private static final String ERRORLOGIN = "/login?error";
+
 
     @Autowired
     public SpringSecurityConfig(AccessDeniedHandler accessDeniedHandler, DataSource dataSource) {
@@ -76,7 +78,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                   .loginPage("/login")
                 //自定义的filter也得描述这个失败请求，这里就是统一的地方
-                  .failureUrl("/login?error")
+                  .failureUrl(ERRORLOGIN)
                   .defaultSuccessUrl("/home")
                   .permitAll()
                   .and()
@@ -133,7 +135,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         //这个也是很关键，这个失败的处理器需要自己实现，
         // 也就是相当于自定义失败后返回到哪个路径下springsecurity交给你自己去处理这个路径
         //底层下描述的是，通过一层层的认证异常捕获，将request请求转发重定向到自定义的路径下。
-        filter.setAuthenticationFailureHandler(new SimpleUrlAuthenticationFailureHandler("/login?error"));
+        filter.setAuthenticationFailureHandler(new SimpleUrlAuthenticationFailureHandler(ERRORLOGIN));
         //成功的处理器，也可以自定义路径，这里就不需要了，使用系统默认的就行
         return filter;
     }
