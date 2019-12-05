@@ -190,6 +190,13 @@ public class UserVoteController {
                                   HttpServletRequest request) throws Exception {
         try{
             ObjectRestResponse response = new ObjectRestResponse();
+            Item item = itemService.findById(id);
+            if(Objects.equals(item.getStatus(),VoteConstants.ITEM_FINAL_STATUS)){
+                response.setStatus(500);
+                response.setMessage("该轮次投票已经结束，不能再进行投票了，点击下一轮次投票");
+                response.setRel(false);
+                return response;
+            }
             String clientIp = getClientIp(request);
             List<UserVoteItem> userVoteItemlist = JSONArray.parseArray(userVoteItems, UserVoteItem.class);
             List<UserVoteItem> collect = userVoteItemlist.stream().filter(new Predicate<UserVoteItem>() {
@@ -201,7 +208,6 @@ public class UserVoteController {
                     return false;
                 }
             }).collect(Collectors.toList());
-            Item item = itemService.findById(id);
             //否同规则校验
             if(Objects.equals(item.getRules(),VoteConstants.ITEM_RULE_AGER)){
                 if(collect.size()>Integer.parseInt(item.getAgreeMax())||
