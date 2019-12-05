@@ -726,7 +726,7 @@ $.fn.message = function (options) {
         };
     }
     var template = [
-        '<div class="alert alert-dismissible fade show alert alert-' + (options.type || 'success') + ' position_alert position_message"  data-message="message" role="alert">',
+        '<div id="message" class="alert alert-dismissible fade show alert alert-' + (options.type || 'success') + ' position_alert position_message"  data-message="message" role="alert">',
         '<span class="mr30">',
         options.message,
         '</span>',
@@ -782,6 +782,7 @@ function unique(arr) {
 }
 
 function tips(el, childName, requestBody, urlOption) {
+    $('.position_message').replaceWith("<div></div>")
     el
         .show()
         .find(childName)

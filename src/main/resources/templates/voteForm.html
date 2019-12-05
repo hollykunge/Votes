@@ -41,7 +41,7 @@
                     <label th:if="${#fields.hasErrors('body')}" th:errors="*{body}"
                            class="alert alert-danger"></label>
                     <textarea th:field="*{body}" placeholder="输入投票描述"
-                              class="form-control input-lg" th:value="${vote.body}" rows="4"></textarea>
+                              class="form-control input-lg" th:value="${vote.body}" rows="4" maxlength="90"></textarea>
                 </div>
 
                 <input type="hidden" th:field="*{user}"/>

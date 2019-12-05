@@ -159,7 +159,6 @@
         [[${ item.code }]]
     ].join('/')
     $(function () {
-        console.log(titleConfig)
         var resultName = '';
         if (rules == '1') {
             resultName = "parentStatisticsNum";
@@ -317,7 +316,6 @@
                     ].join(''),
                     type: 'primary'
                 })
-
             },
             // 排序点击事件回调
             'focus .selectVote': function (e, value, row, index) {
