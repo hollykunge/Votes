@@ -338,6 +338,7 @@ function initTable(options) {
         minimumCountColumns: 2,
         idField: 'id',
         sidePagination: 'server',
+
         // 列操作栏
         columns: columnConfig({
             isRead: options.hasData && options.hasData.length > 0 ? true : false,
@@ -349,6 +350,7 @@ function initTable(options) {
             fraction: fraction
         }, configOperation),
         rowStyle: options.rowStyle,
+
         data: bootStrapDataOption,
         rowAttributes: function (row, index) {
             // 条件
@@ -366,6 +368,8 @@ function initTable(options) {
             }
             return true
         },
+        // fixedColumns: true,
+        // fixedNumber: 1,
         detailFormatter: function (index, row, element) {
 
             var html = [
@@ -406,7 +410,7 @@ function initTable(options) {
                                     '<b style="display: inline-block; margin-right: 10px;">',
                                     '其他',
                                     ':</b> ',
-                                    value.split(',').slice(1).join(' '),
+                                    value.split(',').slice(1).join(';'),
                                     '</p>'
                                 ].join('')
                             )

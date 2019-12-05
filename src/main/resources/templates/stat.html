@@ -82,8 +82,10 @@
             <div class="color-lump-2"></div>
             <div class="color-lump-3"></div>
             <div class="color-lump-4"></div>
-            <div class="color-lump-5"></div> <div style="display:inline-block; color: #989898">并列项</div>
-            <div class="color-lump-6" th:if="${item.rules == '1'}"></div> <div style="display:inline-block; color: #989898" th:if="${item.rules == '1'}">未通过</div>
+            <div class="color-lump-5"></div>
+            <div style="display:inline-block; color: #989898">并列项</div>
+            <div class="color-lump-6" th:if="${item.rules == '1'}"></div>
+            <div style="display:inline-block; color: #989898" th:if="${item.rules == '1'}">未通过</div>
             <div style="float: right">
                 <a th:href="@{'/statistics/export/{itemId}'(itemId=${item.id})}" class="col-md-2">
                     <button type="button" class="btn btn-outline-primary btn-sm">导出</button>
@@ -102,21 +104,21 @@
 <script th:inline="javascript">
     var item = JSON.parse([[${itemObj}]] || '[]');
     var statistics = JSON.parse([[${statistics}]] || '[]');
-    var titleConfig = [[${ item.vote.excelHeader }]] ;
+    var titleConfig = [[${ item.vote.excelHeader }]];
     var data = statistics.voteItems;
     var $table = $('#table') // 当前页面表格
     var resultName = '';
     var colorMap = new Map();
-    if(item.rules == '1'){
+    if (item.rules == '1') {
         resultName = "currentStatisticsNum";
-    }else if(item.rules == '2'){
+    } else if (item.rules == '2') {
         resultName = "currentStatisticsOrderScore";
-    }else{
+    } else {
         resultName = "currentStatisticsToalScore";
     }
-    if(titleConfig) {
+    if (titleConfig) {
         titleConfig = initTitleConfig(titleConfig);
-        titleConfig.splice(5,0,{'title':'结果','field': resultName})
+        titleConfig.splice(5, 0, {'title': '结果', 'field': resultName})
     } else {
         titleConfig = []
     }
