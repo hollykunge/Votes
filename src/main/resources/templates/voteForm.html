@@ -29,7 +29,7 @@
                 </div>
                 <div class="form-label-group">
                     <input type="text" th:field="*{title}" placeholder="输入投票标题" autofocus="autofocus"
-                           th:value="${vote.title}"
+                           th:value="${vote.title}" maxlength="100"
                            class="form-control input-lg" required="true"/>
                 </div>
                 <div class="form-label-group">
@@ -41,7 +41,7 @@
                     <label th:if="${#fields.hasErrors('body')}" th:errors="*{body}"
                            class="alert alert-danger"></label>
                     <textarea th:field="*{body}" placeholder="输入投票描述"
-                              class="form-control input-lg" th:value="${vote.body}" rows="4" maxlength="90"></textarea>
+                              class="form-control input-lg" th:value="${vote.body}" rows="4" maxlength="1000"></textarea>
                 </div>
 
                 <input type="hidden" th:field="*{user}"/>
