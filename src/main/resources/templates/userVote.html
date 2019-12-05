@@ -246,6 +246,7 @@
                     $.each($._fraction, function (index, item) {
                         if(item.voteItem.index === isRepeat.index) {
                             $._fraction[index].score = $(e.target).val()
+                            delete $._fraction[index].ispass
                         }
                     })
                     return
@@ -429,21 +430,33 @@
             } else if ($._fraction) { // 打分
                 if ($._fraction.length > 0) {
                     if ($._fraction.length !== data.length) {
-                        requestBody = $._fraction.concat(
-                            delHasItem(
-                                data,
-                                $._fraction.map(function (item) {
-                                    return item.voteItem.voteItemId
-                                }),
-                                'score'
-                            )
-                        )
+                        requestBody = $._fraction
+                            //# 328 原处理逻辑为如果打分结果不符合要求，自动置为0，现修改为不符合要求限制提交
+                            // .concat(
+                            //     delHasItem(
+                            //         data,
+                            //         $._fraction.map(function (item) {
+                            //             return item.voteItem.voteItemId
+                            //         }),
+                            //         'score'
+                            //     )
+                            // )
+                        $('body').message({
+                            message: '填写内容不符合规则，请正确填写.',
+                            type:'danger'
+                        })
+                        return
                     } else {
                         requestBody = $._fraction
                     }
-                    tips($('.warning'), 'strong', requestBody, urlOption)
-                }
 
+                    tips($('.warning'), 'strong', requestBody, urlOption)
+                    return;
+                }
+                $('body').message({
+                    message: '请将分数填写完整.',
+                    type:'danger'
+                })
                 return
             } else { // 排序
                 requestBody = data.map(function (item, index) {
