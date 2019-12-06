@@ -57,7 +57,9 @@
     //     window.parent.postMessage('fasongxinxi', '*');
     // }
     $(function () {
-
+        if(username == null || password == null){
+            return;
+        }
         $.ajax({
             //提交数据的类型 POST GET
             type:"POST",

@@ -8,10 +8,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.sql.DataSource;
@@ -21,6 +24,7 @@ import javax.sql.DataSource;
  * @author lark
  */
 @Configuration
+@EnableWebSecurity
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final AccessDeniedHandler accessDeniedHandler;
@@ -39,6 +43,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${spring.queries.roles-query}")
     private String rolesQuery;
 
+    private static final String ERRORLOGIN = "/login?error";
+
+
     @Autowired
     public SpringSecurityConfig(AccessDeniedHandler accessDeniedHandler, DataSource dataSource) {
         this.accessDeniedHandler = accessDeniedHandler;
@@ -56,24 +63,45 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/**","/home", "/registration", "/error", "/vote/**", "/vote/**", "/h2-console/**", VoteConstants.INVITECODE_RPC+"**").permitAll()
-                .antMatchers("/newVote/**", "/voteVote/**", "/createTurn/**", "/turnForm/**").hasAnyRole("USER")
-                .anyRequest().authenticated()
+                .antMatchers(
+                        "/home",
+                        "/registration",
+                        "/error",
+                        "/vote/**",
+                        "/h2-console/**",
+                        VoteConstants.INVITECODE_RPC+"**").permitAll()
+                .antMatchers("/newVote/**", "/voteVote/**", "/createTurn/**", "/turnForm/**")
+                .hasAnyRole("USER")
+                .anyRequest()
+                .authenticated()
                 .and()
                 .formLogin()
-                .loginPage("/login")
-                .defaultSuccessUrl("/home")
-                .permitAll()
-                .and()
+                  .loginPage("/login")
+                //自定义的filter也得描述这个失败请求，这里就是统一的地方
+                  .failureUrl(ERRORLOGIN)
+                  .defaultSuccessUrl("/home")
+                  .permitAll()
+                  .and()
                 .logout()
-                .permitAll()
-                .and()
+                  .logoutSuccessUrl("/login?logout")
+                  .permitAll()
+                  .and()
                 .exceptionHandling().accessDeniedHandler(accessDeniedHandler)
                 // Fix for H2 console
                 .and().headers().frameOptions().disable();
         //用重写的Filter替换掉原有的UsernamePasswordAuthenticationFilter
         http.addFilterAt(taskAuthenticationFilter(),
                 UsernamePasswordAuthenticationFilter.class);
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/static/**",
+                "/webjars/**",
+                "/css/**",
+                "/js/**",
+                "/hero-illo.svg",
+                "/erbu_logo.png");
     }
 
     @Autowired
@@ -101,8 +129,14 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     TaskLoginSecurityFilter taskAuthenticationFilter() throws Exception {
         TaskLoginSecurityFilter filter = new TaskLoginSecurityFilter();
 
-        //这句很关键，重用WebSecurityConfigurerAdapter配置的AuthenticationManager，不然要自己组装AuthenticationManager
+        //这句很关键，重用WebSecurityConfigurerAdapter配置的AuthenticationManager，
+        // 不然要自己组装AuthenticationManager
         filter.setAuthenticationManager(authenticationManagerBean());
+        //这个也是很关键，这个失败的处理器需要自己实现，
+        // 也就是相当于自定义失败后返回到哪个路径下springsecurity交给你自己去处理这个路径
+        //底层下描述的是，通过一层层的认证异常捕获，将request请求转发重定向到自定义的路径下。
+        filter.setAuthenticationFailureHandler(new SimpleUrlAuthenticationFailureHandler(ERRORLOGIN));
+        //成功的处理器，也可以自定义路径，这里就不需要了，使用系统默认的就行
         return filter;
     }
 
