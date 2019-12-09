@@ -1,19 +1,19 @@
 package com.hollykunge.config;
 
-import com.alibaba.fastjson.JSONObject;
-import com.hollykunge.model.Item;
-import com.hollykunge.model.Vote;
-import com.hollykunge.model.VoteItem;
-import com.hollykunge.service.VoteItemService;
-import com.hollykunge.util.ExceptionCommonUtil;
-import lombok.extern.slf4j.Slf4j;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.fastjson.JSON;
-import org.springframework.util.StringUtils;
+import com.alibaba.fastjson.JSONObject;
+import com.hollykunge.model.Item;
+import com.hollykunge.model.VoteItem;
+import com.hollykunge.reflection.ReflectionUtils;
+import com.hollykunge.service.VoteItemService;
+import com.hollykunge.util.ExceptionCommonUtil;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhhongyu
@@ -21,15 +21,18 @@ import java.util.List;
  */
 @Slf4j
 public class UploadDataListener extends AnalysisEventListener<ItemUploadData> {
-
+    private final Map<String,Object> resultMsg;
 
     private final VoteItemService voteItemService;
 
     private final Item item;
 
-    public UploadDataListener(Item item, VoteItemService voteItemService) {
+    private static final String ATTR = "attr";
+
+    public UploadDataListener(Item item, VoteItemService voteItemService,Map<String,Object> resultMsg) {
         this.voteItemService = voteItemService;
         this.item = item;
+        this.resultMsg = resultMsg;
     }
 
 
@@ -65,11 +68,15 @@ public class UploadDataListener extends AnalysisEventListener<ItemUploadData> {
             //所在轮数为第一轮 TODO:导入不一定是第一轮
             voteItem.setTurnNum("1");
             voteItem.setItem(this.item);
-            setAttr6(voteItem,item);
+//            setAttr6(voteItem,item);
             try {
                 voteItemService.add(voteItem);
                 log.info("存储数据库成功！");
+                resultMsg.put("status",200);
+                resultMsg.put("msg","导入成功");
             } catch (Exception e) {
+                resultMsg.put("status",500);
+                resultMsg.put("msg","保存excel失败!excel中可能存在不规范数据，或数据库连接失败,失败原因:"+e.getMessage());
                 log.error("存储数据库失败！");
                 log.error(ExceptionCommonUtil.getExceptionMessage(e));
             }
@@ -79,33 +86,12 @@ public class UploadDataListener extends AnalysisEventListener<ItemUploadData> {
     private void setAttr6(VoteItem voteItem, ItemUploadData itemUploadData) {
         String attr6 = "";
         String comma = ",";
-        if (!StringUtils.isEmpty(itemUploadData.getAttr6())) {
-            attr6 += itemUploadData.getAttr6();
-            attr6 += comma;
-        }
-        if (!StringUtils.isEmpty(itemUploadData.getAttr7())) {
-            attr6 += itemUploadData.getAttr7();
-            attr6 += comma;
-        }
-        if (!StringUtils.isEmpty(itemUploadData.getAttr8())) {
-            attr6 += itemUploadData.getAttr8();
-            attr6 += comma;
-        }
-        if (!StringUtils.isEmpty(itemUploadData.getAttr9())) {
-            attr6 += itemUploadData.getAttr9();
-            attr6 += comma;
-        }
-        if (!StringUtils.isEmpty(itemUploadData.getAttr10())) {
-            attr6 += itemUploadData.getAttr10();
-            attr6 += comma;
-        }
-        if (!StringUtils.isEmpty(itemUploadData.getAttr11())) {
-            attr6 += itemUploadData.getAttr11();
-            attr6 += comma;
-        }
-        if (!StringUtils.isEmpty(itemUploadData.getAttr12())) {
-            attr6 += itemUploadData.getAttr12();
-            attr6 += comma;
+        for(int i = 6; i<=31 ; i++){
+            Object o = ReflectionUtils.invokeGetter(itemUploadData, ATTR + i);
+            if(o != null && o instanceof String){
+                attr6 += (String)o;
+                attr6 += comma;
+            }
         }
         voteItem.setAttr6(attr6);
         if("".equals(attr6)){

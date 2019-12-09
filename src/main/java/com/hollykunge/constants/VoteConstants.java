@@ -9,7 +9,10 @@ public class VoteConstants {
     public static final String AGREEMENT_LETTER = "http://";
     public static final String INVITECODE_RPC = "/userVote/";
 
-
+    /**
+     * 投票轮新建状态
+     */
+    public static final String ITEM_ADD_STATUS = "1";
     /**
      * 投票轮已发布状态
      */
@@ -38,4 +41,8 @@ public class VoteConstants {
     public static final String ITEM_RULE_SCORE = "3";
 
     public static final String EXTAPIHEAD = "extapihead";
+    /**
+     * 确认投票项通过的百分比
+     */
+    public static final String VOTE_PASS_PERSENT = "2/3";
 }

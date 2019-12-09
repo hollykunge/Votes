@@ -2,11 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <div th:replace="/fragments/header :: header-css" />
+    <div th:replace="/fragments/header :: header-css"/>
 </head>
 
 <body class="bg-light">
-<div th:replace="/fragments/header :: header" />
+<div th:replace="/fragments/header :: header"/>
 
 <div class="container">
     <nav aria-label="breadcrumb">
@@ -19,43 +19,58 @@
             <li class="breadcrumb-item active" aria-current="page" th:text="'第'+${item.turnNum}+'轮投票项'">新建一轮投票</li>
         </ol>
     </nav>
-    <div class="alert alert-info" th:if="${showMessage}" th:utext="${showMessage}"></div>
+    <div id="alertMsg"></div>
+    <div class="alert alert-danger" th:if="${showAlertMessage}" th:utext="${showAlertMessage}">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
     <div class="card border-dark mb-3">
         <div class="card-header">
-            <button class="btn btn-outline-danger btn-sm" id="delBtn">删除</button>
             <div style="float: right">
                 <a href="/item/export" class="btn btn-link">下载模板</a>
 
-
-                <button type="button" class="btn btn-primary btn-sm" id="importExcel" th:onclick="|showImportModel()|">导入</button>
-                <a th:href="@{'/useParentItem/{itemId}'(itemId=${item.id})}" class="col-md-2" th:if="${item.turnNum != 1}">
+                <button type="button" class="btn btn-primary btn-sm" id="importExcel" th:onclick="|showImportModel()|">
+                    导入
+                </button>
+                <a th:href="@{'/useParentItem/{itemId}'(itemId=${item.id})}" class="col-md-2"
+                   th:if="${item.turnNum != 1}">
                     <button type="button" class="btn btn-secondary btn-sm">使用上一轮投票项</button>
                 </a>
-<!--                <button type="button" class="btn btn-secondary btn-sm" th:onclick="|showAddModel()|">新增</button>-->
+                <!--                <button type="button" class="btn btn-secondary btn-sm" th:onclick="|showAddModel()|">新增</button>-->
             </div>
         </div>
         <div class="card-body text-primary card-nopadding">
-            <table id="table">
+            <table id="table" class="table-striped table-sm">
             </table>
         </div>
     </div>
-    <div class="card border-dark mb-3 shadow-sm">
-        <div class="card-header">
-            <span>排序内容</span>
-        </div>
-        <div class="card-body text-primary card-nopadding">
-            <table id="order"></table>
-        </div>
-    </div>
+    <!--    <div class="card border-dark mb-3 shadow-sm">-->
+    <!--        <div class="card-header">-->
+    <!--            <span>排序内容</span>-->
+    <!--        </div>-->
+    <!--        <div class="card-body text-primary card-nopadding">-->
+    <!--            <table class="table-striped table-sm" id="order"></table>-->
+    <!--        </div>-->
+    <!--    </div>-->
     <!--上传框-->
-    <div class="modal fade" id="importModel" tabindex="-1" role="dialog" aria-labelledby="importTitle" aria-hidden="true" data-backdrop="static">
+    <div class="modal fade" id="importModel" tabindex="-1" role="dialog" aria-labelledby="importTitle"
+         aria-hidden="true" data-backdrop="static">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="importTitle">导入投票选项</h5>
                 </div>
                 <div class="modal-body">
-                    <div class="alert alert-danger tips-hide" role="alert" id="customerTips">文件格式错误，仅限 <strong>XLSX</strong>或<strong>CVS</strong>格式！</div>
+                    <div class="alert alert-danger tips-hide" role="alert" id="customerTips">文件格式错误，仅限
+                        <strong>XLSX</strong>或<strong>CVS</strong>格式！
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="alert alert-warning" role="alert">
+                        注意：投票项的属性不能超过32列；不能进行重复导入。
+                    </div>
                     <div class="input-group mb-3">
                         <input type="file" id="file" name="myfile"/>
                         <label for="file" hidden="hidden">选择文件</label>
@@ -68,8 +83,10 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
-                    <button type="button" class="btn btn-primary copy-code" id="copyCode" th:onclick="'javascript:excelImport('+${item.id}+')'" data-clipboard-target="#code">
-                        上传
+                    <button type="button" class="btn btn-primary copy-code" id="copyCode" data-loading-text="Loading..."
+                            th:onclick="'javascript:importVoteItems('+${item.id}+')'">
+                        <span class="spinner-border spinner-border-sm hide" role="status" aria-hidden="true"></span>
+                        <span>上传</span>
                     </button>
                 </div>
             </div>
@@ -77,7 +94,8 @@
     </div>
 
     <!--新增框-->
-    <div class="modal fade" id="addModel" tabindex="-1" role="dialog" aria-labelledby="addTitle" aria-hidden="true" data-backdrop="static">
+    <div class="modal fade" id="addModel" tabindex="-1" role="dialog" aria-labelledby="addTitle" aria-hidden="true"
+         data-backdrop="static">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -100,7 +118,8 @@
     </div>
 
     <!--删除确认框-->
-    <div class="modal fade" id="delModel" tabindex="-1" role="dialog" aria-labelledby="addTitle" aria-hidden="true" data-backdrop="static">
+    <div class="modal fade" id="delModel" tabindex="-1" role="dialog" aria-labelledby="addTitle" aria-hidden="true"
+         data-backdrop="static">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -120,68 +139,92 @@
     </div>
 </div>
 
-<div th:replace="/fragments/footer :: footer" />
+<div th:replace="/fragments/footer :: footer"/>
 
 <script th:inline="javascript">
-    let data = JSON.parse([[${voteItems}]] || '[]')
-    let $table = $('#table')
-    let $remove = $('#remove')
-    let selections = []
-    let rules = [[${item.rules}]] // 规则范围 1否同 2排序 3打分
-    let agree_rule = [[${item.agreeRule}]] // 规则范围 1否同 2排序 3打分
-    let titleConfig =  [[${item.vote.excelHeader}]]
+    var $table = $('#table');
+    var rules = [[${parentItemRule}]];// 规则范围 1否同 2排序 3打分
+    var titleConfig = [[${item.vote.excelHeader}]];
+    var delVoteId = '';
+    var turnNum = [[${item.turnNum}]];
+    var itemId = [[${item.id}]];
+
 
     $(function () {
-        if(titleConfig) {
-            titleConfig = initTitleConfig(titleConfig)
+        var resultName = '';
+        if (rules === '1') {
+            resultName = "parentStatisticsNum";
+        } else if (rules === '2') {
+            resultName = "parentStatisticsOrderScore";
         } else {
-            // null.map不存在的错误
+            resultName = "parentStatisticsToalScore";
+        }
+        if (titleConfig) {
+            titleConfig = initTitleConfig(titleConfig);
+            if (turnNum !== '1') {
+                titleConfig.splice(5, 0, {'title': '结果', 'field': resultName})
+            }
+        } else {
             titleConfig = []
+        }
+        // 删除按钮列
+        window.operateEvents = {
+            "click #itemDelete": function (e, value, row, index) {
+                delVoteId = row.voteItemId;
+                $('#delModel').modal('show');
+            }
         }
         // 添加checkbox列
         initTable({
             rules: rules,
-            data: data,
             titleConfig: titleConfig,
-            checkbox: true,
-            clickToSelect: true
+            data: [],
+            // checkbox: true,
+            // clickToSelect: true,
+            url: '/voteItems/' + [[${item.id}]],
+            operateCol: true,
+            operateColFormat: delFormatter
         })
 
         // 清空 file 值
-        $('#importModel').on('hide.bs.modal', function (a,b,c) {
-            if(a.type === 'hide') {
+        $('#importModel').on('hide.bs.modal', function (a, b, c) {
+            if (a.type === 'hide') {
                 $('#file').val('')
             }
         })
         // file 改变 判断是否为正确格式文件
-        $('#file').on('change', function() {
+        $('#file').on('change', function () {
             // 存在文件
-            if(this.files.length > 0) {
+            if (this.files.length > 0) {
                 // 是 xlsx || csv 格式
-                if(this.files[0].name.indexOf('.xlsx') !== -1 || this.files[0].name.indexOf('.csv') !== -1) {
+                if (this.files[0].name.indexOf('.xlsx') !== -1 || this.files[0].name.indexOf('.csv') !== -1) {
                     $('.fileName').html(this.files[0].name);
                     $('#customerTips').addClass('tips-hide');
                     $('#copyCode').removeAttr("disabled");
                     return;
-                }else {
+                } else {
                     $('#customerTips').removeClass('tips-hide');
-                    $('#copyCode').attr("disabled",'disabled');
+                    $('#copyCode').attr("disabled", 'disabled');
                 }
             }
         })
-        // 删除确认框
-        $('#delBtn').click(function () {
-            $('#delModel').modal('show');
-        })
         // 删除
         $('#saveDelBtn').click(function () {
-            var selectItems = $table.bootstrapTable('getSelections')
-            var ids = '';
-            selectItems.forEach(item => {
-                ids = ids + item.voteItemId + ','
-            })
-            ids = ids.substring(0,ids.length-1)
-            self.location.href="/deleteVoteItem/"+[[${item.id}]]+"/"+ids;
+            $.ajax({
+                url: "/deleteVoteItem/" + [[${item.id}]] + "/" + delVoteId,
+                async: true,
+                contentType: "application/json;charset=utf-8",
+                dataType: 'html',
+                cache: false,
+                type: "get",
+                success: function (res) {
+                    $('#delModel').modal('hide');
+                    $table.bootstrapTable('refresh');
+                    showInfo("删除成功")
+                }, error: function (result) {
+                    alert("数据没有成功返回!")
+                }
+            });
         })
         // 新增
         $('#saveAddBtn').click(function () {
@@ -196,24 +239,62 @@
             voteItem.attr6 = $("form input:eq(6)").val();
             voteItem.voteItemId = "";
             $.ajax({
-                url:"/addVoteItem",
-                async:true,
-                contentType:"application/json;charset=utf-8",
+                url: "/addVoteItem",
+                async: true,
+                contentType: "application/json;charset=utf-8",
                 dataType: 'html',
                 cache: false,
-                data:JSON.stringify(voteItem),
-                type:"post",
-                success:function(){
+                data: JSON.stringify(voteItem),
+                type: "post",
+                success: function () {
                     $('#addModel').modal('hide');
                     window.location.reload();
-                },error:function(result){
+                }, error: function (result) {
                     alert("数据没有成功返回!")
                 }
             });
         })
 
-
+        function showInfo(info) {
+            var innerDiv = '<div class="alert alert-success">' + info + '</div>';
+            $("#alertMsg").html(innerDiv)
+        }
     })
+
+    // 操作列
+    function delFormatter(value, row, index) {
+        return [
+            '<button id="itemDelete" type="button" class="btn btn-outline-danger btn-sm">删除</button>'
+        ].join("")
+    }
+
+    function importVoteItems(id) {
+        excelImport(id, loadFn)
+    }
+
+    function loadFn(evt) {
+        var response = JSON.parse(evt.currentTarget.response || '[]')
+        if (response.status === 200) {
+            initTable({
+                rules: rules,
+                titleConfig: initTitleConfig(response.excelHeader.excelHeader),
+                data: [],
+                url: '/voteItems/' + itemId,
+                operateCol: true,
+                operateColFormat: delFormatter
+            })
+            $table.bootstrapTable('refresh');
+        }
+        $('#importModel').modal('hide');
+        showInfo(response.msg);
+        $('#copyCode').attr('disabled', false);
+        $('#copyCode').find('.spinner-border').addClass('hide')
+    }
+
+    function showInfo(info) {
+        var innerDiv = '<div class="alert alert-success">' + info + '</div>';
+        $("#alertMsg").html(innerDiv)
+    }
 </script>
 <script type="text/javascript" th:src="@{/js/voteItem.js}"></script>
 </body>

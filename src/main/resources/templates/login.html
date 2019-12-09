@@ -10,17 +10,24 @@
 <div class="container">
 
     <form class="form-signin" th:action="@{/login}" method="post">
+        <h3 class="text-center">登录</h3>
         <fieldset>
 
             <div th:if="${param.error}">
                 <div class="alert alert-danger">
                     无效的用户名密码
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
             </div>
 
             <div th:if="${param.logout}">
                 <div class="alert alert-info">
                     你已经注销
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
             </div>
 
@@ -38,9 +45,43 @@
 
         </fieldset>
     </form>
+<!--    <button onclick="fasong()">123123</button>-->
 </div>
 
 <div th:replace="/fragments/footer :: footer"/>
+<script type="text/javascript" th:inline="javascript">
+    'use strict';
+    var username = [[${username}]];
+    var password = [[${password}]];
+    // function fasong(){
+    //     window.parent.postMessage('fasongxinxi', '*');
+    // }
+    $(function () {
+        if(username == null || password == null){
+            return;
+        }
+        $.ajax({
+            //提交数据的类型 POST GET
+            type:"POST",
+            url:"/login",
+            //提交的数据
+            data:{username:username,password:password},
+            //返回数据的格式
+            dataType: "html",//"xml", "html", "script", "json", "jsonp", "text".
+            //成功返回之后调用的函数
+            success:function(data){
+                window.location.href="/home"
+            },
+            //调用执行后调用的函数
+            complete: function(XMLHttpRequest, textStatus){
+            },
+            //调用出错执行的函数
+            error: function(){
+                //请求出错处理
+            }
+        });
 
+    })
+</script>
 </body>
 </html>

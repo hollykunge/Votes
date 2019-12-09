@@ -31,5 +31,43 @@ public class ItemUploadData {
     private String attr11;
     @ExcelProperty(index = 12)
     private String attr12;
+    @ExcelProperty(index = 13)
+    private String attr13;
+    @ExcelProperty(index = 14)
+    private String attr14;
+    @ExcelProperty(index = 15)
+    private String attr15;
+    @ExcelProperty(index = 16)
+    private String attr16;
+    @ExcelProperty(index = 17)
+    private String attr17;
+    @ExcelProperty(index = 18)
+    private String attr18;
+    @ExcelProperty(index = 19)
+    private String attr19;
+    @ExcelProperty(index = 20)
+    private String attr20;
+    @ExcelProperty(index = 21)
+    private String attr21;
+    @ExcelProperty(index = 22)
+    private String attr22;
+    @ExcelProperty(index = 23)
+    private String attr23;
+    @ExcelProperty(index = 24)
+    private String attr24;
+    @ExcelProperty(index = 25)
+    private String attr25;
+    @ExcelProperty(index = 26)
+    private String attr26;
+    @ExcelProperty(index = 27)
+    private String attr27;
+    @ExcelProperty(index = 28)
+    private String attr28;
+    @ExcelProperty(index = 29)
+    private String attr29;
+    @ExcelProperty(index = 30)
+    private String attr30;
+    @ExcelProperty(index = 31)
+    private String attr31;
 
 }

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>投票单轮统计</title>
+    <div th:replace="/fragments/header :: header-css"/>
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-expand-lg shadow-sm rounded mb-5">
+    <div class="container">
+<!--        <img th:src="@{/erbu_logo.png}" style="width: 300px;height: 38px"/>-->
+        <div class="navbar-brand text-dark font-weight-bolder text-muted">投票系统</div>
+    </div>
+</nav>
+<div class="container">
+    <h3 class="text-center"><span th:text="'第'+${item.turnNum}+'轮投票统计结果'"></span></h3>
+    <div class="alert alert-danger" th:if="${showAlertMessage}" th:utext="${showAlertMessage}">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="card-deck mb-3 text-center">
+        <div class="card border-dark mb-3 shadow-sm">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal ">投票规则</h4>
+            </div>
+            <div class="card-body">
+                <h1 class="card-title">
+                    <div th:switch="*{item.rules}">
+                        <div th:case="1">
+                            <span th:text="${item.agreeRule == '1' ? '同意' : '否决'}"></span>
+                            <small class="text-muted">/ 否同</small>
+                        </div>
+                        <div th:case="2">
+                            <span>排序</span>
+                        </div>
+                        <div th:case="3">
+                            <span>评分</span>
+                        </div>
+                    </div>
+                </h1>
+                <ul class="list-unstyled mt-3 mb-4">
+                    <div th:switch="*{item.rules}">
+                        <div th:case="1">
+                            <li th:text="${'通过系数：'+ item.agreePassPersent}"></li>
+                            <li th:text="${'大于'+ item.agreeMin}"></li>
+                            <li th:text="${'小于'+ item.agreeMax}"></li>
+                        </div>
+                        <div th:case="3">
+                            <li th:text="${'大于'+ item.minScore}"></li>
+                            <li th:text="${'小于'+ item.maxScore}"></li>
+                        </div>
+                    </div>
+                </ul>
+            </div>
+        </div>
+        <div class="card border-dark mb-3 shadow-sm">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">投票说明</h4>
+            </div>
+            <div class="card-body">
+                <div class="card-text" th:text="${item.body}">
+                    暂无说明
+                </div>
+            </div>
+        </div>
+        <div class="card border-dark mb-3 shadow-sm">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">投票人数</h4>
+            </div>
+            <div class="card-body">
+                <h1 class="card-title">
+                    <span th:text="${item.memberNum}">0/</span>
+                    <small class="text-muted" th:text="'/'+${item.memberSize}+'人'">--</small>
+                </h1>
+            </div>
+        </div>
+    </div>
+    <div style="float: right">
+
+    </div>
+    <div class="card border-dark mb-3 shadow-sm">
+        <div class="card-header">
+            <span style="margin-right: 30px">投票结果</span>
+            <div class="color-lump-1"></div>
+            <div class="color-lump-2"></div>
+            <div class="color-lump-3"></div>
+            <div class="color-lump-4"></div>
+            <div class="color-lump-5"></div> <div style="display:inline-block; color: #989898">并列项</div>
+            <div class="color-lump-6" th:if="${item.rules == '1'}"></div> <div style="display:inline-block; color: #989898" th:if="${item.rules == '1'}">未通过</div>
+        </div>
+        <div class="card-body card-nopadding">
+            <table id="table" class="table-striped table-sm"
+            ></table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 mb-3">
+            <button id="nextVote" class="btn btn-outline-primary btn-block">
+                <span>进入下一轮投票</span>
+            </button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" th:src="@{/js/voteStat.js}"></script>
+<script type="text/javascript"
+        src="/webjars/bootstrap-table/1.15.4/dist/bootstrap-table.min.js"></script>
+<script th:inline="javascript">
+    var item = JSON.parse([[${itemObj}]] || '[]');
+    var statistics = JSON.parse([[${statistics}]] || '[]');
+    var data = statistics.voteItems;
+    var titleConfig = [[${ item.vote.excelHeader }]];
+    var $table = $('#table') // 当前页面表格
+    var resultName = '';
+    var colorMap = new Map();
+    if (item.rules == '1') {
+        resultName = "currentStatisticsNum";
+    } else if (item.rules == '2') {
+        resultName = "currentStatisticsOrderScore";
+    } else {
+        resultName = "currentStatisticsToalScore";
+    }
+    if (titleConfig) {
+        titleConfig = initTitleConfig(titleConfig);
+        titleConfig.splice(5, 0, {'title': '结果', 'field': resultName})
+    } else {
+        titleConfig = []
+    }
+    $(function () {
+        // 筛选重复值
+        handleRepeatData();
+        initTable({
+            rules: item.rules,
+            data: data,
+            titleConfig: titleConfig,
+            checkbox: false,
+            clickToSelect: false,
+            rowStyle: rowStyle
+        })
+        // 点击进入下一轮投票
+        $('#nextVote').on('click', function (e) {
+            var url = window.location.href;
+            window.location.href = '/userVote/nextTurn/' + [[${ item.id }]] + '/' + [[${ item.code }]];
+        })
+    })
+</script>
+
+</body>
+</html>

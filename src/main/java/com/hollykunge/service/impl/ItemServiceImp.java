@@ -3,6 +3,7 @@ package com.hollykunge.service.impl;
 import com.hollykunge.constants.VoteConstants;
 import com.hollykunge.exception.BaseException;
 import com.hollykunge.model.Item;
+import com.hollykunge.model.Vote;
 import com.hollykunge.repository.ItemRepository;
 import com.hollykunge.service.ItemService;
 import com.hollykunge.util.UUIDUtils;
@@ -113,5 +114,10 @@ public class ItemServiceImp implements ItemService {
     @Override
     public List<Item> findByPrevious(String previous){
        return itemRepository.findByPreviousId(previous);
+    }
+
+    @Override
+    public List<Item> findItemsByVote(Vote vote) {
+        return itemRepository.findByVote(vote);
     }
 }

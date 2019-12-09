@@ -9,7 +9,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -43,18 +42,18 @@ public class ExtTokenServiceImp implements ExtTokenService {
             }
         }
         extTokenRepository.saveAndFlush(extToken);
-        log.info("生成token为:{}", token);
         return token;
     }
 
     @Override
-    public boolean findToken(String token) {
+    public List<ExtToken> findToken(String token) {
         List<ExtToken> listTokens = extTokenRepository.findByToken(token);
-        if (listTokens.isEmpty() || listTokens.size() == 0) {
-            return false;
-        }
+        return listTokens;
+    }
+    @Override
+    public boolean deleteToken(List<ExtToken> tokenList){
         //获取成功后删除key
-        listTokens.stream().forEach(extToken -> {
+        tokenList.stream().forEach(extToken -> {
             extTokenRepository.delete(extToken.getId());
         });
         return true;
@@ -75,8 +74,6 @@ public class ExtTokenServiceImp implements ExtTokenService {
         Calendar calendar = Calendar.getInstance();
         /* HOUR_OF_DAY 指示一天中的小时 */
         calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY) - 1);
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        System.out.println("一个小时前的时间：" + df.format(calendar.getTime()));
         return calendar.getTime();
     }
 

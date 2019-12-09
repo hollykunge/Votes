@@ -1,16 +1,22 @@
 package com.hollykunge.service.impl;
 
+import com.hollykunge.constants.VoteConstants;
 import com.hollykunge.model.Item;
 import com.hollykunge.model.VoteItem;
+import com.hollykunge.repository.ItemRepository;
 import com.hollykunge.repository.VoteItemRepository;
 import com.hollykunge.service.VoteItemService;
 import com.hollykunge.util.ExceptionCommonUtil;
+import com.hollykunge.util.IntegerCompareUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -23,10 +29,12 @@ import java.util.Optional;
 @Transactional(rollbackFor = Exception.class)
 public class VoteItemServiceImp implements VoteItemService {
     private final VoteItemRepository voteItemRepository;
+    private final ItemRepository itemRepository;
 
     @Autowired
-    public VoteItemServiceImp(VoteItemRepository voteItemRepository) {
+    public VoteItemServiceImp(VoteItemRepository voteItemRepository,ItemRepository itemRepository) {
         this.voteItemRepository = voteItemRepository;
+        this.itemRepository = itemRepository;
     }
 
     @Override
@@ -46,7 +54,23 @@ public class VoteItemServiceImp implements VoteItemService {
 
     @Override
     public Optional<List<VoteItem>> findByItem(Item item) {
-        return voteItemRepository.findByItem(item);
+        Optional<List<VoteItem>> byItem = voteItemRepository.findByItem(item);
+        if(byItem.isPresent() && byItem.get().size() >= 0 && !StringUtils.isEmpty(item.getPreviousId())){
+            final Item parent = itemRepository.findOne(Long.valueOf(item.getPreviousId()));
+            Collections.sort(byItem.get(),(voteItem1,voteItem2) ->{
+                if(Objects.equals(parent.getRules(), VoteConstants.ITEM_RULE_AGER)){
+                    return IntegerCompareUtil.compareTo(voteItem1.getParentStatisticsNum(),voteItem2.getParentStatisticsNum());
+                }
+                if(Objects.equals(parent.getRules(), VoteConstants.ITEM_RULE_SCORE)){
+                    return IntegerCompareUtil.compareTo(voteItem1.getParentStatisticsToalScore(),voteItem2.getParentStatisticsToalScore());
+                }
+                if(Objects.equals(parent.getRules(), VoteConstants.ITEM_RULE_ORDER)){
+                    return IntegerCompareUtil.compareTo(voteItem1.getParentStatisticsOrderScore(),voteItem2.getParentStatisticsOrderScore());
+                }
+                return 1;
+            });
+        }
+        return byItem;
     }
     @Override
     public void deleteVoteItem(List<String> ids)throws Exception{

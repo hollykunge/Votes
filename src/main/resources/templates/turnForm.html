@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>二部投票系统</title>
+    <title>投票系统</title>
 
     <div th:replace="/fragments/header :: header-css"/>
 
@@ -37,8 +37,12 @@
                                required="" th:field="*{memberSize}"/>
                     </div>
                 </div>
-                <br/>
-                <h6 class="p-1 mb-2 bg-customer text-white">投票规则</h6>
+
+                <h6 class="p-1 mb-2 bg-customer text-white">注意事项</h6>
+                <textarea th:field="*{body}"
+                          placeholder="" class="form-control" id="tips"/>
+
+                <h6 class="p-1 mb-2 bg-customer-primary text-white">投票规则</h6>
                 <div class="row" style="margin-left: 240px;margin-bottom: 16px">
                     <div class="custom-control custom-radio col-md-3">
                         <input id="isNot" name="role" type="radio" class="custom-control-input"
@@ -60,9 +64,9 @@
                     </div>
                 </div>
                 <div id="isNotDiv" class="row">
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-3 mb-3">
                         <label for="agreeRule">规则</label>
-                        <select class="custom-select d-block w-100" id="agreeRule"
+                        <select class="custom-select d-block w-100" id="agreeRule" name="agreeRule"
                                 th:field="*{agreeRule}">
                             <option value="">选择...</option>
                             <option value="1">同意</option>
@@ -72,15 +76,7 @@
                             选择一项规则
                         </div>
                     </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="max">范围（最大）</label>
-                        <input type="number" class="form-control" id="max" placeholder=""
-                               th:field="*{agreeMax}"/>
-                        <div class="invalid-feedback">
-                            填写最大数量
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-3 mb-3">
                         <label for="min">范围（最小）</label>
                         <input type="number" class="form-control" id="min" placeholder=""
                                th:field="*{agreeMin}"/>
@@ -88,20 +84,40 @@
                             填写最小数量
                         </div>
                     </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="max">范围（最大）</label>
+                        <input type="number" class="form-control" id="max" placeholder=""
+                               th:field="*{agreeMax}"/>
+                        <div class="invalid-feedback">
+                            填写最大数量
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="rate">通过系数(专家人数x系数=通过票数)</label>
+                        <select class="custom-select d-block w-100" id="rate"
+                                th:field="*{agreePassPersent}">
+                            <option value="">选择...</option>
+                            <option value="1/3">1/3</option>
+                            <option value="2/3">2/3</option>
+                            <option value="1">1</option>
+                        </select>
+                        <div class="invalid-feedback">
+                            填写通过系数
+                        </div>
+                    </div>
                 </div>
                 <div id="sortDiv" class="row">
-                    <div class="col-md-6 mb-3">
-                        <label for="max">分数（最高）</label>
-                        <input type="number" class="form-control" id="maxSort" placeholder=""
-                               th:field="*{maxScore}"/>
-                    </div>
                     <div class="col-md-6 mb-3">
                         <label for="min">分数（最低）</label>
                         <input type="number" class="form-control" id="minSort" placeholder=""
                                th:field="*{minScore}"/>
                     </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="max">分数（最高）</label>
+                        <input type="number" class="form-control" id="maxSort" placeholder=""
+                               th:field="*{maxScore}"/>
+                    </div>
                 </div>
-
                 <div id="countDiv" class="row">
                     <div class="col-md-12">
                         <label for="description">说明</label>
@@ -109,24 +125,21 @@
                                   placeholder="" class="form-control" id="description"/>
                     </div>
                 </div>
-                <h6 class="p-1 mb-2 bg-customer text-white">注意事项</h6>
-                <div class="row">
-                    <div class="col-md-12">
-                            <textarea th:field="*{body}"
-                                      placeholder="" class="form-control" id="tips"/>
-                        <input type="hidden" th:field="*{vote}"/>
-                        <input type="hidden" th:field="*{user}"/>
-                        <input type="hidden" th:field="*{id}"/>
-                        <input type="hidden" th:field="*{code}"/>
-                        <input type="hidden" th:field="*{turnNum}"/>
-                        <input type="hidden" th:field="*{status}"/>
-                        <input type="hidden" th:field="*{memberNum}"/>
-                    </div>
-                </div>
+                <input type="hidden" th:field="*{vote}"/>
+                <input type="hidden" th:field="*{user}"/>
+                <input type="hidden" th:field="*{id}"/>
+                <input type="hidden" th:field="*{code}"/>
+                <input type="hidden" th:field="*{turnNum}"/>
+                <input type="hidden" th:field="*{status}"/>
+                <input type="hidden" th:field="*{memberNum}"/>
+                <input type="hidden" th:field="*{previousId}"/>
+
                 <hr class="mb-4"/>
                 <div class="row">
                     <div class="col-md-12 mb-3">
-                        <button type="submit" class="btn btn-primary btn-block" onclick="return saveVoteItem()">保存</button>
+                        <button type="submit" class="btn btn-primary btn-block" onclick="return saveVoteItem()">保存
+                            <span class="spinner-border spinner-border-sm hide" role="status" aria-hidden="true"></span>
+                        </button>
                     </div>
                 </div>
             </form>
@@ -143,6 +156,8 @@
         showRuleDiv();
     });
     var rule = 0;
+    var submitcount = 0;
+
     /**
      * 根据规则范围的选择
      * 显示对应的规则项
@@ -173,51 +188,85 @@
             $("#agreeRule").attr("required", true);
             $("#max").attr("required", true);
             $("#min").attr("required", true);
+            $("#rate").attr("required", true);
             $("#maxSort").attr("required", false);
             $("#minSort").attr("required", false);
         } else if (rule === '2') {
             $("#agreeRule").attr("required", false);
             $("#max").attr("required", false);
             $("#min").attr("required", false);
+            $("#rate").attr("required", false);
             $("#maxSort").attr("required", false);
             $("#minSort").attr("required", false);
         } else if (rule === '3') {
             $("#agreeRule").attr("required", false);
             $("#max").attr("required", false);
             $("#min").attr("required", false);
+            $("#rate").attr("required", false);
             $("#maxSort").attr("required", true);
             $("#minSort").attr("required", true);
         }
     }
-    function showInfo (info){
-        var innerDiv = '<div class="alert alert-danger">'+ info +'</div>';
+
+    function showInfo(info) {
+        var innerDiv = '<div class="alert alert-danger">' + info + '</div>';
         $("#alertMsg").html(innerDiv)
     }
-    function hideInfo(){
+
+    function hideInfo() {
         $("#alertMsg").html('<div></div>')
     }
-    function saveVoteItem(){
+
+    function saveVoteItem() {
+        var reg = /^[0-9]\d*$/;
+        var memberSize = $('#memberSize').val()
+        if (!reg.test(memberSize)) {
+            showInfo("投票人数请输入正整数");
+            return false;
+        }
         var rule = rule = $('input[type=radio]:checked').val();
         if (rule === '1') {
+            var max = $("#max").val();
+            var min = $("#min").val();
             /*<![CDATA[*/
-            if (parseInt($("#max").val()) < parseInt($("#min").val())){
-                showInfo("最大范围应大于最小范围");
+            if (!reg.test(max) || !reg.test(min)) {
+                showInfo("范围请输入正整数");
                 return false;
-            }else{
-                hideInfo();
-                return true;
+            } else {
+                if (parseInt(max) < parseInt(min)) {
+                    showInfo("最大范围应大于最小范围");
+                    return false;
+                } else {
+                    hideInfo();
+                    return true;
+                }
             }
             /*]]>*/
         } else if (rule === '3') {
+            var maxSort = $("#maxSort").val();
+            var minSort = $("#minSort").val();
             /*<![CDATA[*/
-            if (parseInt($("#maxSort").val()) < parseInt($("#minSort").val())){
-                showInfo("最大分数应大于最小分数");
+            if (!reg.test(maxSort) || !reg.test(minSort)) {
+                showInfo("分数请输入正整数");
                 return false;
-            }else{
-                hideInfo();
-                return true;
+            } else {
+                if (parseInt(maxSort) < parseInt(minSort)) {
+                    showInfo("最大分数应大于最小分数");
+                    return false;
+                } else {
+                    hideInfo();
+                    return true;
+                }
             }
             /*]]>*/
+        }
+        if (submitcount == 0) {
+            submitcount++;
+            $('button[type=submit]').find('.hide').removeClass('hide');
+            return true;
+        } else {
+            alert("正在操作，请不要重复提交");
+            return false;
         }
     }
 

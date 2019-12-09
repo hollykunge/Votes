@@ -1,8 +1,10 @@
 package com.hollykunge.controller;
 
 import com.hollykunge.constants.VoteConstants;
+import com.hollykunge.model.Item;
 import com.hollykunge.model.Vote;
 import com.hollykunge.model.User;
+import com.hollykunge.service.ItemService;
 import com.hollykunge.service.VoteService;
 import com.hollykunge.service.UserService;
 import com.hollykunge.util.Base64Utils;
@@ -15,12 +17,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -38,6 +42,8 @@ public class TurnController {
         this.voteService = voteService;
         this.userService = userService;
     }
+    @Autowired
+    private ItemService itemService;
 
     @RequestMapping(value = "/newVote", method = RequestMethod.GET)
     public String newVote(Principal principal,
@@ -124,16 +130,22 @@ public class TurnController {
 
     @RequestMapping(value = "/vote/{id}", method = RequestMethod.DELETE)
     public String deleteVoteWithId(@PathVariable Long id,
-                                   Principal principal) {
+                                   Principal principal,
+                                   RedirectAttributes redirectAttributes) {
 
         Optional<Vote> optionalVote = voteService.findForId(id);
 
         if (optionalVote.isPresent()) {
             Vote vote = optionalVote.get();
-
+            List<Item> itemsByVote = itemService.findItemsByVote(vote);
+            if(itemsByVote.size() > 0){
+                redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("包含投票项不能进行删除操作"));
+                return "redirect:/votes/"+ vote.getUser().getUsername();
+            }
             if (isPrincipalOwnerOfVote(principal, vote)) {
                 voteService.delete(vote);
-                return "redirect:/home";
+                redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("删除成功"));
+                return "redirect:/votes/"+ vote.getUser().getUsername();
             } else {
                 return "/403";
             }

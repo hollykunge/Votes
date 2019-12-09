@@ -15,7 +15,7 @@
             </li>
             <li class="breadcrumb-item"><a th:href="@{'/vote/' + ${item.getVote().id}}"
                                            th:text="${item.getVote().title}"></a></li>
-            <li class="breadcrumb-item active" aria-current="page" th:text="'第'+${item.turnNum}+'轮统计结果'">新建一轮投票</li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="'第'+${item.turnNum}+'轮投票统计结果'">新建一轮投票</li>
         </ol>
     </nav>
     <div class="card-deck mb-3 text-center">
@@ -41,6 +41,7 @@
                 <ul class="list-unstyled mt-3 mb-4">
                     <div th:switch="*{item.rules}">
                         <div th:case="1">
+                            <li th:text="${'通过系数：'+ item.agreePassPersent}"></li>
                             <li th:text="${'大于'+ item.agreeMin}"></li>
                             <li th:text="${'小于'+ item.agreeMax}"></li>
                         </div>
@@ -74,21 +75,25 @@
             </div>
         </div>
     </div>
-    <div style="float: right">
-
-    </div>
     <div class="card border-dark mb-3 shadow-sm">
         <div class="card-header">
-            投票结果
+            <span style="margin-right: 30px">投票结果</span>
+            <div class="color-lump-1"></div>
+            <div class="color-lump-2"></div>
+            <div class="color-lump-3"></div>
+            <div class="color-lump-4"></div>
+            <div class="color-lump-5"></div>
+            <div style="display:inline-block; color: #989898">并列项</div>
+            <div class="color-lump-6" th:if="${item.rules == '1'}"></div>
+            <div style="display:inline-block; color: #989898" th:if="${item.rules == '1'}">未通过</div>
             <div style="float: right">
                 <a th:href="@{'/statistics/export/{itemId}'(itemId=${item.id})}" class="col-md-2">
-                    <button type="button" class="btn btn-primary btn-sm">导出</button>
+                    <button type="button" class="btn btn-outline-primary btn-sm">导出</button>
                 </a>
             </div>
         </div>
         <div class="card-body card-nopadding">
-            <table id="table"
-                   data-virtual-scroll="true"
+            <table id="table" class="table-striped table-sm"
             ></table>
         </div>
     </div>
@@ -99,21 +104,21 @@
 <script th:inline="javascript">
     var item = JSON.parse([[${itemObj}]] || '[]');
     var statistics = JSON.parse([[${statistics}]] || '[]');
-    var titleConfig = item.user.votes[0].excelHeader;
+    var titleConfig = [[${ item.vote.excelHeader }]];
     var data = statistics.voteItems;
     var $table = $('#table') // 当前页面表格
     var resultName = '';
     var colorMap = new Map();
-    if(item.rules == '1'){
-        resultName = "statisticsNum";
-    }else if(item.rules == '2'){
-        resultName = "statisticsOrderScore";
-    }else{
-        resultName = "statisticsToalScore";
+    if (item.rules == '1') {
+        resultName = "currentStatisticsNum";
+    } else if (item.rules == '2') {
+        resultName = "currentStatisticsOrderScore";
+    } else {
+        resultName = "currentStatisticsToalScore";
     }
-    if(titleConfig) {
+    if (titleConfig) {
         titleConfig = initTitleConfig(titleConfig);
-        titleConfig.splice(5,0,{'title':'结果','field': resultName})
+        titleConfig.splice(5, 0, {'title': '结果', 'field': resultName})
     } else {
         titleConfig = []
     }
@@ -121,53 +126,13 @@
         // 筛选重复值
         handleRepeatData();
         initTable({
-            rules: null,
+            rules: item.rules,
             data: data,
             titleConfig: titleConfig,
             checkbox: false,
             clickToSelect: false,
             rowStyle: rowStyle
         })
-        /**
-         * 对重复投票结果做标记
-         */
-        function handleRepeatData() {
-
-            var randowColor = ['#52b1ff', '#7ac8ff', '#a3dcff', '#e6f6ff', '#ffffff'];
-            // 第一次循环，结果计数 (key:score,value:出现次数)
-            var countMap = new Map();
-            for(var i=0;data.length>i; i++){
-                var score = data[i][resultName];
-                var count = countMap.get(score)
-                if (count > 0) {
-                    count = count + 1;
-                    countMap.set(score,count);
-                } else {
-                    countMap.set(score,1);
-                }
-            }
-            // 第二次循环，出现次数超过一次且分数不为0的
-            for(var i=0;data.length>i; i++){
-                var score = data[i][resultName];
-                var count = countMap.get(score)
-                /*<![CDATA[*/
-                if (count > 1 && score!=='0') {
-                    // 分数个位
-                    var fix = parseInt(score%10);
-                    colorMap.set(score,randowColor[fix])
-                }
-                /*]]>*/
-            }
-        }
-        // 设置相同结果的行样式
-        function rowStyle(row, index) {
-            if (colorMap.get(row[resultName])){
-                return {css:{'background-color':colorMap.get(row[resultName])}}
-            }
-            return {}
-        }
-
-
     })
 </script>
 

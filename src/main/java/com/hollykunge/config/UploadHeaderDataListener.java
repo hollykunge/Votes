@@ -26,10 +26,13 @@ public class UploadHeaderDataListener extends AnalysisEventListener<ItemUploadDa
 
     private final Item item;
 
-    public UploadHeaderDataListener(Item item, VoteService voteService,ItemService itemService) {
+    private final Map<String,Object> result;
+
+    public UploadHeaderDataListener(Item item, VoteService voteService,ItemService itemService,Map<String,Object> result) {
         this.item = item;
         this.voteService = voteService;
         this.itemService = itemService;
+        this.result = result;
     }
 
     /**
@@ -41,14 +44,28 @@ public class UploadHeaderDataListener extends AnalysisEventListener<ItemUploadDa
     @Override
     public void invokeHeadMap(Map<Integer, String> headMap, AnalysisContext context) {
         log.info("解析到一条头数据:{}", JSON.toJSONString(headMap));
+        if(headMap.size() == 0){
+            result.put("status",500);
+            result.put("msg","excel没有标题头..");
+            return;
+        }
+        if(headMap.size() > 32){
+            result.put("status",500);
+            result.put("msg","导入失败！excel表头限制在32个以内..");
+            return;
+        }
         Vote vote = null;
         try {
             Item itemtemp = itemService.findById(item.getId());
             vote = itemtemp.getVote();
             vote.setExcelHeader(setHeaderToString(headMap));
             voteService.updateById(vote);
+            result.put("excelHeader",vote.getExcelHeader());
+            result.put("status",200);
             log.info("更新vote中的excel头成功！");
         } catch (Exception e) {
+            result.put("status",500);
+            result.put("msg",e.getMessage());
             log.error("更新vote数据库失败！");
             log.error(ExceptionCommonUtil.getExceptionMessage(e));
         }

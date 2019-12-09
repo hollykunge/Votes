@@ -4,8 +4,6 @@ import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.hollykunge.annotation.ExtApiIdempotent;
-import com.hollykunge.annotation.ExtApiToken;
 import com.hollykunge.config.*;
 import com.hollykunge.constants.VoteConstants;
 import com.hollykunge.exception.BaseException;
@@ -17,6 +15,9 @@ import com.hollykunge.reflection.ReflectionUtils;
 import com.hollykunge.service.*;
 import com.hollykunge.util.Base64Utils;
 import com.hollykunge.util.ExceptionCommonUtil;
+import com.hollykunge.util.ExtApiTokenUtil;
+import com.hollykunge.util.VoteItemPassRuleUtils;
+import com.hollykunge.vo.VoteItemVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -50,15 +51,17 @@ public class ItemController {
     private final ItemService itemService;
     private final VoteItemService voteItemService;
     private final UserVoteItemService userVoteItemService;
+    private final ExtApiTokenUtil extApiTokenUtil;
 
     @Autowired
     public ItemController(VoteService voteService, UserService userService,
-                          ItemService itemService, VoteItemService voteItemService, UserVoteItemService userVoteItemService) {
+                          ItemService itemService, VoteItemService voteItemService, UserVoteItemService userVoteItemService,ExtApiTokenUtil extApiTokenUtil) {
         this.voteService = voteService;
         this.userService = userService;
         this.itemService = itemService;
         this.voteItemService = voteItemService;
         this.userVoteItemService = userVoteItemService;
+        this.extApiTokenUtil = extApiTokenUtil;
     }
 
     /**
@@ -161,6 +164,9 @@ public class ItemController {
             if (item.getMemberSize() == null){
                 item.setMemberSize(item.getVote().getMemberSize());
             }
+            if (item.getBody() == null){
+                item.setBody(item.getVote().getBody());
+            }
             model.addAttribute("item", item);
             return "/turnForm";
         } catch (Exception e) {
@@ -190,21 +196,39 @@ public class ItemController {
      * @param model
      * @return
      */
-    @ExtApiToken(interfaceAdress = "/item/import")
-    @RequestMapping(value = "/editItem/{id}", method = RequestMethod.GET)
-    public String editItem(@PathVariable Long id,
-                           Model model) throws Exception {
+//    @ExtApiToken(interfaceAdress = "/item/import")
+    @RequestMapping(value = "/voteItemsView/{id}", method = RequestMethod.GET)
+    public String voteItemsView(@PathVariable Long id,
+                           Model model)throws Exception {
+
+        try {
+            Item item = itemService.findById(id);
+            if(!StringUtils.isEmpty(item.getPreviousId())){
+                Item prentItem = itemService.findById(Long.valueOf(item.getPreviousId()));
+                model.addAttribute("parentItemRule",prentItem.getRules());
+            }
+            model.addAttribute("item", item);
+            model.addAttribute("vote",item.getVote());
+            return "/item";
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    /**
+     * ajax加载表数据
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/voteItems/{id}", method = RequestMethod.GET)
+    public @ResponseBody List<VoteItemVO> voteItems(@PathVariable Long id,HttpServletRequest request)throws Exception {
         try {
             Item item = itemService.findById(id);
             Optional<List<VoteItem>> voteItems = voteItemService.findByItem(item);
-            model.addAttribute("item", item);
-            model.addAttribute("vote", item.getVote());
-            model.addAttribute("voteItems", null);
-            if (voteItems.get().size() > 0) {
-                model.addAttribute("voteItems", JSONObject.toJSONString(voteItems.get()));
-            }
-            return "/item";
-        } catch (Exception e) {
+            List<VoteItemVO> result = JSONArray.parseArray(JSONObject.toJSONString(voteItems.get()),VoteItemVO.class);
+            return result;
+        }catch (Exception e){
             throw e;
         }
     }
@@ -260,8 +284,10 @@ public class ItemController {
      * @throws IOException
      */
     @RequestMapping(value = "/item/import", method = RequestMethod.POST)
-    @ExtApiIdempotent(value = VoteConstants.EXTAPIHEAD)
-    public String excelImport(MultipartFile file, HttpServletRequest request,Model model) throws Exception {
+//    @ExtApiIdempotent(value = VoteConstants.EXTAPIHEAD)
+    public @ResponseBody Map<String,Object> excelImport(MultipartFile file, HttpServletRequest request,Model model) throws Exception {
+        Map<String,Object> result = new HashMap<>();
+        Map<String,Object> headerResult = new HashMap<>();
         try {
             String itemIdTemp = request.getHeader("itemId");
             if (StringUtils.isEmpty(itemIdTemp)) {
@@ -269,14 +295,17 @@ public class ItemController {
             }
             Item item = new Item();
             item.setId(Long.parseLong(itemIdTemp));
-            EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadDataListener(item, voteItemService)).sheet().doRead();
-
-            EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadHeaderDataListener(item,voteService,itemService)).sheet().doRead();
-//            return "redirect:/editItem/" + itemIdTemp;
-            return this.editItem(Long.valueOf(itemIdTemp),model);
-
+            EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadHeaderDataListener(item,voteService,itemService,headerResult)).sheet().doRead();
+            if((Integer) headerResult.get("status") == 500){
+                return headerResult;
+            }
+            EasyExcel.read(file.getInputStream(), ItemUploadData.class, new UploadDataListener(item, voteItemService,result)).sheet().doRead();
+            result.put("excelHeader",headerResult);
+            return result;
         } catch (Exception e) {
-            return "redirect:/error";
+            result.put("status",500);
+            result.put("msg",e.getMessage());
+            return result;
         }
     }
 
@@ -344,7 +373,13 @@ public class ItemController {
      * @throws Exception
      */
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
-    public String deleteItem(@PathVariable Long id) throws Exception {
+    public String deleteItem(@PathVariable Long id,RedirectAttributes redirectAttributes) throws Exception {
+        Item byId = itemService.findById(id);
+        Optional<List<VoteItem>> byItem = voteItemService.findByItem(byId);
+        if(byItem.isPresent() && byItem.get().size() > 0){
+            redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("包含投票项，不能删除该投票轮"));
+            return "redirect:/vote/" + byId.getVote().getId();
+        }
         Item item = itemService.deleteItem(id);
         return "redirect:/vote/" + item.getVote().getId();
     }
@@ -358,15 +393,14 @@ public class ItemController {
      * @throws Exception
      */
     @RequestMapping(value = "/deleteVoteItem/{itemId}/{ids}", method = RequestMethod.GET)
-    public String deleteVoteItems(@PathVariable String itemId,
+    public @ResponseBody String deleteVoteItems(@PathVariable String itemId,
 
                                   @PathVariable String ids,
                                   Model model)throws Exception{
         try {
             voteItemService.deleteVoteItem(Arrays.asList(ids.split(",")));
             model.addAttribute("showMessage","删除成功！");
-            return this.editItem(Long.valueOf(itemId),model);
-
+            return "success";
         } catch (Exception e) {
             throw e;
         }
@@ -383,7 +417,7 @@ public class ItemController {
     public String addVoteItem(@RequestBody VoteItem voteItem) throws Exception {
         try {
             voteItemService.add(voteItem);
-            return "redirect:/editItem/" + voteItem.getItem().getId();
+            return "redirect:/voteItemsView/" + voteItem.getItem().getId();
         } catch (Exception e) {
             throw e;
         }
@@ -450,15 +484,33 @@ public class ItemController {
             String excelHeader = item.getVote().getExcelHeader();
             LinkedHashMap jsonObject = JSON.parseObject(excelHeader, LinkedHashMap.class);
             //清洗一遍数据，excelhead中对应的值为null的给默认值无
+            AtomicInteger setId = new AtomicInteger();
             statisticsDownloadData.forEach(data -> {
+                setId.getAndIncrement();
+                ReflectionUtils.setFieldValue(data,"voteItemId", setId.intValue());
+                AtomicInteger index = new AtomicInteger();
                 jsonObject.forEach((key, value) -> {
+                    index.getAndIncrement();
+                    if (index.intValue() > 32) {
+                        return;
+                    }
                     if (StringUtils.isEmpty(ReflectionUtils.getFieldValue(data, (String) key))) {
                         ReflectionUtils.setFieldValue(data, (String) key, "无");
                     }
                 });
+                if(Objects.equals(item.getRules(),VoteConstants.ITEM_RULE_AGER)){
+                    if(data.getCurrentStatisticsNum() == null){
+                        ReflectionUtils.setFieldValue(data,"currentStatisticsNum", "0");
+                    }
+                    if(Objects.equals(data.getAgreeRulePassFlag(),"1")){
+                        ReflectionUtils.setFieldValue(data,"agreeRulePassFlag", "通过");
+                    }else{
+                        ReflectionUtils.setFieldValue(data,"agreeRulePassFlag", "未通过");
+                    }
+                }
             });
             EasyExcel.write(response.getOutputStream())
-                    .head(head(jsonObject))
+                    .head(head(jsonObject,item.getRules()))
                     .sheet("统计情况")
                     .doWrite(statisticsDownloadData);
             return "success";
@@ -490,12 +542,18 @@ public class ItemController {
             }
             voteItemService.deleteByItem(dataItem);
             List<VoteItem> tempData = JSONArray.parseArray(JSONObject.toJSONString(byItem.get()), VoteItem.class);
+            //规则为否同的时候，按百分比规则确定进入下一轮人数
+            if(Objects.equals(item.getRules(),VoteConstants.ITEM_RULE_AGER)){
+                Long totalNum = userVoteItemService.countIpByItem(item);
+                tempData = VoteItemPassRuleUtils.passVoteItems(tempData,item,Integer.parseInt(String.valueOf(totalNum)));
+            }
             for (VoteItem vote : tempData) {
                 this.resetVoteItem(vote);
                 vote.setItem(dataItem);
+                vote.setTurnNum(String.valueOf(dataItem.getTurnNum()));
                 voteItemService.add(vote);
             }
-            return "redirect:/editItem/" + id;
+            return "redirect:/voteItemsView/" + id;
         } catch (Exception e) {
             throw e;
         }
@@ -503,12 +561,17 @@ public class ItemController {
 
     private void resetVoteItem(VoteItem voteItem) {
         voteItem.setVoteItemId(null);
-        voteItem.setStatisticsOrderScore(0);
-        voteItem.setStatisticsToalScore(null);
-        voteItem.setStatisticsNum(null);
+        voteItem.setParentStatisticsNum(voteItem.getCurrentStatisticsNum());
+        voteItem.setParentStatisticsOrderScore(voteItem.getCurrentStatisticsOrderScore());
+        voteItem.setParentStatisticsToalScore(voteItem.getCurrentStatisticsToalScore());
+        voteItem.setCurrentStatisticsNum(null);
+        voteItem.setCurrentStatisticsOrderScore(null);
+        voteItem.setCurrentStatisticsToalScore(null);
+        voteItem.setVoteItemOrder(null);
+        voteItem.setAgreeRulePassFlag(null);
     }
 
-    private List<List<String>> head(LinkedHashMap jsonObject) {
+    private List<List<String>> head(LinkedHashMap jsonObject,String flag) {
         try {
             List<List<String>> list = new ArrayList<List<String>>();
             List<String> one = new ArrayList<>();
@@ -518,7 +581,7 @@ public class ItemController {
             AtomicInteger index = new AtomicInteger();
             values.forEach((Object ob) -> {
                 index.getAndIncrement();
-                if (index.intValue() > 7) {
+                if (index.intValue() > 32) {
                     return;
                 }
                 List<String> head = new ArrayList<String>();
@@ -526,8 +589,21 @@ public class ItemController {
                 list.add(head);
             });
             List<String> fina = new ArrayList<>();
-            fina.add("结果");
+            if(Objects.equals(flag,"1")){
+                fina.add("总票数结果");
+            }
+            if(Objects.equals(flag,"2")){
+                fina.add("排序汇总结果");
+            }
+            if(Objects.equals(flag,"3")){
+                fina.add("总得分结果");
+            }
             list.add(fina);
+            if(Objects.equals(flag,"1")){
+                List<String> pass = new ArrayList<>();
+                pass.add("是否通过");
+                list.add(pass);
+            }
             return list;
         } catch (Exception e) {
             log.error(ExceptionCommonUtil.getExceptionMessage(e));

@@ -31,7 +31,7 @@ public class Vote {
     @Column(name = "body", columnDefinition = "varchar2(4000)")
     private String body;
 
-    @Column(name = "excel_header")
+    @Column(name = "excel_header", length = 2000)
     private String excelHeader;
 
     @Column(columnDefinition = "number(6)")
