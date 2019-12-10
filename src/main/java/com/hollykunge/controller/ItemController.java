@@ -565,7 +565,8 @@ public class ItemController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "voteItem/clean/{id}")
+    @GetMapping("voteItem/clean/{id}")
+    @ResponseBody
     public ObjectRestResponse<Boolean> dropVoteItems(@PathVariable Long id) throws Exception {
         ObjectRestResponse<Boolean> response = new ObjectRestResponse<Boolean>();
         Item item = itemService.findById(id);
