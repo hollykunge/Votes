@@ -11,6 +11,7 @@ import com.hollykunge.model.Item;
 import com.hollykunge.model.User;
 import com.hollykunge.model.Vote;
 import com.hollykunge.model.VoteItem;
+import com.hollykunge.msg.ObjectRestResponse;
 import com.hollykunge.reflection.ReflectionUtils;
 import com.hollykunge.service.*;
 import com.hollykunge.util.Base64Utils;
@@ -557,6 +558,33 @@ public class ItemController {
         } catch (Exception e) {
             throw e;
         }
+    }
+
+    /**
+     * 投票轮一键清除投票项
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "voteItem/clean/{id}")
+    public ObjectRestResponse<Boolean> dropVoteItems(@PathVariable Long id) throws Exception {
+        ObjectRestResponse<Boolean> response = new ObjectRestResponse<Boolean>();
+        Item item = itemService.findById(id);
+        if(item == null){
+            response.setRel(false);
+            response.setMessage("没有查到对应的投票轮..");
+            response.setStatus(500);
+            return response;
+        }
+        if(!Objects.equals(item.getStatus(),VoteConstants.ITEM_ADD_STATUS)){
+            response.setRel(false);
+            response.setMessage("已发布的投票轮不能进行删除投票项操作..");
+            response.setStatus(500);
+            return response;
+        }
+        voteItemService.deleteByItem(item);
+        response.setStatus(200);
+        response.setRel(true);
+        return response;
     }
 
     private void resetVoteItem(VoteItem voteItem) {
