@@ -29,15 +29,15 @@ function columnConfig(rules, callback) {
             return item
         })
     // 添加 序号 表头与 voteItemId 关联
-    columnsOption.unshift({
-        title: '序号',
-        field: "voteItemId",
-        align: 'center',
-        valign: 'middle',
-        formatter: function (value, row, index) {
-            return index + 1;
-        }
-    })
+    // columnsOption.unshift({
+    //     title: '序号',
+    //     field: "voteItemId",
+    //     align: 'center',
+    //     valign: 'middle',
+    //     formatter: function (value, row, index) {
+    //         return index + 1;
+    //     }
+    // })
     callback(rules, columnsOption)
     return columnsOption
 }
