@@ -122,11 +122,14 @@ public class UserVoteItemServiceImp implements UserVoteItemService {
             }
             voteItems.add(one);
         }
+        //没有得到票数的投票项
         List<VoteItem> collect = itemData
                 .stream()
                 .filter(voteItem -> !voteItems.stream().anyMatch(vote -> (long) vote.getVoteItemId() == voteItem.getVoteItemId()))
                 .collect(Collectors.toList());
         collect.forEach(voteItem -> voteItem.setAgreeRulePassFlag("0"));
+        //按id升序
+        Collections.sort(collect, Comparator.comparingLong(VoteItem :: getVoteItemId));
         voteItems.addAll(collect);
         this.setVoteItemOrder(voteItems);
         return voteItems;
