@@ -37,6 +37,7 @@
                    th:if="${item.turnNum != 1}">
                     <button type="button" class="btn btn-secondary btn-sm">使用上一轮投票项</button>
                 </a>
+                <button type="button" class="btn btn-danger btn-sm" th:onclick="|delAllItems()|">清空投票项</button>
                 <!--                <button type="button" class="btn btn-secondary btn-sm" th:onclick="|showAddModel()|">新增</button>-->
             </div>
         </div>
@@ -130,7 +131,27 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-primary copy-code" id="saveDelBtn">
+                    <button type="button" class="btn btn-danger copy-code" id="saveDelBtn">
+                        确认删除
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--删除所有投票项确认框-->
+    <div class="modal fade" id="delAllModel" tabindex="-1" role="dialog" aria-labelledby="addTitle" aria-hidden="true"
+         data-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">提示</h5>
+                </div>
+                <div class="modal-body">
+                    <h6 class="modal-title">请确认是否删除所有投票项？</h6>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-danger copy-code" id="saveDelAllBtn">
                         确认删除
                     </button>
                 </div>
@@ -226,6 +247,25 @@
                 }
             });
         })
+        // 删除所有
+        $('#saveDelAllBtn').click(function () {
+            $.ajax({
+                url: "/voteItem/clean/" + [[${item.id}]] + "/",
+                async: true,
+                contentType: "application/json;charset=utf-8",
+                dataType: 'html',
+                cache: false,
+                type: "get",
+                success: function (res) {
+                    console.log('res', res)
+                    $('#delAllModel').modal('hide');
+                    $table.bootstrapTable('refresh');
+                    showInfo("删除成功")
+                }, error: function (result) {
+                    alert("数据没有成功返回!")
+                }
+            });
+        })
         // 新增
         $('#saveAddBtn').click(function () {
             var voteItems = JSON.parse([[${voteItems}]] || '[]');
@@ -294,6 +334,12 @@
     function showInfo(info) {
         var innerDiv = '<div class="alert alert-success">' + info + '</div>';
         $("#alertMsg").html(innerDiv)
+    }
+    /**
+     * 清空投票项
+     */
+    function delAllItems () {
+        $('#delAllModel').modal('show');
     }
 </script>
 <script type="text/javascript" th:src="@{/js/voteItem.js}"></script>
