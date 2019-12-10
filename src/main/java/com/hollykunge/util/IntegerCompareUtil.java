@@ -17,6 +17,6 @@ public class IntegerCompareUtil {
             return -1;
         }
         //如果都为空时，按id升序
-        return id2.compareTo(id1);
+        return id1.compareTo(id2);
     }
 }
