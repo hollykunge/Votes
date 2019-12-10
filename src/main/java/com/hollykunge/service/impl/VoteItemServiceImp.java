@@ -56,13 +56,22 @@ public class VoteItemServiceImp implements VoteItemService {
             final Item parent = itemRepository.findOne(Long.valueOf(item.getPreviousId()));
             Collections.sort(byItem.get(),(voteItem1,voteItem2) ->{
                 if(Objects.equals(parent.getRules(), VoteConstants.ITEM_RULE_AGER)){
-                    return IntegerCompareUtil.compareTo(voteItem1.getParentStatisticsNum(),voteItem2.getParentStatisticsNum());
+                    return IntegerCompareUtil.compareTo(voteItem1.getParentStatisticsNum(),
+                            voteItem2.getParentStatisticsNum(),
+                            voteItem1.getVoteItemId(),
+                            voteItem2.getVoteItemId());
                 }
                 if(Objects.equals(parent.getRules(), VoteConstants.ITEM_RULE_SCORE)){
-                    return IntegerCompareUtil.compareTo(voteItem1.getParentStatisticsToalScore(),voteItem2.getParentStatisticsToalScore());
+                    return IntegerCompareUtil.compareTo(voteItem1.getParentStatisticsToalScore(),
+                            voteItem2.getParentStatisticsToalScore(),
+                            voteItem1.getVoteItemId(),
+                            voteItem2.getVoteItemId());
                 }
                 if(Objects.equals(parent.getRules(), VoteConstants.ITEM_RULE_ORDER)){
-                    return IntegerCompareUtil.compareTo(voteItem1.getParentStatisticsOrderScore(),voteItem2.getParentStatisticsOrderScore());
+                    return IntegerCompareUtil.compareTo(voteItem1.getParentStatisticsOrderScore(),
+                            voteItem2.getParentStatisticsOrderScore(),
+                            voteItem1.getVoteItemId(),
+                            voteItem2.getVoteItemId());
                 }
                 return 1;
             });
