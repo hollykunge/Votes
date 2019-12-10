@@ -14,7 +14,8 @@ import javax.validation.constraints.NotNull;
 public class UserVoteItem {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "user_vote_item_seq")
+    @SequenceGenerator(name = "user_vote_item_seq",sequenceName = "USER_VOTE_ITEM_SEQ",initialValue = 2,allocationSize = 1)
     @Column(name = "id")
     private Long id;
 
@@ -28,7 +29,7 @@ public class UserVoteItem {
      * 排序
      */
     @Column(name = "order_rule")
-    private Integer order;
+    private String order;
     /**
      * 分数
      */
@@ -66,11 +67,11 @@ public class UserVoteItem {
         this.agreeFlag = agreeFlag;
     }
 
-    public Integer getOrder() {
+    public String getOrder() {
         return order;
     }
 
-    public void setOrder(Integer order) {
+    public void setOrder(String order) {
         this.order = order;
     }
 

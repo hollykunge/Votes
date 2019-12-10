@@ -1,8 +1,8 @@
 ALTER TABLE VOTE
-  ALTER COLUMN create_date SET DEFAULT CURRENT_TIMESTAMP;
+   modify  create_date  DEFAULT sysdate;
 
 -- Users
-INSERT INTO USER (user_id, password, username, active)
+INSERT INTO VOTE_USER (user_id, password, username, active)
 VALUES
   (1, '$2a$10$kYdU1bOG50gufWRhAjaSLu5/EnATu6gYzxZcDsiAcltuBBfRmTowe', 'user', 1);
 

@@ -14,7 +14,8 @@ import java.util.Date;
 @Table(name = "ext_token")
 public class ExtToken {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "ext_token_seq")
+    @SequenceGenerator(name = "ext_token_seq",sequenceName = "EXT_TOKEN_SEQ",initialValue = 1,allocationSize = 1)
     @Column(name = "id")
     private Long id;
 
@@ -28,7 +29,7 @@ public class ExtToken {
     private String interfaceAddress;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "create_date", nullable = false, updatable = false)
+    @Column(name = "create_date", nullable = false, updatable = false,columnDefinition = "Date")
     @CreationTimestamp
     private Date createDate;
 
