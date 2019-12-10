@@ -43,7 +43,7 @@ public class ExtTokenServiceImp implements ExtTokenService {
         return true;
     }
 
-    @Scheduled(cron = "0 0/10 * * * ?")
+    @Scheduled(cron = "0 0/1 * * * ?")
     public void testTasks() {
         LocalCache.getCacheMap().forEach((key,value) ->{
             LocalCache.checkCacheName(key);
