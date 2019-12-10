@@ -4,7 +4,6 @@ import com.hollykunge.annotation.ExtApiIdempotent;
 import com.hollykunge.annotation.ExtApiToken;
 import com.hollykunge.constants.VoteConstants;
 import com.hollykunge.dictionary.VoteHttpResponseStatus;
-import com.hollykunge.model.ExtToken;
 import com.hollykunge.msg.ObjectRestResponse;
 import com.hollykunge.service.ExtTokenService;
 import com.hollykunge.util.ClientIpUtil;
@@ -26,7 +25,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 
 @Slf4j
 @Aspect
@@ -97,9 +95,9 @@ public class ExtApiAopIdempotent {
 			log.warn("参数错误！");
 			return null;
 		}
-		List<ExtToken> tokens = extTokenService.findToken(token);
-		if (tokens.isEmpty() || tokens.size() == 0) {
-			response("请勿重复提交!");
+		String caCheToken = extTokenService.getCaCheToken(token);
+		if (StringUtils.isEmpty(caCheToken)) {
+			response("请勿重复提交!或幂等性token已经超时失效...");
 			log.warn("系统检测到 --->>>>>重复提交表单数据！");
 			return null;
 		}
@@ -111,7 +109,7 @@ public class ExtApiAopIdempotent {
 				return proceed;
 			}
 		}
-		extTokenService.deleteToken(tokens);
+		extTokenService.removeCache(caCheToken);
 		return proceed;
 	}
 
