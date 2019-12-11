@@ -223,7 +223,7 @@
                     $(e.target).focus().addClass('warning_input focus_input')
                     // 不符合规则也需要修改数据内容
                     $.each($._fraction, function (index, item) {
-                        if(item.voteItem.index === isRepeat.index) {
+                        if(item.index === isRepeat.index) {
                             $._fraction[index].score = $(e.target).val()
                             $._fraction[index].ispass = false // 添加一个未通过的tag
                         }
@@ -231,11 +231,12 @@
                     return
                 }
                 row.score = $(e.target).val()
+                row.index = index
                 $(e.target).removeClass('warning_input')
                 // 判断是否已存在该项内容，存在则修改，不存在push
                 $.each($._fraction, function (index, item) {
                     // 当前分数行已经有值
-                    if (item.voteItem.index === row.index) {
+                    if (item.index === row.index) {
                         isRepeat = {
                             repeat: true,
                             index: item.voteItem.index
@@ -244,7 +245,7 @@
                 })
                 if (isRepeat.repeat) {
                     $.each($._fraction, function (index, item) {
-                        if(item.voteItem.index === isRepeat.index) {
+                        if(item.index === isRepeat.index) {
                             $._fraction[index].score = $(e.target).val()
                             delete $._fraction[index].ispass
                         }
