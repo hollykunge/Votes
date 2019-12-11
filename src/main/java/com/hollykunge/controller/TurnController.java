@@ -71,6 +71,8 @@ public class TurnController {
         if (bindingResult.hasErrors()) {
             return "/voteForm";
         } else {
+            //默认增加投票为新建
+            vote.setStatus(VoteConstants.VOTE_ADD_STATUS);
             voteService.save(vote);
             return "redirect:/votes/" + vote.getUser().getUsername();
         }
