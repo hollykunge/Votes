@@ -1,6 +1,5 @@
 package com.hollykunge.model;
 
-import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -36,6 +35,11 @@ public class Vote {
 
     @Column(columnDefinition = "number(6)")
     private Integer memberSize;// COMMENT '预计投票人数'
+    /**
+     * 状态1为新建，2为发起，3为结束
+     */
+    @Column(name = "status")
+    private String status;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "create_date", nullable = false, updatable = false,columnDefinition = "Date")
@@ -109,6 +113,14 @@ public class Vote {
 
     public void setMemberSize(Integer memberSize) {
         this.memberSize = memberSize;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     @OneToMany(mappedBy = "vote", cascade = CascadeType.REMOVE)
