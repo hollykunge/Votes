@@ -4,8 +4,6 @@ import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.hollykunge.annotation.ExtApiIdempotent;
-import com.hollykunge.annotation.ExtApiToken;
 import com.hollykunge.config.*;
 import com.hollykunge.constants.VoteConstants;
 import com.hollykunge.exception.BaseException;
@@ -224,7 +222,6 @@ public class ItemController {
      * @throws Exception
      */
     @RequestMapping(value = "/voteItems/{id}", method = RequestMethod.GET)
-    @ExtApiToken(interfaceAdress = "/useParentItem")
     public @ResponseBody List<VoteItemVO> voteItems(@PathVariable Long id,HttpServletRequest request)throws Exception {
         try {
             Item item = itemService.findById(id);
@@ -530,7 +527,6 @@ public class ItemController {
      * @throws Exception
      */
     @RequestMapping(value = "/useParentItem/{id}", method = RequestMethod.GET)
-    @ExtApiIdempotent(VoteConstants.EXTAPIHEAD)
     public String itemToNext(@PathVariable Long id,
                              Model model) throws Exception {
         try {
