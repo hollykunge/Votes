@@ -9,4 +9,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ExtApiIdempotent {
 	String value();
+	boolean isViewTransfer() default false;
+	String tranferView() default "/home";
 }

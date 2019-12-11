@@ -1,17 +1,11 @@
 package com.hollykunge.service.impl;
 
-import com.hollykunge.model.ExtToken;
-import com.hollykunge.repository.ExtTokenRepository;
 import com.hollykunge.service.ExtTokenService;
+import com.hollykunge.util.LocalCache;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 /**
  * @author: zhhongyu
@@ -21,60 +15,42 @@ import java.util.List;
 @Slf4j
 @Service
 public class ExtTokenServiceImp implements ExtTokenService {
-    private final ExtTokenRepository extTokenRepository;
-
-    @Autowired
-    public ExtTokenServiceImp(ExtTokenRepository extTokenRepository) {
-        this.extTokenRepository = extTokenRepository;
-    }
 
     @Override
     public String getToken(String clentIp,String interfaceAddress) throws Exception {
-        String token = "vote_token_" + clentIp + System.currentTimeMillis();
-        ExtToken extToken = new ExtToken();
-        extToken.setToken(token);
-        extToken.setIp(clentIp);
-        extToken.setInterfaceAddress(interfaceAddress);
+        String token = "vote_token_" + clentIp+ "_" + interfaceAddress + "_" + System.currentTimeMillis();
         if (!StringUtils.isEmpty(clentIp)&&!StringUtils.isEmpty(interfaceAddress)) {
-            List<ExtToken> byToken = extTokenRepository.findByIpAndInterfaceAddress(clentIp,interfaceAddress);
-            if (byToken.size() > 0) {
-                return byToken.get(0).getToken();
+            Object tk = LocalCache.get(token);
+            if(tk != null){
+                return (String) tk;
             }
         }
-        extTokenRepository.saveAndFlush(extToken);
+        LocalCache.put(token,token);
         return token;
     }
-
     @Override
-    public List<ExtToken> findToken(String token) {
-        List<ExtToken> listTokens = extTokenRepository.findByToken(token);
-        return listTokens;
+    public String getCaCheToken(String token){
+        if(StringUtils.isEmpty(token)){
+            return null;
+        }
+        String cacheToken = (String) LocalCache.get(token);
+        log.info("获取幂等性token为：{}",cacheToken);
+        return cacheToken;
     }
     @Override
-    public boolean deleteToken(List<ExtToken> tokenList){
-        //获取成功后删除key
-        tokenList.stream().forEach(extToken -> {
-            extTokenRepository.delete(extToken.getId());
-        });
+    public boolean removeCache(String token){
+        if(LocalCache.checkCacheName(token)){
+            LocalCache.remove(token);
+            log.info("幂等性的token已被清除，token为：{}",token);
+        }
         return true;
     }
 
     @Scheduled(cron = "0 0/1 * * * ?")
     public void testTasks() {
-        Date end = new Date();
-        Date start = getDate(end);
-        List<ExtToken> byCreateDateBetween = extTokenRepository.findByCreateDateBefore(start);
-        byCreateDateBetween.forEach(extToken -> {
-            extTokenRepository.delete(extToken);
-            log.info("ip地址中的{},没用token已经删除..",extToken.getIp());
+        LocalCache.getCacheMap().forEach((key,value) ->{
+            LocalCache.checkCacheName(key);
         });
-    }
-
-    private Date getDate(Date start){
-        Calendar calendar = Calendar.getInstance();
-        /* HOUR_OF_DAY 指示一天中的小时 */
-        calendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY) - 1);
-        return calendar.getTime();
     }
 
 }

@@ -8,7 +8,6 @@ import com.hollykunge.config.ItemStatusConfig;
 import com.hollykunge.constants.VoteConstants;
 import com.hollykunge.dictionary.VoteHttpResponseStatus;
 import com.hollykunge.exception.BaseException;
-import com.hollykunge.model.ExtToken;
 import com.hollykunge.model.Item;
 import com.hollykunge.model.UserVoteItem;
 import com.hollykunge.model.VoteItem;
@@ -160,8 +159,8 @@ public class UserVoteController {
             }
             //当前轮为结束，下一轮为发起，下一轮投票页面
             if(Objects.equals(item.getStatus(),VoteConstants.ITEM_SEND_STATUS)){
-                List<ExtToken> vote_token = extTokenService.findToken((String) request.getSession().getAttribute("vote_token"));
-                extTokenService.deleteToken(vote_token);
+                String vote_token = extTokenService.getCaCheToken((String) request.getSession().getAttribute("vote_token"));
+                extTokenService.removeCache(vote_token);
                 //手动生成新的token
                 extApiTokenUtil.extApiToken(ClientIpUtil.getClientIp(request),VoteConstants.INVITECODE_RPC+"add");
                 return this.inviteCodeView(item.getId(),item.getCode(),model,request,null);
