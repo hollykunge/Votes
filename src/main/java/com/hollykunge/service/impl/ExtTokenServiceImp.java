@@ -18,7 +18,7 @@ public class ExtTokenServiceImp implements ExtTokenService {
 
     @Override
     public String getToken(String clentIp,String interfaceAddress) throws Exception {
-        String token = "vote_token_" + clentIp+ "_" + interfaceAddress + System.currentTimeMillis();
+        String token = "vote_token_" + clentIp+ "_" + interfaceAddress + "_" + System.currentTimeMillis();
         if (!StringUtils.isEmpty(clentIp)&&!StringUtils.isEmpty(interfaceAddress)) {
             Object tk = LocalCache.get(token);
             if(tk != null){
@@ -33,12 +33,15 @@ public class ExtTokenServiceImp implements ExtTokenService {
         if(StringUtils.isEmpty(token)){
             return null;
         }
-        return (String) LocalCache.get(token);
+        String cacheToken = (String) LocalCache.get(token);
+        log.info("获取幂等性token为：{}",cacheToken);
+        return cacheToken;
     }
     @Override
     public boolean removeCache(String token){
         if(LocalCache.checkCacheName(token)){
             LocalCache.remove(token);
+            log.info("幂等性的token已被清除，token为：{}",token);
         }
         return true;
     }

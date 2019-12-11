@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2019-12-10
  */
 public final class LocalCache {
-	
+
 	/**
 	 * 预缓存信息
 	 */
@@ -94,5 +94,20 @@ public final class LocalCache {
 
 	public static Map<String, Object> getCacheMap() {
 		return CACHE_MAP;
+	}
+
+	public static void main(String[] args) {
+			Thread aa = new Thread(() -> {
+				LocalCache.put("vote_token_127.0.0.1_useParentItem_1576033013706","vote_token_127.0.0.1_useParentItem_1576033013706");
+				LocalCache.remove("vote_token_127.0.0.1_useParentItem_1576033013706");
+				System.out.println("CacheName = [" + LocalCache.checkCacheName("vote_token_127.0.0.1_useParentItem_1576033013706") + "]");
+				System.out.println("LocalCache = [" + LocalCache.get("vote_token_127.0.0.1_useParentItem_1576033013706") + "]");
+			});
+			Thread bb = new Thread(() -> {
+				System.out.println("CacheName = [" + LocalCache.checkCacheName("vote_token_127.0.0.1_useParentItem_1576033013706") + "]");
+				System.out.println("LocalCache = [" + LocalCache.get("vote_token_127.0.0.1_useParentItem_1576033013706") + "]");
+			});
+			aa.start();
+			bb.start();
 	}
 }
