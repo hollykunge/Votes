@@ -139,9 +139,7 @@ public class VoteController {
                 statisticsDownloadData) {
             setId.getAndIncrement();
             ReflectionUtils.setFieldValue(data, "voteItemId", setId.intValue());
-            AtomicInteger index = new AtomicInteger();
             jsonObject.forEach((key, value) -> {
-                index.getAndIncrement();
                 if (StringUtils.isEmpty(ReflectionUtils.getFieldValue(data, (String) key))) {
                     ReflectionUtils.setFieldValue(data, (String) key, "-");
                 }
@@ -200,6 +198,10 @@ public class VoteController {
         Item item = itemsByVote.get(0);
         //最后的投票结果
         List<VoteItem> finalturnVoteItems = getfinalTurnVoteItems(item);
+        //如果就一个轮次，则返回最后一个轮次的结果
+        if(itemsByVote.size() == 1){
+            return finalturnVoteItems;
+        }
         //查找是否有否同规则
         List<Item> agareeItems = itemsByVote.stream()
                 .filter(entity -> Objects.equals(entity.getRules(), VoteConstants.ITEM_RULE_AGER))
