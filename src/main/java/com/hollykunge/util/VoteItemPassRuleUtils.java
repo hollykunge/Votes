@@ -1,5 +1,6 @@
 package com.hollykunge.util;
 
+import com.hollykunge.exception.BaseException;
 import com.hollykunge.model.Item;
 import com.hollykunge.model.VoteItem;
 import org.springframework.util.StringUtils;
@@ -14,11 +15,11 @@ import java.util.List;
  */
 public class VoteItemPassRuleUtils {
 
-    public static List<VoteItem> passVoteItems(List<VoteItem> voteItems, Item item, Integer totalNum) {
+    public static List<VoteItem> passVoteItems(List<VoteItem> voteItems, Item item, Integer totalNum) throws Exception {
 //        double decimal = MarkToDecimalsUtil.transfer(item);
         double decimal = 0;
         if(!StringUtils.isEmpty(item.getAgreePassPersent())){
-            decimal = Double.parseDouble(item.getAgreePassPersent());
+            getDecimal(item.getAgreePassPersent());
         }
         List<VoteItem> result = new ArrayList<VoteItem>();
         double finalDecimal = decimal;
@@ -49,5 +50,20 @@ public class VoteItemPassRuleUtils {
             return false;
         }
         return true;
+    }
+
+    public static double getDecimal(String data)throws Exception{
+        if(StringUtils.isEmpty(data)){
+            throw new BaseException("百分比数据不能为空...");
+        }
+        try{
+            double parseDouble = Double.parseDouble(data);
+            if(parseDouble > 100 || parseDouble < 0){
+                throw new BaseException("百分比不能大于100或者小于0");
+            }
+            return parseDouble/100;
+        }catch (Exception e){
+            throw e;
+        }
     }
 }
