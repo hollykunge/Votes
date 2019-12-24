@@ -179,21 +179,21 @@ function columnConfig(rules, callback) {
             return item
         })
     // 添加 序号 表头与 voteItemId 关联
-    // columnsOption.unshift({
-    //     title: '序号',
-    //     field: "voteItemId",
-    //     align: 'center',
-    //     valign: 'middle',
-    //     formatter: function (value, row, index) {
-    //         if (row.hasOwnProperty("contentTitle")) {
-    //             if (row.contentTitle.indexOf("序列") !== -1) {
-    //                 hasSort++
-    //             }
-    //         }
-    //         return index + 1 - hasSort
-    //     },
-    //     cellStyle: cellStyle
-    // })
+    columnsOption.unshift({
+        title: '序号',
+        field: "voteItemId",
+        align: 'center',
+        valign: 'middle',
+        formatter: function (value, row, index) {
+            if (row.hasOwnProperty("contentTitle")) {
+                if (row.contentTitle.indexOf("序列") !== -1) {
+                    hasSort++
+                }
+            }
+            return index + 1 - hasSort
+        },
+        cellStyle: cellStyle
+    })
     callback(rules, columnsOption, rules.resultName, rules.fraction)
     return columnsOption
 }

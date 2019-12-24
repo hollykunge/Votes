@@ -21,7 +21,7 @@
             <div style="float: right" sec:authorize="isAuthenticated()" th:if="${username}">
                 <div th:if="${vote.getItems().size()==0}">
                     <a th:href="@{'/editVote/{id}'(id=${vote.id})}" class="col-md-2">
-                        <button type="button" class="btn btn-secondary btn-sm" th:text="编辑">
+                        <button type="button" class="btn btn-primary btn-sm" th:text="编辑">
                             <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
                             编辑
                         </button>
@@ -30,7 +30,7 @@
             </div>
             <div style="float: right">
                 <a th:href="@{'/voteStatistics/export/{voteId}'(voteId=${vote.id})}" class="col-md-2">
-                    <button type="button" class="btn btn-outline-primary btn-sm">导出</button>
+                    <button type="button" class="btn btn-primary btn-sm">导出</button>
                 </a>
             </div>
         </div>
@@ -46,13 +46,13 @@
         </button>
     </div>
     <div class="card border-dark mb-3 shadow-sm" style="margin-top: 16px">
-        <div class="card-header bg-secondary text-white">投票轮
+        <div class="card-header bg-secondary text-white">
             <!--添加投票轮按钮-->
             <!--如果有权限-->
             <div sec:authorize="isAuthenticated()" style="float: right">
                 <a th:href="@{'/voteVote/{voteId}/{itemId}'(voteId=${vote.id},itemId=0)}" class="col-md-2">
-                    <button type="button" class="btn btn-secondary btn-sm">
-                        添加新一轮投票
+                    <button type="button" class="btn btn-primary btn-sm">
+                        添加一轮投票
                     </button>
                 </a>
             </div>

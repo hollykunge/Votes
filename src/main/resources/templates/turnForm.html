@@ -78,7 +78,7 @@
                     </div>
                     <div class="col-md-3 mb-3">
                         <label for="min">范围（最小）</label>
-                        <input type="number" class="form-control" id="min" placeholder=""
+                        <input type="number" class="form-control" id="min" placeholder="最小值"
                                th:field="*{agreeMin}"/>
                         <div class="invalid-feedback">
                             填写最小数量
@@ -86,21 +86,23 @@
                     </div>
                     <div class="col-md-3 mb-3">
                         <label for="max">范围（最大）</label>
-                        <input type="number" class="form-control" id="max" placeholder=""
+                        <input type="number" class="form-control" id="max" placeholder="最大值"
                                th:field="*{agreeMax}"/>
                         <div class="invalid-feedback">
                             填写最大数量
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
-                        <label for="rate">通过系数(专家人数x系数=通过票数)</label>
-                        <select class="custom-select d-block w-100" id="rate"
-                                th:field="*{agreePassPersent}">
-                            <option value="">选择...</option>
-                            <option value="1/3">1/3</option>
-                            <option value="2/3">2/3</option>
-                            <option value="1">1</option>
-                        </select>
+                        <label for="rate">系数%</label>
+                        <input id="rate" type="number" class="form-control" placeholder="1~100"
+                               th:field="*{agreePassPersent}"/>
+                        <!--                        <select class="custom-select d-block w-100" id="rate"-->
+                        <!--                                th:field="*{agreePassPersent}">-->
+                        <!--                            <option value="">选择...</option>-->
+                        <!--                            <option value="1/3">1/3</option>-->
+                        <!--                            <option value="2/3">2/3</option>-->
+                        <!--                            <option value="1">1</option>-->
+                        <!--                        </select>-->
                         <div class="invalid-feedback">
                             填写通过系数
                         </div>
@@ -179,6 +181,7 @@
         }
         setRequired(rule)
     }
+
     /**
      * 根据规则范围的选择
      * 必填项限制调整
