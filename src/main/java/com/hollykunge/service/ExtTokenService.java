@@ -1,9 +1,5 @@
 package com.hollykunge.service;
 
-import com.hollykunge.model.ExtToken;
-
-import java.util.List;
-
 /**
  * @author: zhhongyu
  * @description:
@@ -12,7 +8,7 @@ import java.util.List;
 public interface ExtTokenService {
     String getToken(String clentIp,String interfaceAddress) throws Exception;
 
-    List<ExtToken> findToken(String token);
+    String getCaCheToken(String token);
 
-    boolean deleteToken(List<ExtToken> tokenList);
+    boolean removeCache(String token);
 }

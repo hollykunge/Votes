@@ -4,7 +4,6 @@ import com.hollykunge.annotation.ExtApiIdempotent;
 import com.hollykunge.annotation.ExtApiToken;
 import com.hollykunge.constants.VoteConstants;
 import com.hollykunge.dictionary.VoteHttpResponseStatus;
-import com.hollykunge.model.ExtToken;
 import com.hollykunge.msg.ObjectRestResponse;
 import com.hollykunge.service.ExtTokenService;
 import com.hollykunge.util.ClientIpUtil;
@@ -26,7 +25,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Aspect
@@ -70,49 +70,74 @@ public class ExtApiAopIdempotent {
 	// 验证Token
 	public Object extApiIdempotent(ProceedingJoinPoint proceedingJoinPoint, MethodSignature signature)
 			throws Throwable {
-		ExtApiIdempotent extApiIdempotent = signature.getMethod().getDeclaredAnnotation(ExtApiIdempotent.class);
-		if (extApiIdempotent == null) {
-			// 直接执行程序
-			Object proceed = proceedingJoinPoint.proceed();
-			return proceed;
-		}
-		// 代码步骤：
-		// 1.获取令牌 存放在请求头中
-		HttpServletRequest request = extApiTokenUtil.getRequest();
-		String valueType = extApiIdempotent.value();
-		if (StringUtils.isEmpty(valueType)) {
-			response("参数错误!");
-			log.warn("参数错误！");
-			return null;
-		}
-		String token = null;
-		if (valueType.equals(VoteConstants.EXTAPIHEAD)) {
-			token = (String) request.getSession().getAttribute("vote_token");
-		} else {
-			token = request.getParameter("vote_toke");
-		}
-		if (StringUtils.isEmpty(token)) {
-			response("参数错误!");
-			log.warn("没有找到重复表单的token！");
-			log.warn("参数错误！");
-			return null;
-		}
-		List<ExtToken> tokens = extTokenService.findToken(token);
-		if (tokens.isEmpty() || tokens.size() == 0) {
-			response("请勿重复提交!");
-			log.warn("系统检测到 --->>>>>重复提交表单数据！");
-			return null;
-		}
-		Object proceed = proceedingJoinPoint.proceed();
-		if(proceed instanceof ObjectRestResponse){
-			ObjectRestResponse infor = (ObjectRestResponse)proceed;
-			//涉及ajax请求，返回提示信息
-			if(infor.getStatus() == VoteHttpResponseStatus.INFORMATIONAL.getValue()){
+		synchronized (this){
+			ExtApiIdempotent extApiIdempotent = signature.getMethod().getDeclaredAnnotation(ExtApiIdempotent.class);
+			if (extApiIdempotent == null) {
+				// 直接执行程序
+				Object proceed = proceedingJoinPoint.proceed();
 				return proceed;
 			}
+			// 代码步骤：
+			// 1.获取令牌 存放在请求头中
+			HttpServletRequest request = extApiTokenUtil.getRequest();
+			String valueType = extApiIdempotent.value();
+			if (StringUtils.isEmpty(valueType)) {
+				response("参数错误!");
+				log.warn("参数错误！");
+				return null;
+			}
+			String token = null;
+			if (valueType.equals(VoteConstants.EXTAPIHEAD)) {
+				token = (String) request.getSession().getAttribute("vote_token");
+			} else {
+				token = request.getParameter("vote_toke");
+			}
+			if (StringUtils.isEmpty(token)) {
+				response("参数错误!");
+				log.warn("没有找到重复表单的token！");
+				log.warn("参数错误！");
+				return null;
+			}
+			String caCheToken = extTokenService.getCaCheToken(token);
+			if (StringUtils.isEmpty(caCheToken)) {
+				response("请勿重复提交!或幂等性token已经超时失效...");
+				log.warn("请勿重复提交!或幂等性token已经超时失效...");
+				if(extApiIdempotent.isViewTransfer()){
+					String view = extApiIdempotent.tranferView();
+					String regex = "\\{([^}]*)\\}";
+					Pattern pattern = Pattern.compile (regex);
+					Matcher matcher = pattern.matcher (view);
+					String group = "";
+					if(matcher.find()){
+						group = matcher.group();
+						group = group.substring(1,group.length()-1);
+					}
+					Object[] args = proceedingJoinPoint.getArgs();
+					String[] parameterNames = signature.getParameterNames();
+					Object id = null;
+					for(int i = 0;i<parameterNames.length;i++){
+						if(!StringUtils.isEmpty(group) && group.equals(parameterNames[i])){
+							id = args[i];
+						}
+					}
+					if(id != null){
+						view = view.substring(0,view.indexOf("{"))+id;
+					}
+					return view;
+				}
+				return null;
+			}
+			Object proceed = proceedingJoinPoint.proceed();
+			extTokenService.removeCache(caCheToken);
+			if(proceed instanceof ObjectRestResponse){
+				ObjectRestResponse infor = (ObjectRestResponse)proceed;
+				//涉及ajax请求，返回提示信息
+				if(infor.getStatus() == VoteHttpResponseStatus.INFORMATIONAL.getValue()){
+					return proceed;
+				}
+			}
+			return proceed;
 		}
-		extTokenService.deleteToken(tokens);
-		return proceed;
 	}
 
 

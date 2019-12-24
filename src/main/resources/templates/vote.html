@@ -28,6 +28,11 @@
                     </a>
                 </div>
             </div>
+            <div style="float: right">
+                <a th:href="@{'/voteStatistics/export/{voteId}'(voteId=${vote.id})}" class="col-md-2">
+                    <button type="button" class="btn btn-outline-primary btn-sm">导出</button>
+                </a>
+            </div>
         </div>
         <div class="card-body">
             <h5 class="card-title" th:text="${vote.title}">Title</h5>

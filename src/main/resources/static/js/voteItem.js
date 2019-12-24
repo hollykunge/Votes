@@ -521,6 +521,7 @@ function initDataItem(item, type) {
         obj.agreeFlag = '1'
     }
     obj.score = item.score ? item.score : ''
+    obj.index = item.index ? item.index : ''
     obj.order = item.SerialNumber
     obj.voteItem = {}
     for (var key in item) {

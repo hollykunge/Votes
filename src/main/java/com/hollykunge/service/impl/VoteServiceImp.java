@@ -1,11 +1,10 @@
 package com.hollykunge.service.impl;
 
 import com.hollykunge.exception.BaseException;
-import com.hollykunge.model.Vote;
 import com.hollykunge.model.User;
+import com.hollykunge.model.Vote;
 import com.hollykunge.repository.VoteRepository;
 import com.hollykunge.service.VoteService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -76,6 +75,9 @@ public class VoteServiceImp implements VoteService {
         }
         if (!StringUtils.isEmpty(source.getTitle())){
             target.setTitle(source.getTitle());
+        }
+        if(!StringUtils.isEmpty(source.getStatus())){
+            target.setStatus(source.getStatus());
         }
     }
 

@@ -45,4 +45,17 @@ public class VoteConstants {
      * 确认投票项通过的百分比
      */
     public static final String VOTE_PASS_PERSENT = "2/3";
+
+    /**
+     * 投票新建状态
+     */
+    public static final String VOTE_ADD_STATUS = "1";
+    /**
+     * 投票已发布状态
+     */
+    public static final String VOTE_SEND_STATUS = "2";
+    /**
+     * 投票结束状态
+     */
+    public static final String VOTE_FINAL_STATUS = "3";
 }

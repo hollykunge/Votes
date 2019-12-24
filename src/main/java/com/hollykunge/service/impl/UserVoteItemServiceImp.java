@@ -9,7 +9,6 @@ import com.hollykunge.repository.UserVoteItemRepository;
 import com.hollykunge.repository.VoteItemRepository;
 import com.hollykunge.service.UserVoteItemService;
 import com.hollykunge.util.ExceptionCommonUtil;
-import com.hollykunge.util.MarkToDecimalsUtil;
 import com.hollykunge.util.VoteItemPassRuleUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,7 +99,10 @@ public class UserVoteItemServiceImp implements UserVoteItemService {
         double decimal = 0;
         if(Objects.equals(item.getRules(),VoteConstants.ITEM_RULE_AGER)){
             agreeRuleCount = userVoteItemRepository.countIp(item.getId());
-            decimal = MarkToDecimalsUtil.transfer(item);
+//            decimal = MarkToDecimalsUtil.transfer(item);
+            if(!StringUtils.isEmpty(item.getAgreePassPersent())){
+                decimal = Double.parseDouble(item.getAgreePassPersent());
+            }
         }
         List<VoteItem> voteItems = new ArrayList<>();
         for (Object[] objects :

@@ -2,6 +2,7 @@ package com.hollykunge.util;
 
 import com.hollykunge.model.Item;
 import com.hollykunge.model.VoteItem;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +15,15 @@ import java.util.List;
 public class VoteItemPassRuleUtils {
 
     public static List<VoteItem> passVoteItems(List<VoteItem> voteItems, Item item, Integer totalNum) {
-        double decimal = MarkToDecimalsUtil.transfer(item);
+//        double decimal = MarkToDecimalsUtil.transfer(item);
+        double decimal = 0;
+        if(!StringUtils.isEmpty(item.getAgreePassPersent())){
+            decimal = Double.parseDouble(item.getAgreePassPersent());
+        }
         List<VoteItem> result = new ArrayList<VoteItem>();
+        double finalDecimal = decimal;
         voteItems.stream().forEach(voteItem -> {
-            if (caculate(voteItem.getCurrentStatisticsNum(), decimal, totalNum)) {
+            if (caculate(voteItem.getCurrentStatisticsNum(), finalDecimal, totalNum)) {
                 result.add(voteItem);
             }
         });
@@ -39,7 +45,7 @@ public class VoteItemPassRuleUtils {
             temp = 0;
         }
         double finalNum = totalNum * decimal;
-        if (temp == 0 || Math.round(finalNum) > temp) {
+        if (temp == 0 || Math.ceil(finalNum) > temp) {
             return false;
         }
         return true;
