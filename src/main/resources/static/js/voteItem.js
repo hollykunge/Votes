@@ -821,7 +821,8 @@ var colorMap = new Map();
  * 对重复投票结果做标记
  */
 function handleRepeatData() {
-    var randowColor = ['#2789ff', '#52b1ff', '#7ac8ff', '#a3dcff', '#e6f6ff'];
+    var randowColor = ['#2789ff', '#52b1ff', '#7ac8ff', '#a3dcff',
+        '#e6f6ff'];
     // 第一次循环，结果计数 (key:score,value:出现次数)
     var countMap = new Map();
     for (var i = 0; data.length > i; i++) {
@@ -877,7 +878,7 @@ function orderDataTest(data, orderData, keyName, sequence) {
 function rowStyle(row, index) {
     // 根据“通过系数”判断，不能通过的行，背景色显示红色
     if (unpassMap.get(row.voteItemId) === 1) {
-        return {css: {'background-color': '#ff6975'}}
+        return {css: {'background-color': '#ffbcd1'}}
     }
     if (colorMap.get(row[resultName])) {
         return {css: {'background-color': colorMap.get(row[resultName])}}

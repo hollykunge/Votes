@@ -256,7 +256,7 @@ function handleRepeatData() {
 function rowStyle(row, index) {
     // 根据“通过系数”判断，不能通过的行，背景色显示红色
     if (unpassMap.get(row.voteItemId) === 1) {
-        return {css:{'background-color': '#FF4040'}}
+        return {css:{'background-color': '#ffbcd1'}}
     }
     if (colorMap.get(row[resultName])){
         return {css:{'background-color':colorMap.get(row[resultName])}}
