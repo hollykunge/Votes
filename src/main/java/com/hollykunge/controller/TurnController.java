@@ -25,6 +25,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.Principal;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -155,6 +156,40 @@ public class TurnController {
         } else {
             return "/error";
         }
+    }
+
+    /**
+     * 设置投票状态接口
+     *
+     * @param id
+     * @param status
+     * @param principal
+     * @param redirectAttributes
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/vote/setstatus/{id}/{status}", method = RequestMethod.GET)
+    public String setVoteStatus(@PathVariable Long id,
+                                @PathVariable String status,
+                                Principal principal,
+                                RedirectAttributes redirectAttributes) throws Exception {
+        //结束投票时增加校验
+        if (Objects.equals(status, VoteConstants.VOTE_FINAL_STATUS)) {
+            Vote voteTemp = new Vote();
+            voteTemp.setId(id);
+            List<Item> itemsByVote = itemService.findItemsByVote(voteTemp);
+            boolean noFinal = itemsByVote.stream().anyMatch(item -> Objects.equals(VoteConstants.ITEM_ADD_STATUS, item.getStatus()) ||
+                    Objects.equals(VoteConstants.ITEM_SEND_STATUS, item.getStatus()));
+            if (noFinal) {
+                redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("不能结束,有未结束的投票轮..."));
+                return "redirect:/vote/" + voteTemp.getId();
+            }
+        }
+        Vote vote = new Vote();
+        vote.setId(id);
+        vote.setStatus(status);
+        voteService.updateById(vote);
+        return "redirect:/vote/" + vote.getId();
     }
 
     private boolean isPrincipalOwnerOfVote(Principal principal, Vote vote) {

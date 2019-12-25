@@ -17,10 +17,10 @@
         </ol>
     </nav>
     <div class="card border-dark mb-3 shadow-sm">
-        <div class="card-header bg-secondary text-white">详情
-            <div style="float: right" sec:authorize="isAuthenticated()" th:if="${username}">
+        <div class="card-header bg-primary text-white">详情
+            <div style="float: right" sec:authorize="isAuthenticated()" th:if="${username}" class="mr-1">
                 <div th:if="${vote.getItems().size()==0}">
-                    <a th:href="@{'/editVote/{id}'(id=${vote.id})}" class="col-md-2">
+                    <a th:href="@{'/editVote/{id}'(id=${vote.id})}">
                         <button type="button" class="btn btn-primary btn-sm" th:text="编辑">
                             <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
                             编辑
@@ -28,9 +28,14 @@
                     </a>
                 </div>
             </div>
-            <div style="float: right">
-                <a th:href="@{'/voteStatistics/export/{voteId}'(voteId=${vote.id})}" class="col-md-2">
-                    <button type="button" class="btn btn-primary btn-sm">导出</button>
+            <div style="float: right" class="mr-1">
+                <a th:href="@{'/voteStatistics/export/{voteId}'(voteId=${vote.id})}">
+                    <button type="button" class="btn btn-secondary btn-sm">导出结果</button>
+                </a>
+            </div>
+            <div style="float: right" class="mr-1">
+                <a th:href="@{'/vote/setstatus/{voteId}/3'(voteId=${vote.id})}">
+                    <button type="button" class="btn btn-danger btn-sm">结束投票</button>
                 </a>
             </div>
         </div>
@@ -46,16 +51,21 @@
         </button>
     </div>
     <div class="card border-dark mb-3 shadow-sm" style="margin-top: 16px">
-        <div class="card-header bg-secondary text-white">
+
+        <div class="card-header bg-primary text-white">
+            投票轮
             <!--添加投票轮按钮-->
             <!--如果有权限-->
-            <div sec:authorize="isAuthenticated()" style="float: right">
-                <a th:href="@{'/voteVote/{voteId}/{itemId}'(voteId=${vote.id},itemId=0)}" class="col-md-2">
-                    <button type="button" class="btn btn-primary btn-sm">
-                        添加一轮投票
-                    </button>
-                </a>
+            <div th:if="${vote.getStatus()!='3'}">
+                <div sec:authorize="isAuthenticated()" style="float: right">
+                    <a th:href="@{'/voteVote/{voteId}/{itemId}'(voteId=${vote.id},itemId=0)}" class="col-md-2">
+                        <button type="button" class="btn btn-secondary btn-sm">
+                            添加一轮投票
+                        </button>
+                    </a>
+                </div>
             </div>
+
         </div>
         <div class="card-body card-nopadding">
             <table class="do-table table table-hover" width='100%' border='0' cellspacing='0' cellpadding='0'
