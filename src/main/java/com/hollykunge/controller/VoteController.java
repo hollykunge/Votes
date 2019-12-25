@@ -130,6 +130,9 @@ public class VoteController {
             return HttpResponseUtil.setErrorResponse("没有查询到投票...");
         }
         Vote voteTemp = vote.get();
+        if(!Objects.equals(voteTemp.getStatus(),VoteConstants.VOTE_FINAL_STATUS)){
+            return HttpResponseUtil.setErrorResponse("投票没有结束不能导出投票...");
+        }
         List<VoteItem> voteItems = getVoteItems(voteTemp);
         List<StatisticsDownloadData> statisticsDownloadData = JSONArray.parseArray(JSONObject.toJSONString(voteItems), StatisticsDownloadData.class);
         LinkedHashMap jsonObject = JSON.parseObject(voteTemp.getExcelHeader(), LinkedHashMap.class);
