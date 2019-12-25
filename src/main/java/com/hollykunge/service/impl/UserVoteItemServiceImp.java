@@ -90,7 +90,7 @@ public class UserVoteItemServiceImp implements UserVoteItemService {
         return result;
     }
 
-    private List<VoteItem> getRuleList(Item item, List<Object[]> projections, String flag) {
+    private List<VoteItem> getRuleList(Item item, List<Object[]> projections, String flag) throws Exception {
         List<VoteItem> itemData = voteItemRepository.findByItem(item).get();
         if (itemData.size() == 0) {
             throw new BaseException("没有投票项...");
@@ -101,7 +101,7 @@ public class UserVoteItemServiceImp implements UserVoteItemService {
             agreeRuleCount = userVoteItemRepository.countIp(item.getId());
 //            decimal = MarkToDecimalsUtil.transfer(item);
             if(!StringUtils.isEmpty(item.getAgreePassPersent())){
-                decimal = Double.parseDouble(item.getAgreePassPersent());
+                decimal = VoteItemPassRuleUtils.getDecimal(item.getAgreePassPersent());
             }
         }
         List<VoteItem> voteItems = new ArrayList<>();
