@@ -922,3 +922,15 @@ function removal(dataArr, selectArr) {
     })
     return selectArr
 }
+
+function filterObject(item, key) {
+    var newitem = new Object()
+    newitem.item = {
+        id: item.item.id
+    }
+    newitem[key] = item[key]
+    newitem.voteItem = {
+        voteItemId: item.voteItem.voteItemId
+    }
+    return newitem
+}
