@@ -418,20 +418,28 @@
                     if (!passMin) {
                         return
                     }
-                    requestBody = $._voteArr.concat(
-                        delHasItem(
-                            data,
-                            $._voteArr.map(function (item) {
-                                return item.voteItem.voteItemId
-                            }),
-                            'agreeFlag'
+                    requestBody = $._voteArr
+                        .concat(
+                            delHasItem(
+                                data,
+                                $._voteArr.map(function (item) {
+                                    return item.voteItem.voteItemId
+                                }),
+                                'agreeFlag'
+                            )
                         )
-                    )
+                        .map(function(item) {
+                            return filterObject(item, 'agreeFlag')
+                        })
+
                 }
             } else if ($._fraction) { // 打分
                 if ($._fraction.length > 0) {
                     if ($._fraction.length !== data.length) {
                         requestBody = $._fraction
+                            .map(function (item) {
+                                return filterObject(item, 'score')
+                            })
                             //# 328 原处理逻辑为如果打分结果不符合要求，自动置为0，现修改为不符合要求限制提交
                             // .concat(
                             //     delHasItem(
@@ -460,9 +468,13 @@
                 })
                 return
             } else { // 排序
-                requestBody = data.map(function (item, index) {
-                    return initDataItem(item)
-                })
+                requestBody = data
+                    .map(function (item, index) {
+                        return initDataItem(item)
+                    })
+                    .map(function(item) {
+                        return filterObject(item, 'order')
+                    })
             }
 
             tips($('.warning'), 'strong', requestBody, urlOption)

@@ -219,6 +219,7 @@ public class UserVoteController {
             for (UserVoteItem userVoteItem:
                     userVoteItemlist) {
                 userVoteItem.setIp(clientIp);
+                userVoteItem.setItem(item);
                 userVoteItemService.add(userVoteItem);
             }
             Long memgerNum = userVoteItemService.countIpByItem(item);
