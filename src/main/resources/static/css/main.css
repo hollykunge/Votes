@@ -288,3 +288,9 @@ a:hover, a:focus, a:active {
     background-color: #ff3c3a;
     display: inline-block;
 }
+.color-lump-7{
+    width: 12px;
+    height: 12px;
+    background-color: #c3e2c3;
+    display: inline-block;
+}

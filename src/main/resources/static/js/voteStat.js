@@ -30,12 +30,15 @@ function columnConfig(rules, callback) {
         })
     // 添加 序号 表头与 voteItemId 关联
     columnsOption.unshift({
-        title: '序号',
+        title: '排序',
         field: "voteItemId",
         align: 'center',
         valign: 'middle',
         formatter: function (value, row, index) {
             return index + 1;
+        },
+        cellStyle:{
+            css:{"background-color":"#c3e2c3"}
         }
     })
     callback(rules, columnsOption)
