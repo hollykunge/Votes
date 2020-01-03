@@ -178,6 +178,10 @@ public class TurnController {
             Vote voteTemp = new Vote();
             voteTemp.setId(id);
             List<Item> itemsByVote = itemService.findItemsByVote(voteTemp);
+            if(itemsByVote == null || itemsByVote.size() == 0){
+                redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("不能结束,有未结束的投票轮..."));
+                return "redirect:/vote/" + voteTemp.getId();
+            }
             boolean noFinal = itemsByVote.stream().anyMatch(item -> Objects.equals(VoteConstants.ITEM_ADD_STATUS, item.getStatus()) ||
                     Objects.equals(VoteConstants.ITEM_SEND_STATUS, item.getStatus()));
             if (noFinal) {
