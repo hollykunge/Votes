@@ -12,4 +12,5 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     List<Item> findByVote(Vote vote);
     Optional<Item> findByIdAndCode(Long id,String code);
     List<Item> findByPreviousId(String previousId);
+    int deleteByVote(Vote vote);
 }
