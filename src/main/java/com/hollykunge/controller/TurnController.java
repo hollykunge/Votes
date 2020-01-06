@@ -4,9 +4,7 @@ import com.hollykunge.constants.VoteConstants;
 import com.hollykunge.model.Item;
 import com.hollykunge.model.Vote;
 import com.hollykunge.model.User;
-import com.hollykunge.service.ItemService;
-import com.hollykunge.service.VoteService;
-import com.hollykunge.service.UserService;
+import com.hollykunge.service.*;
 import com.hollykunge.util.Base64Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -45,6 +43,10 @@ public class TurnController {
     }
     @Autowired
     private ItemService itemService;
+    @Autowired
+    private UserVoteItemService userVoteItemService;
+    @Autowired
+    private VoteItemService voteItemService;
 
     @RequestMapping(value = "/newVote", method = RequestMethod.GET)
     public String newVote(Principal principal,
@@ -134,15 +136,27 @@ public class TurnController {
     @RequestMapping(value = "/vote/{id}", method = RequestMethod.DELETE)
     public String deleteVoteWithId(@PathVariable Long id,
                                    Principal principal,
-                                   RedirectAttributes redirectAttributes) {
+                                   RedirectAttributes redirectAttributes) throws Exception {
 
         Optional<Vote> optionalVote = voteService.findForId(id);
 
         if (optionalVote.isPresent()) {
             Vote vote = optionalVote.get();
+            //当为结束状态时进行删除投票，将关联的一大堆东西全部都删除了
+            if(Objects.equals(vote.getStatus(),VoteConstants.VOTE_FINAL_STATUS)){
+                List<Item> itemsByVote = itemService.findItemsByVote(vote);
+                for(Item item : itemsByVote){
+                    userVoteItemService.deleteByItem(item);
+                    voteItemService.deleteByItem(item);
+                }
+                itemService.deleteByVote(vote);
+                voteService.delete(vote);
+                redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("删除成功"));
+                return "redirect:/votes/"+ vote.getUser().getUsername();
+            }
             List<Item> itemsByVote = itemService.findItemsByVote(vote);
             if(itemsByVote.size() > 0){
-                redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("包含投票项不能进行删除操作"));
+                redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("未结束投票或者包含投票项不能进行删除操作"));
                 return "redirect:/votes/"+ vote.getUser().getUsername();
             }
             if (isPrincipalOwnerOfVote(principal, vote)) {

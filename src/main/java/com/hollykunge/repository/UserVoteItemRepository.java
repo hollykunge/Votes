@@ -46,4 +46,6 @@ public interface UserVoteItemRepository extends JpaRepository<UserVoteItem, Long
             "                        having item_id = ?1" +
             "                        and u.vote_item_id = ?2", nativeQuery = true)
     Integer orderRuleMaxScore(Long itemId,Long voteItemId);
+
+    int deleteByItem(Item item);
 }

@@ -120,4 +120,8 @@ public class ItemServiceImp implements ItemService {
     public List<Item> findItemsByVote(Vote vote) {
         return itemRepository.findByVote(vote);
     }
+    @Override
+    public int deleteByVote(Vote vote)throws Exception{
+        return itemRepository.deleteByVote(vote);
+    }
 }

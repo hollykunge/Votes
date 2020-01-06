@@ -16,4 +16,6 @@ public interface ItemService {
 
     List<Item> findByPrevious(String previous);
     List<Item> findItemsByVote(Vote vote);
+
+    int deleteByVote(Vote vote) throws Exception;
 }

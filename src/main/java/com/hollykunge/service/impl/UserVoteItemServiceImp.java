@@ -194,4 +194,8 @@ public class UserVoteItemServiceImp implements UserVoteItemService {
         }
         return voteItem;
     }
+    @Override
+    public int deleteByItem(Item item)throws Exception{
+        return userVoteItemRepository.deleteByItem(item);
+    }
 }

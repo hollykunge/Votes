@@ -27,4 +27,6 @@ public interface UserVoteItemService {
     Long countIpByItem(Item item);
 
     Map<String,Object> getStatistics(Item item)throws Exception;
+
+    int deleteByItem(Item item)throws Exception;
 }
