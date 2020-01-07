@@ -58,45 +58,21 @@ function configOperation(rules, columnsOption) {
  * @param options { Object }
  */
 function initTable(options) {
-    var bootStrapDataOption = options.hasData && options.hasData.length > 0
-        ?
-        options.hasData.map(function (item) {
-            return Object.assign({}, item, item.voteItem, {order: item.order, item: item.item})
-        }) :
-        options.data.map(function (item, index) {
-            return Object.assign({}, item, {item: options.data[0].item, index: index})
-        });
-
-    // 根据分数做分类
-    var fraction = {}
-    $(bootStrapDataOption).each(function (index, item) {
-        // 不存在序列，此值不存在内容
-        if (!item[options.resultName]) {
-            return
-        }
-        // 存在则赋值
-        if (fraction[item[options.resultName]]) {
-            fraction[item[options.resultName]] = fraction[item[options.resultName]].concat(index * 1 + 1)
-            return
-        }
-        fraction[item[options.resultName]] = [].concat(index * 1 + 1)
-    })
-    bootStrapDataOption = orderDataTest(bootStrapDataOption, Object.keys(fraction), options.resultName, Object.keys(fraction).length)
     // 根据“通过系数”判断，不能通过的行，背景色显示红色
     if (options.rules === '1') {
-        bootStrapDataOption.forEach(function (item) {
-            if (item.agreeRulePassFlag === '0') {
-                unpassMap.set(item.voteItemId, 1)
+        options.data.forEach(function(item){
+            if (item.agreeRulePassFlag == undefined) {
+                unpassMap.set(item.voteItemId,1)
             }
         })
     }
-    // parentStatisticsToalScore
     $table.bootstrapTable('destroy').bootstrapTable({
         url: options.url,
         clickToSelect: options.clickToSelect,
         minimumCountColumns: 2,
         idField: 'id',
         sidePagination: 'server',
+        rowStyle: options.rowStyle,
 
         // 列操作栏
         columns: columnConfig({
@@ -104,33 +80,19 @@ function initTable(options) {
             rules: options.rules,
             titleConfig: options.titleConfig,
             operateCol: options.operateCol,
-            operateColFormat: options.operateColFormat,
-            resultName: options.resultName,
-            fraction: fraction
+            operateColFormat: options.operateColFormat
         }, configOperation),
-        rowStyle: options.rowStyle,
 
-        data: bootStrapDataOption,
-        rowAttributes: function (row, index) {
-            // 条件
-            // if (row.fraction) {
-            //     return {
-            //         class: 'cell'
-            //     }
-            // }
-        },
+        data: options.hasData && options.hasData.length > 0 ? options.hasData.map(function (item) {
+            return Object.assign({}, item, item.voteItem, {order: item.order, item: item.item})
+        }) : options.data.map(function (item) {
+            return Object.assign({}, item, {item: options.data[0].item})
+        }),
         detailView: true,
         detailViewIcon: true,
-        detailFilter: function (index, row, element) {
-            if (row.fraction) {
-                return false
-            }
-            return true
-        },
         // fixedColumns: true,
         // fixedNumber: 1,
         detailFormatter: function (index, row, element) {
-
             var html = [
                 '<div class="card">',
                 '<div class="card-body">',
@@ -169,7 +131,7 @@ function initTable(options) {
                                     '<b style="display: inline-block; margin-right: 10px;">',
                                     '其他',
                                     ':</b> ',
-                                    value.split(',').slice(1).join(';'),
+                                    value.split(',').slice(1).join(' '),
                                     '</p>'
                                 ].join('')
                             )
@@ -183,65 +145,10 @@ function initTable(options) {
                 '</div>'
             ])
             return html.join('')
-        },
-        onLoadSuccess: function () {
-            console.log('success')
         }
     })
-
-    $(bootStrapDataOption).each(function (index, item) {
-        if (item.fraction) {
-            $table.bootstrapTable('mergeCells', {index: index, colspan: 9})
-
-            $table.find('tbody').find('tr').eq(index).find('td').eq(0).text(item.contentTitle).css({
-                textAlign: 'center',
-                verticalAlign: 'middle',
-                // fontWeight: 'bold',
-                fontSize: '18px'
-            })
-        }
-    })
-
-    $(bootStrapDataOption).each(function (index, item) {
-        if (item.fraction) {
-            $table.bootstrapTable('mergeCells', {index: index, colspan: 9})
-
-            $table.find('tbody').find('tr').eq(index).find('td').eq(0).text(item.contentTitle).css({
-                textAlign: 'center',
-                verticalAlign: 'middle',
-                // fontWeight: 'bold',
-                fontSize: '18px'
-            })
-        }
-    })
-
 }
-/**
- * 序列分类
- * @param data
- * @param orderData
- * @param keyName
- * @param sequence
- * @returns {*}
- */
-function orderDataTest(data, orderData, keyName, sequence) {
 
-    for (var i = 0; i < orderData.length; i++) {
-        for (var j = 0; j < data.length; j++) {
-            if (orderData[i] == data[j][keyName]) {
-                data.splice(j, 0, {
-                    fraction: orderData[i],
-                    contentTitle: '(第' + sequence + '序列)'
-                })
-                orderData.splice(i, 1)
-
-                return orderDataTest(data, orderData, keyName, --sequence)
-
-            }
-        }
-    }
-    return data
-}
 /**
  * 格式化data 的 item 值
  * @param item

@@ -19,7 +19,7 @@ public class VoteItemPassRuleUtils {
 //        double decimal = MarkToDecimalsUtil.transfer(item);
         double decimal = 0;
         if(!StringUtils.isEmpty(item.getAgreePassPersent())){
-            decimal = getDecimal(item.getAgreePassPersent());
+            getDecimal(item.getAgreePassPersent());
         }
         List<VoteItem> result = new ArrayList<VoteItem>();
         double finalDecimal = decimal;
