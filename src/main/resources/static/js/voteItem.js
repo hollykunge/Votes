@@ -4,6 +4,7 @@ var hasSort = 0;
 var ot;
 var oloaded;
 var unpassMap = new Map();
+var para = $("script").eq(-1).attr("src").replace(/.+\?para=/i,"");
 var templateOption = {
     haveVoted: [
         '<div class="have-voted">',
@@ -207,7 +208,7 @@ function columnConfig(rules, callback) {
  */
 function configOperation(rules, columnsOption, resultName, fraction) {
     // 是否是编辑页面
-    if (window.location.href.indexOf('userVote') !== -1) {
+    if (window.location.href.indexOf('userVote') !== -1 && para != '1') {
         switch (rules.rules) {
             case '1':
                 $._voteArr = []
