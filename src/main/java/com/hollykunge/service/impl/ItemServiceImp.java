@@ -6,6 +6,7 @@ import com.hollykunge.model.Item;
 import com.hollykunge.model.Vote;
 import com.hollykunge.repository.ItemRepository;
 import com.hollykunge.service.ItemService;
+import com.hollykunge.service.VoteService;
 import com.hollykunge.util.UUIDUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,13 +15,14 @@ import org.springframework.util.StringUtils;
 
 import java.util.Comparator;
 import java.util.List;
-
 import java.util.Optional;
 @Transactional(rollbackFor = Exception.class)
 @Service
 public class ItemServiceImp implements ItemService {
 
     private final ItemRepository itemRepository;
+    @Autowired
+    private VoteService voteService;
 
     @Autowired
     public ItemServiceImp(ItemRepository itemRepository) {
@@ -123,5 +125,17 @@ public class ItemServiceImp implements ItemService {
     @Override
     public int deleteByVote(Vote vote)throws Exception{
         return itemRepository.deleteByVote(vote);
+    }
+    @Override
+    public Item deleteItemAndUpdateVote(Long id) throws Exception {
+        Item item = this.deleteItem(id);
+        //如果正好删除了第一个投票轮，将投票轮次的表头设置为null
+        if(item.getTurnNum() == 1){
+            //将excel表头删除
+            Vote vote = item.getVote();
+            vote.setExcelHeader(null);
+            voteService.updateById(vote);
+        }
+        return item;
     }
 }
