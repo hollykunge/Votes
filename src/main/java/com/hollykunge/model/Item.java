@@ -32,23 +32,23 @@ public class Item {
         this.turnNum = turnNum;
     }
 
-    @Column(name = "turn_num", columnDefinition = "number(6)")
-    private Integer turnNum;// COMMENT '投票第几轮'
+    @Column(name = "turn_num", columnDefinition = "number(6) COMMENT '投票第几轮'")
+    private Integer turnNum;
 
-    @Column(columnDefinition = "number(6)")
-    private Integer memberSize;// COMMENT '预计投票人数'
+    @Column(columnDefinition = "number(6) COMMENT '预计投票人数'")
+    private Integer memberSize;
 
-    @Column(columnDefinition = "number(6)")
-    private Integer memberNum;// COMMENT '投票人数'
+    @Column(columnDefinition = "number(6) COMMENT '投票人数'")
+    private Integer memberNum;
 
-    @Column(columnDefinition = "varchar2(11)")
-    private String previousId;// COMMENT '上一轮id'
+    @Column(columnDefinition = "varchar2(11) COMMENT '上一轮id'")
+    private String previousId;
 
-    @Column(columnDefinition = "varchar2(32)")
-    private String code;// COMMENT '邀请码'
+    @Column(columnDefinition = "varchar2(32) COMMENT '邀请码'")
+    private String code;
 
-    @Column(columnDefinition = "varchar2(4000)")
-    private String content;// COMMENT '规则内容'
+    @Column(columnDefinition = "varchar2(4000) COMMENT '规则内容'")
+    private String content;
     /**
      * 规则范围（1否同2排序3打分）
      */
