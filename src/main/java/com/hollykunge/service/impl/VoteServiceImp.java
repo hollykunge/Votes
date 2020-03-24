@@ -70,15 +70,13 @@ public class VoteServiceImp implements VoteService {
         if (source.getCreateDate() != null){
             target.setCreateDate(source.getCreateDate());
         }
-        if (!StringUtils.isEmpty(source.getExcelHeader())){
-            target.setExcelHeader(source.getExcelHeader());
-        }
         if (!StringUtils.isEmpty(source.getTitle())){
             target.setTitle(source.getTitle());
         }
         if(!StringUtils.isEmpty(source.getStatus())){
             target.setStatus(source.getStatus());
         }
+        target.setExcelHeader(source.getExcelHeader());
     }
 
     private int subtractPageByOne(int page){

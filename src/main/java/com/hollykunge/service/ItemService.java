@@ -18,4 +18,6 @@ public interface ItemService {
     List<Item> findItemsByVote(Vote vote);
 
     int deleteByVote(Vote vote) throws Exception;
+
+    Item deleteItemAndUpdateVote(Long id) throws Exception;
 }

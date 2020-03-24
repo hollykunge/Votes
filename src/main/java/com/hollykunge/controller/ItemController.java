@@ -379,7 +379,8 @@ public class ItemController {
             redirectAttributes.addAttribute("redirect", Base64Utils.encrypt("包含投票项，不能删除该投票轮"));
             return "redirect:/vote/" + byId.getVote().getId();
         }
-        Item item = itemService.deleteItem(id);
+//        Item item = itemService.deleteItem(id);
+        Item item = itemService.deleteItemAndUpdateVote(id);
         return "redirect:/vote/" + item.getVote().getId();
     }
 
