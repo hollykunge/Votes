@@ -42,7 +42,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @Slf4j
 @Controller
-public class ItemController {
+public class ItemController extends BaseController{
     private final String LINK = ":";
 
     private final VoteService voteService;
@@ -153,7 +153,11 @@ public class ItemController {
             //为添加
             if (item == null) {
                 item = new Item();
-                Optional<User> user = userService.findByUsername(principal.getName());
+                String username = null;
+                if(principal != null){
+                    username = principal.getName();
+                }
+                Optional<User> user = userService.findByUsername(username);
                 Optional<Vote> vote = voteService.findForId(voteId);
                 item.setUser(user.get());
                 item.setVote(vote.get());

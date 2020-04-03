@@ -35,7 +35,7 @@
                     aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div th:if="${loginSys} eq true" class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav do-right">
                     <div sec:authorize="!isAuthenticated()">
                         <a class="btn btn-primary mr-1" th:href="@{/registration}">注册</a>
@@ -52,6 +52,12 @@
                     <div sec:authorize="isAuthenticated()">
                         <a class="btn btn-primary mr-1" th:href="@{/logout}">注销</a>
                     </div>
+                </div>
+            </div>
+            <div th:if="${loginSys} eq false" class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav do-right">
+                        <a class="btn btn-warning mr-1" th:href="@{/newVote}">新建投票</a>
+                        <a class="btn btn-primary mr-1" th:href="@{'/votes/admin'}">我的投票</a>
                 </div>
             </div>
         </div>

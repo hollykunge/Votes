@@ -30,7 +30,7 @@ import java.util.Optional;
  * @author lark
  */
 @Controller
-public class TurnController {
+public class TurnController extends BaseController{
     private final String LINK = ":";
 
     private final VoteService voteService;
@@ -51,8 +51,11 @@ public class TurnController {
     @RequestMapping(value = "/newVote", method = RequestMethod.GET)
     public String newVote(Principal principal,
                           Model model) {
-
-        Optional<User> user = userService.findByUsername(principal.getName());
+        String userName = null;
+        if(principal != null){
+            userName = principal.getName();
+        }
+        Optional<User> user = userService.findByUsername(userName);
 
         if (user.isPresent()) {
             Vote vote = new Vote();
