@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author lark
  */
 @Controller
-public class HomeController {
+public class HomeController extends BaseController{
 
     private final VoteService voteService;
 

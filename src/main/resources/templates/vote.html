@@ -10,8 +10,11 @@
 <div class="container">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item">
+            <li th:if="${loginSys}" class="breadcrumb-item">
                 <a th:href="@{'/votes/' + ${#authentication.getName()}}">我的投票</a>
+            </li>
+            <li th:if="!${loginSys}" class="breadcrumb-item">
+                <a th:href="@{'/votes/' + ${username}}">我的投票</a>
             </li>
             <li class="breadcrumb-item active" aria-current="page" th:text="${vote.title}">Library</li>
         </ol>
@@ -54,12 +57,23 @@
             投票轮
             <!--添加投票轮按钮-->
             <!--如果有权限-->
-            <div sec:authorize="isAuthenticated()" style="float: right" th:if="${vote.getStatus()!='3'}">
+            <div th:if="${loginSys}">
+                <div sec:authorize="isAuthenticated()" style="float: right" th:if="${vote.getStatus()!='3'}">
                 <a th:href="@{'/voteVote/{voteId}/{itemId}'(voteId=${vote.id},itemId=0)}">
                     <button type="button" class="btn btn-primary btn-sm">
                         添加一轮投票
                     </button>
                 </a>
+                </div>
+            </div>
+            <div th:if="!${loginSys}">
+                <div style="float: right" th:if="${vote.getStatus()!='3'}">
+                    <a th:href="@{'/voteVote/{voteId}/{itemId}'(voteId=${vote.id},itemId=0)}">
+                        <button type="button" class="btn btn-secondary btn-sm">
+                            添加一轮投票
+                        </button>
+                    </a>
+                </div>
             </div>
         </div>
         <div class="card-body card-nopadding">

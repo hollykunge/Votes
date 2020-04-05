@@ -4,6 +4,7 @@ import com.hollykunge.model.User;
 import com.hollykunge.repository.RoleRepository;
 import com.hollykunge.repository.UserRepository;
 import com.hollykunge.service.UserService;
+import com.hollykunge.util.SystemLoginEnableUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,8 @@ public class UserServiceImp implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     private static final String USER_ROLE = "ROLE_USER";
+    @Autowired
+    private SystemLoginEnableUtil systemLoginEnableUtil;
 
     @Autowired
     public UserServiceImp(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
@@ -29,6 +32,11 @@ public class UserServiceImp implements UserService {
 
     @Override
     public Optional<User> findByUsername(String username) {
+        //不需要登录
+        if(!systemLoginEnableUtil.isNeedLogin()){
+            Optional result = Optional.of(systemLoginEnableUtil.getDefaltUser());
+            return result;
+        }
         return userRepository.findByUsername(username);
     }
 

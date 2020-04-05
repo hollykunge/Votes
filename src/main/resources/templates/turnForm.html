@@ -12,8 +12,11 @@
 <div class="container">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item">
+            <li th:if="${loginSys}" class="breadcrumb-item">
                 <a th:href="@{'/votes/' + ${#authentication.getName()}}">我的投票</a>
+            </li>
+            <li th:if="!${loginSys}" class="breadcrumb-item">
+                <a th:href="@{'/votes/' + ${username}}">我的投票</a>
             </li>
             <li class="breadcrumb-item"><a th:href="@{'/vote/' + ${item.getVote().id}}"
                                            th:text="${item.getVote().title}"></a></li>

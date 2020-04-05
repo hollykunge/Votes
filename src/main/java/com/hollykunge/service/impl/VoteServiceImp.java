@@ -5,6 +5,7 @@ import com.hollykunge.model.User;
 import com.hollykunge.model.Vote;
 import com.hollykunge.repository.VoteRepository;
 import com.hollykunge.service.VoteService;
+import com.hollykunge.util.SystemLoginEnableUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +16,8 @@ import java.util.Optional;
 
 @Service
 public class VoteServiceImp implements VoteService {
+    @Autowired
+    private SystemLoginEnableUtil systemLoginEnableUtil;
 
     private final VoteRepository voteRepository;
 
@@ -35,6 +38,10 @@ public class VoteServiceImp implements VoteService {
 
     @Override
     public Page<Vote> findByUserOrderedByDatePageable(User user, int page) {
+        //不需要登录
+        if(!systemLoginEnableUtil.isNeedLogin()){
+            return voteRepository.findAllByOrderByCreateDateDesc(new PageRequest(subtractPageByOne(page), 5));
+        }
         return voteRepository.findByUserOrderByCreateDateDesc(user, new PageRequest(subtractPageByOne(page), 5));
     }
 
