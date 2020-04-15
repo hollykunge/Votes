@@ -5,9 +5,11 @@ import com.hollykunge.exception.BaseException;
 import com.hollykunge.model.Item;
 import com.hollykunge.model.Vote;
 import com.hollykunge.repository.ItemRepository;
+import com.hollykunge.repository.VoteRepository;
 import com.hollykunge.service.ItemService;
 import com.hollykunge.service.VoteService;
 import com.hollykunge.util.UUIDUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,8 @@ public class ItemServiceImp implements ItemService {
     private final ItemRepository itemRepository;
     @Autowired
     private VoteService voteService;
+    @Autowired
+    private VoteRepository voteRepository;
 
     @Autowired
     public ItemServiceImp(ItemRepository itemRepository) {
@@ -133,8 +137,10 @@ public class ItemServiceImp implements ItemService {
         if(item.getTurnNum() == 1){
             //将excel表头删除
             Vote vote = item.getVote();
-            vote.setExcelHeader(null);
-            voteService.updateById(vote);
+            Vote temp = new Vote();
+            BeanUtils.copyProperties(vote,temp);
+            temp.setExcelHeader(null);
+            voteRepository.saveAndFlush(temp);
         }
         return item;
     }
