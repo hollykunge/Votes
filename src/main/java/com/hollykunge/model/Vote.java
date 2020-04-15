@@ -33,8 +33,8 @@ public class Vote {
     @Column(name = "excel_header", length = 2000)
     private String excelHeader;
 
-    @Column(columnDefinition = "number(6)")
-    private Integer memberSize;// COMMENT '预计投票人数'
+    @Column(columnDefinition = "number(6) COMMENT '预计投票人数'")
+    private Integer memberSize;
     /**
      * 状态1为新建，2为发起，3为结束
      */
