@@ -83,7 +83,9 @@ public class VoteServiceImp implements VoteService {
         if(!StringUtils.isEmpty(source.getStatus())){
             target.setStatus(source.getStatus());
         }
-        target.setExcelHeader(source.getExcelHeader());
+        if(!StringUtils.isEmpty(source.getExcelHeader())){
+            target.setExcelHeader(source.getExcelHeader());
+        }
     }
 
     private int subtractPageByOne(int page){
