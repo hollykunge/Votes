@@ -70,6 +70,7 @@ public class ItemController extends BaseController{
      * @param bindingResult
      * @return
      */
+    @ControllerWebLog(name = "增加", intoDb = true)
     @RequestMapping(value = "/createTurn", method = RequestMethod.POST)
     public String createNewVote(@Valid Item item,
                                 BindingResult bindingResult) throws Exception {
