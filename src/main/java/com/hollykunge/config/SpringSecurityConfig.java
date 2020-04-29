@@ -1,11 +1,9 @@
 package com.hollykunge.config;
 
 import com.hollykunge.constants.VoteConstants;
-import com.hollykunge.filter.TaskLoginSecurityFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,8 +12,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.sql.DataSource;
 
@@ -93,9 +89,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().accessDeniedHandler(accessDeniedHandler)
                 // Fix for H2 console
                 .and().headers().frameOptions().disable();
-        //用重写的Filter替换掉原有的UsernamePasswordAuthenticationFilter
-        http.addFilterAt(taskAuthenticationFilter(),
-                UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override
@@ -123,22 +116,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         // In memory authentication
         auth.inMemoryAuthentication()
                 .withUser(adminUsername).password(adminPassword).roles("ADMIN");
-    }
-
-
-    @Bean
-    TaskLoginSecurityFilter taskAuthenticationFilter() throws Exception {
-        TaskLoginSecurityFilter filter = new TaskLoginSecurityFilter();
-
-        //这句很关键，重用WebSecurityConfigurerAdapter配置的AuthenticationManager，
-        // 不然要自己组装AuthenticationManager
-        filter.setAuthenticationManager(authenticationManagerBean());
-        //这个也是很关键，这个失败的处理器需要自己实现，
-        // 也就是相当于自定义失败后返回到哪个路径下springsecurity交给你自己去处理这个路径
-        //底层下描述的是，通过一层层的认证异常捕获，将request请求转发重定向到自定义的路径下。
-        filter.setAuthenticationFailureHandler(new SimpleUrlAuthenticationFailureHandler(ERRORLOGIN));
-        //成功的处理器，也可以自定义路径，这里就不需要了，使用系统默认的就行
-        return filter;
     }
 
 }
