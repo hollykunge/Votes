@@ -26,6 +26,9 @@ public class ParsingDnnameHeaderUtil {
                 pid = val.substring(2, val.length());
             }
         }
+        if(pid == null){
+            pid = dnname;
+        }
         return pid;
     }
 }
