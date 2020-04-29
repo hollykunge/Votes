@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -22,6 +23,8 @@ public class UserServiceImp implements UserService {
     private static final String USER_ROLE = "ROLE_USER";
     @Autowired
     private SystemLoginEnableUtil systemLoginEnableUtil;
+    @Autowired
+    private HttpServletRequest request;
 
     @Autowired
     public UserServiceImp(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
@@ -34,7 +37,7 @@ public class UserServiceImp implements UserService {
     public Optional<User> findByUsername(String username) {
         //不需要登录
         if(!systemLoginEnableUtil.isNeedLogin()){
-            Optional result = Optional.of(systemLoginEnableUtil.getDefaltUser());
+            Optional result = Optional.of(systemLoginEnableUtil.getDefaltUser(request));
             return result;
         }
         return userRepository.findByUsername(username);
