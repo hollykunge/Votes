@@ -5,7 +5,6 @@ import com.hollykunge.dictionary.RequestHeaderEnums;
 import com.hollykunge.exception.BaseException;
 import com.hollykunge.model.User;
 import com.hollykunge.repository.UserRepository;
-import com.hollykunge.util.SystemLoginEnableUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +28,6 @@ import java.util.Optional;
 public class SysLoginEnableConfig {
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private SystemLoginEnableUtil systemLoginEnableUtil;
 
     @Value("${system.login.enable}")
     private boolean loginEnable;
@@ -55,7 +52,7 @@ public class SysLoginEnableConfig {
         /**
          * 使用登录时触发，使用登录后，直接使用系统自身的user表
          */
-        if(systemLoginEnableUtil.isNeedLogin()){
+        if(loginEnable){
             return;
         }
         /**
