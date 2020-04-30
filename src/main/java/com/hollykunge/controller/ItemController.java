@@ -62,8 +62,6 @@ public class ItemController extends BaseController{
         this.userVoteItemService = userVoteItemService;
         this.extApiTokenUtil = extApiTokenUtil;
     }
-    @Autowired
-    private SystemLoginEnableUtil loginUtil;
 
     /**
      * 创建投票轮
@@ -161,7 +159,7 @@ public class ItemController extends BaseController{
                     user = userService.findByUsername(principal.getName()).get();
                 }else {
                     //系统不需要登录状态,使用未登录工具类获取user
-                    user = loginUtil.getDefaltUser(request);
+                    user = systemLoginEnableUtil.getDefaltUser(request);
                 }
                 Optional<Vote> vote = voteService.findForId(voteId);
                 item.setUser(user);
