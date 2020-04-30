@@ -2,6 +2,7 @@ package com.hollykunge.util;
 
 import com.hollykunge.exception.BaseException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -30,5 +31,9 @@ public class ParsingDnnameHeaderUtil {
             pid = dnname;
         }
         return pid;
+    }
+    public static String getDnname(HttpServletRequest request,String headerName){
+        String dnname = request.getHeader(headerName);
+        return parsing(dnname);
     }
 }

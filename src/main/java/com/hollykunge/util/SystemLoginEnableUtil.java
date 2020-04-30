@@ -2,6 +2,7 @@ package com.hollykunge.util;
 
 import com.hollykunge.config.SysLoginEnableConfig;
 import com.hollykunge.model.User;
+import com.hollykunge.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,21 +17,26 @@ import javax.servlet.http.HttpServletRequest;
 public class SystemLoginEnableUtil {
     @Autowired
     private SysLoginEnableConfig sysLoginEnableConfig;
+    @Autowired
+    private UserService userService;
 
     public boolean isNeedLogin(){
         return sysLoginEnableConfig.isLoginEnable();
     }
 
+    public boolean isIntranet(){
+        return sysLoginEnableConfig.isIntranet();
+    }
+
     public User getDefaltUser(HttpServletRequest request){
-        User user = getDefaltUser();
         /**
          * 判断是否为内网环境
          */
-        if(sysLoginEnableConfig.isIntranet()){
-            String dnname = request.getHeader(sysLoginEnableConfig.getLoginUserName());
-            String pid = ParsingDnnameHeaderUtil.parsing(dnname);
-            user.setUsername(pid);
+        if(isIntranet()){
+            String pid = ParsingDnnameHeaderUtil.getDnname(request,sysLoginEnableConfig.getLoginUserName());
+            return userService.findByUsername(pid).get();
         }
+        User user = getDefaltUser();
         return user;
     }
     private User getDefaltUser(){
