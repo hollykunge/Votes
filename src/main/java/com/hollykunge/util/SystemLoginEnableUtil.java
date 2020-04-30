@@ -1,12 +1,14 @@
 package com.hollykunge.util;
 
 import com.hollykunge.config.SysLoginEnableConfig;
+import com.hollykunge.exception.BaseException;
 import com.hollykunge.model.User;
 import com.hollykunge.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 /**
  * @author: zhhongyu
@@ -34,7 +36,11 @@ public class SystemLoginEnableUtil {
          */
         if(isIntranet()){
             String pid = ParsingDnnameHeaderUtil.getDnname(request,sysLoginEnableConfig.getLoginUserName());
-            return userService.findByUsername(pid).get();
+            Optional<User> user = userService.findByUsername(pid);
+            if(!user.isPresent()){
+                throw new BaseException("投票系统不存在你..无权访问");
+            }
+            return user.get();
         }
         User user = getDefaltUser();
         return user;
