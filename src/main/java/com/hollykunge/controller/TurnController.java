@@ -119,7 +119,9 @@ public class TurnController extends BaseController{
 
             model.addAttribute("vote", vote);
             if (isPrincipalOwnerOfVote(principal, vote)) {
-                model.addAttribute("username", principal.getName());
+                if(principal != null){
+                    model.addAttribute("username", principal.getName());
+                }
             }
             //进入邀请页面接口地址
             InetAddress address= InetAddress.getByName(request.getServerName());
