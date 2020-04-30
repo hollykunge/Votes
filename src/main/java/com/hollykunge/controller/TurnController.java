@@ -210,6 +210,11 @@ public class TurnController extends BaseController{
     }
 
     private boolean isPrincipalOwnerOfVote(Principal principal, Vote vote) {
+        //无登录状态下业务
+        if(!systemLoginEnableUtil.isNeedLogin()){
+            User user = systemLoginEnableUtil.getDefaltUser(request);
+            return Objects.equals(user.getUsername(),vote.getUser().getUsername());
+        }
         return principal != null && principal.getName().equals(vote.getUser().getUsername());
     }
 }
