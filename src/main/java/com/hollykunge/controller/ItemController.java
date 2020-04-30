@@ -62,6 +62,8 @@ public class ItemController extends BaseController{
         this.userVoteItemService = userVoteItemService;
         this.extApiTokenUtil = extApiTokenUtil;
     }
+    @Autowired
+    private SystemLoginEnableUtil loginUtil;
 
     /**
      * 创建投票轮
@@ -153,16 +155,20 @@ public class ItemController extends BaseController{
             //为添加
             if (item == null) {
                 item = new Item();
-                String username = null;
+                User user;
                 if(principal != null){
-                    username = principal.getName();
+                    //已登录状态
+                    user = userService.findByUsername(principal.getName()).get();
+                }else {
+                    //系统不需要登录状态,使用未登录工具类获取user
+                    user = loginUtil.getDefaltUser(request);
                 }
-                Optional<User> user = userService.findByUsername(username);
                 Optional<Vote> vote = voteService.findForId(voteId);
-                item.setUser(user.get());
+                item.setUser(user);
                 item.setVote(vote.get());
                 //添加页面时默认选择否同
                 item.setRules("1");
+
             }
             if (item.getMemberSize() == null){
                 item.setMemberSize(item.getVote().getMemberSize());
@@ -175,21 +181,6 @@ public class ItemController extends BaseController{
         } catch (Exception e) {
             throw e;
         }
-//        Optional<Vote> vote = voteService.findForId(id);
-//        if (vote.isPresent()) {
-//            Optional<User> user = userService.findByUsername(principal.getName());
-//            if (user.isPresent()) {
-//                Item turn = new Item();
-//                turn.setUser(user.get());
-//                turn.setVote(vote.get());
-//                model.addAttribute("turn", turn);
-//                return "/turnForm";
-//            } else {
-//                return "/error";
-//            }
-//        } else {
-//            return "/error";
-//        }
     }
 
     /**
