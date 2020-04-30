@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -35,12 +36,20 @@ public class SystemLoginEnableUtil {
          * 判断是否为内网环境
          */
         if(isIntranet()){
+            //使用jvm缓存用户，减少数据库压力
             String pid = ParsingDnnameHeaderUtil.getDnname(request,sysLoginEnableConfig.getLoginUserName());
-            Optional<User> user = userService.findByUsername(pid);
-            if(!user.isPresent()){
-                throw new BaseException("投票系统不存在你..无权访问");
+            Object cacheUser = LocalCache.get(pid);
+            User user;
+            if(Objects.isNull(cacheUser)){
+                Optional<User> userData = userService.findByUsername(pid);
+                if(!userData.isPresent()){
+                    throw new BaseException("投票系统不存在你..无权访问");
+                }
+                user = userData.get();
+                LocalCache.put(pid,user);
             }
-            return user.get();
+            user = (User) cacheUser;
+            return user;
         }
         User user = getDefaltUser();
         return user;
