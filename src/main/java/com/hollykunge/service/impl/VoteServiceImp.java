@@ -39,7 +39,7 @@ public class VoteServiceImp implements VoteService {
     @Override
     public Page<Vote> findByUserOrderedByDatePageable(User user, int page) {
         //不需要登录
-        if(!systemLoginEnableUtil.isNeedLogin()){
+        if(!systemLoginEnableUtil.isNeedLogin() && !systemLoginEnableUtil.isIntranet()){
             return voteRepository.findAllByOrderByCreateDateDesc(new PageRequest(subtractPageByOne(page), 5));
         }
         return voteRepository.findByUserOrderByCreateDateDesc(user, new PageRequest(subtractPageByOne(page), 5));
