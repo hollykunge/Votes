@@ -51,23 +51,19 @@ public class TurnController extends BaseController{
     @RequestMapping(value = "/newVote", method = RequestMethod.GET)
     public String newVote(Principal principal,
                           Model model) {
-        String userName = null;
+        User user;
+        //登录状态
         if(principal != null){
-            userName = principal.getName();
+            String userName = principal.getName();
+            user = userService.findByUsername(userName).get();
+        }else{
+            //无登录状态
+            user = systemLoginEnableUtil.getDefaltUser(request);
         }
-        Optional<User> user = userService.findByUsername(userName);
-
-        if (user.isPresent()) {
-            Vote vote = new Vote();
-            vote.setUser(user.get());
-
-            model.addAttribute("vote", vote);
-
-            return "/voteForm";
-
-        } else {
-            return "/error";
-        }
+        Vote vote = new Vote();
+        vote.setUser(user);
+        model.addAttribute("vote", vote);
+        return "/voteForm";
     }
 
     @RequestMapping(value = "/saveVote", method = RequestMethod.POST)
