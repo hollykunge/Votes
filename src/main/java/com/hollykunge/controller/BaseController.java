@@ -14,12 +14,18 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class BaseController {
     @Autowired
-    private SystemLoginEnableUtil systemLoginEnableUtil;
+    protected SystemLoginEnableUtil systemLoginEnableUtil;
     @Autowired
-    private HttpServletRequest request;
+    protected HttpServletRequest request;
     @ModelAttribute
     public void nologinModel(Model model) {
+        /**
+         * 用来断定页面显示的内容要根据username进行显示
+         */
         model.addAttribute("loginSys",systemLoginEnableUtil.isNeedLogin());
+        /**
+         * 页面过滤数据用的username
+         */
         model.addAttribute("username",systemLoginEnableUtil.getDefaltUser(request).getUsername());
     }
 }
