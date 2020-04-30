@@ -57,7 +57,7 @@
             <div th:if="${loginSys} eq false" class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav do-right">
                         <a class="btn btn-warning mr-1" th:href="@{/newVote}">新建投票</a>
-                        <a class="btn btn-primary mr-1" th:href="@{'/votes/admin'}">我的投票</a>
+                        <a class="btn btn-primary mr-1" th:href="@{'/votes/' + ${#httpServletRequest.getAttribute('username')}}">我的投票</a>
                 </div>
             </div>
         </div>
