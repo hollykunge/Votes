@@ -19,12 +19,16 @@
             <li class="breadcrumb-item active" aria-current="page" th:text="${vote.title}">Library</li>
         </ol>
     </nav>
+    <div class="error-container"></div>
+
     <div class="card border-dark mb-3 shadow-sm">
         <div class="card-header bg-light">详情
             <div style="float: right">
-                <a th:href="@{'/voteStatistics/export/{voteId}'(voteId=${vote.id})}">
-                    <button type="button" class="btn btn-secondary btn-sm">导出结果</button>
-                </a>
+                <a class="export-url" th:href="@{'/voteStatistics/export/{voteId}'(voteId=${vote.id})}"></a>
+                <button type="button" class="btn btn-secondary btn-sm export-btn">导出结果</button>
+<!--                 <a th:href="@{'/voteStatistics/export/{voteId}'(voteId=${vote.id})}">-->
+<!--                    <button type="button" class="btn btn-secondary btn-sm">导出结果</button>-->
+<!--                </a>-->
             </div>
             <div style="float: right" class="mr-1" sec:authorize="isAuthenticated()" th:if="${username}">
                 <a th:href="@{'/editVote/{id}'(id=${vote.id})}" th:if="${vote.getItems().size()==0}">
@@ -188,7 +192,9 @@
     function showModel(id) {
         $('#' + id).modal('show');
     }
-
+    function overVote(id) {
+        window.location.href = '/setItemStatus/' + id + '/' + '3'
+    }
     var clipboard = new ClipboardJS('#copyCode');
     clipboard.on('success', function (e) {
         $('#copyCode').text('复制成功');
@@ -201,10 +207,38 @@
         $('#copyCode').text('复制');
         $(this).removeData("bs.modal");
     })
-
-    function overVote(id) {
-        window.location.href = '/setItemStatus/' + id + '/' + '3'
-    }
+    $('.export-btn').on('click', function () {
+        $.ajax({
+            url: $('.export-url').attr('href'),
+            success: function (res) {
+                /**
+                 * file url: src/main/java/com/hollykunge/controller/VoteController
+                 *
+                 * public ObjectRestResponse exportVoteStatic
+                 *
+                 * url直接跳转后，不存在数据，界面返回为json，用ajax请求处理json，成功后返回内容为 .xlsx
+                 *
+                 * */
+                if(res.status) {
+                    if(res.status === 500) {
+                        // 将错误信息添加到容器
+                        var template = [
+                            '<div class="alert alert-danger error-alert-danger">',
+                            res.message,
+                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close">',
+                            '<span aria-hidden="true">&times;</span>',
+                            '</button>',
+                            '</div>'
+                        ].join('')
+                        $('.error-container').append(template)
+                    }
+                    return
+                }
+                window.location.href = $('.export-url').attr('href')
+            }
+        })
+    })
+    
 </script>
 </body>
 </html>
