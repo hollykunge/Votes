@@ -48,6 +48,7 @@ public class TurnController extends BaseController{
     @Autowired
     private VoteItemService voteItemService;
 
+    @ControllerWebLog(name = "查询", intoDb = true)
     @RequestMapping(value = "/newVote", method = RequestMethod.GET)
     public String newVote(Principal principal,
                           Model model) {
@@ -66,6 +67,7 @@ public class TurnController extends BaseController{
         return "/voteForm";
     }
 
+    @ControllerWebLog(name = "增加", intoDb = true)
     @RequestMapping(value = "/saveVote", method = RequestMethod.POST)
     public String createNewVote(@Valid Vote vote,
                                 BindingResult bindingResult) {
@@ -80,6 +82,7 @@ public class TurnController extends BaseController{
         }
     }
 
+    @ControllerWebLog(name = "查询", intoDb = true)
     @RequestMapping(value = "/editVote/{id}", method = RequestMethod.GET)
     public String editVoteWithId(@PathVariable Long id,
                                  Principal principal,
@@ -102,6 +105,7 @@ public class TurnController extends BaseController{
         }
     }
 
+    @ControllerWebLog(name = "查询", intoDb = true)
     @RequestMapping(value = "/vote/{id}", method = RequestMethod.GET)
     public String getVoteWithId(@PathVariable Long id,
                                 Principal principal,
@@ -134,6 +138,7 @@ public class TurnController extends BaseController{
         }
     }
 
+    @ControllerWebLog(name = "删除", intoDb = true)
     @RequestMapping(value = "/vote/{id}", method = RequestMethod.DELETE)
     public String deleteVoteWithId(@PathVariable Long id,
                                    Principal principal,
@@ -183,6 +188,7 @@ public class TurnController extends BaseController{
      * @return
      * @throws Exception
      */
+    @ControllerWebLog(name = "查询", intoDb = true)
     @RequestMapping(value = "/vote/setstatus/{id}/{status}", method = RequestMethod.GET)
     public String setVoteStatus(@PathVariable Long id,
                                 @PathVariable String status,

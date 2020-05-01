@@ -281,7 +281,6 @@ function configOperation(rules, columnsOption, resultName, fraction) {
         columnsOption.push({
             title: '操作',
             cellStyle: cellStyle,
-
             field: "Button",
             align: 'center',
             valign: 'middle',
@@ -903,11 +902,14 @@ function cellStyle(value, row, index) {
             classes: '',
             css: {
                 background: '#fff'
-
             }
         }
     }
-    return false
+    return {
+        css: {
+            'min-width': '120px'
+        }
+    }
 }
 
 /**

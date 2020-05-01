@@ -51,6 +51,7 @@ public class UserVoteController {
     @Autowired
     private ExtTokenService extTokenService;
 
+    @ControllerWebLog(name = "查询", intoDb = true)
     @ExtApiToken(interfaceAdress = VoteConstants.INVITECODE_RPC+"add")
     @RequestMapping(value = VoteConstants.INVITECODE_RPC+"{id}/{code}", method = RequestMethod.GET)
     public String inviteCodeView(@PathVariable Long id,
@@ -130,6 +131,7 @@ public class UserVoteController {
      * @return
      * @throws Exception
      */
+    @ControllerWebLog(name = "查询", intoDb = true)
     @RequestMapping(value = VoteConstants.INVITECODE_RPC+"nextTurn/"+"{id}/{code}", method = RequestMethod.GET)
     public String nextTurnItem(@PathVariable Long id,
                                @PathVariable String code,
@@ -179,6 +181,7 @@ public class UserVoteController {
      * @return
      * @throws Exception
      */
+    @ControllerWebLog(name = "查询", intoDb = true)
     @ExtApiIdempotent(VoteConstants.EXTAPIHEAD)
     @RequestMapping(value = VoteConstants.INVITECODE_RPC+"add/{id}/{code}", method = RequestMethod.POST)
     @ResponseBody
@@ -241,6 +244,7 @@ public class UserVoteController {
      * @return
      * @throws Exception
      */
+    @ControllerWebLog(name = "查询", intoDb = true)
     @RequestMapping(value = VoteConstants.INVITECODE_RPC+"all", method = RequestMethod.GET)
     public String getAll(
             Model model,
