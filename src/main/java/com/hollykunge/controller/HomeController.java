@@ -24,7 +24,6 @@ public class HomeController extends BaseController{
     }
 
     @GetMapping("/home")
-    @ControllerWebLog(name = "查询", intoDb = true)
     public String home(@RequestParam(defaultValue = "0") int page,
                        Model model) {
 
@@ -37,7 +36,6 @@ public class HomeController extends BaseController{
     }
 
     @GetMapping("/")
-    @ControllerWebLog(name = "查询", intoDb = true)
     public String index(Model model) {
         return "/home";
     }

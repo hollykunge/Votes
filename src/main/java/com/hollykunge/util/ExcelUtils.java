@@ -59,10 +59,10 @@ public final class ExcelUtils {
                 agree.add("否同规则结果");
                 list.add(agree);
                 List<String> order = new ArrayList<>();
-                order.add("排序规则结果");
+                order.add("打分规则结果");
                 list.add(order);
                 List<String> socore = new ArrayList<>();
-                socore.add("打分规则结果");
+                socore.add("排序规则结果");
                 list.add(socore);
                 List<String> agreepass = new ArrayList<>();
                 agreepass.add("否同规则是否通过");
