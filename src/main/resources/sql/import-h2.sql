@@ -4,7 +4,7 @@ ALTER TABLE VOTE
 -- Users
 INSERT INTO VOTE_USER (user_id, password, username, active)
 VALUES
-  (1, '$2a$10$kYdU1bOG50gufWRhAjaSLu5/EnATu6gYzxZcDsiAcltuBBfRmTowe', 'user', 1);
+  (1, '$2a$10$kYdU1bOG50gufWRhAjaSLu5/EnATu6gYzxZcDsiAcltuBBfRmTowe', 'larkadmin', 1);
 
 -- Roles
 INSERT INTO ROLE (role_id, role)
