@@ -54,7 +54,6 @@ public class VoteController extends BaseController{
         this.userVoteItemService = userVoteItemService;
     }
 
-    @ControllerWebLog(name = "查询", intoDb = true)
     @RequestMapping(value = "/votes/{username}", method = RequestMethod.GET)
     public String voteForUsername(@PathVariable String username,
                                   @RequestParam(defaultValue = "0") int page,
@@ -87,7 +86,6 @@ public class VoteController extends BaseController{
      * @param id
      * @return
      */
-    @ControllerWebLog(name = "查询", intoDb = true)
     @RequestMapping(value = "/voteStatistics/export/{id}", method = RequestMethod.GET)
     @ResponseBody
     public ObjectRestResponse exportVoteStatic(@PathVariable Long id,
@@ -146,7 +144,6 @@ public class VoteController extends BaseController{
      * @return
      * @throws Exception
      */
-    @ControllerWebLog(name = "查询", intoDb = true)
     @RequestMapping(value = "/voteStatistics/view/{id}", method = RequestMethod.GET)
     public String voteStatisticsView(@PathVariable Long id,
                                      Model model) throws Exception {

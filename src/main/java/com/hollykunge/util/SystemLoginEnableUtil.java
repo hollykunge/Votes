@@ -47,9 +47,9 @@ public class SystemLoginEnableUtil {
                 }
                 user = userData.get();
                 LocalCache.put(pid,user);
+                return user;
             }
-            user = (User) cacheUser;
-            return user;
+            return (User)cacheUser;
         }
         User user = getDefaltUser();
         return user;
