@@ -14,26 +14,26 @@ public final class LocalCache {
 	 * 预缓存信息
 	 */
 	private static final Map<String, Object> CACHE_MAP = new ConcurrentHashMap<String, Object>();
-	
+
 	/**
-	 * 每个缓存生效时间2分钟
+	 * 每个缓存生效时间30分钟
 	 */
-	public static final long CACHE_HOLD_TIME_2M = 10 * 60 * 1000L;
-	
+	public static final long CACHE_HOLD_TIME_2M = 30 * 60 * 1000L;
+
 	/**
 	 * 每个缓存生效时间1分钟
 	 */
 	public static final long CACHE_HOLD_TIME_1M = 60 * 1000L;
-	
+
 	/**
-	 * 存放一个缓存对象，默认保存时间2分钟
+	 * 存放一个缓存对象，默认保存时间30分钟
 	 * @param cacheName
 	 * @param obj
 	 */
 	public static void put(String cacheName, Object obj) {
 		put(cacheName, obj, CACHE_HOLD_TIME_2M);
 	}
-	
+
 	/**
 	 * 存放一个缓存对象，保存时间为holdTime
 	 * @param cacheName
@@ -44,7 +44,7 @@ public final class LocalCache {
 		CACHE_MAP.put(cacheName, obj);
 		CACHE_MAP.put(cacheName + "_HoldTime", System.currentTimeMillis() + holdTime);//缓存失效时间
 	}
-	
+
 	/**
 	 * 取出一个缓存对象
 	 * @param cacheName
@@ -56,14 +56,14 @@ public final class LocalCache {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 删除所有缓存
 	 */
 	public static void removeAll() {
 		CACHE_MAP.clear();
 	}
-	
+
 	/**
 	 * 删除某个缓存
 	 * @param cacheName
@@ -72,7 +72,7 @@ public final class LocalCache {
 		CACHE_MAP.remove(cacheName);
 		CACHE_MAP.remove(cacheName + "_HoldTime");
 	}
-	
+
 	/**
 	 * 检查缓存对象是否存在，
 	 * 若不存在，则返回false
