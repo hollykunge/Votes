@@ -125,6 +125,8 @@
 </div>
 <input type="hidden" name="vote_token" id="vote_token"
        th:value="${#httpServletRequest.getAttribute('vote_token')}"/>
+<input type="hidden" name="view_href" id="view_href"
+       th:value="${#httpServletRequest.requestURL}"/>
 <div th:replace="/fragments/footer :: footer"/>
 <!-- loading -->
 <div class="modal" id="loading" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop='static'>
@@ -160,6 +162,7 @@
         [[${ item.code }]]
     ].join('/')
     var vote_token = document.getElementById("vote_token").value;;
+    var view_href = document.getElementById("view_href").value;
     $(function () {
         var resultName = '';
         if (rules == '1') {

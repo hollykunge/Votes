@@ -1,5 +1,6 @@
 package com.hollykunge.aop;
 
+import com.alibaba.fastjson.JSONObject;
 import com.hollykunge.annotation.ExtApiIdempotent;
 import com.hollykunge.annotation.ExtApiToken;
 import com.hollykunge.constants.VoteConstants;
@@ -82,7 +83,7 @@ public class ExtApiAopIdempotent {
 			HttpServletRequest request = extApiTokenUtil.getRequest();
 			String valueType = extApiIdempotent.value();
 			if (StringUtils.isEmpty(valueType)) {
-				response("参数错误!");
+                response502("参数错误!");
 				log.warn("参数错误！");
 				return null;
 			}
@@ -94,40 +95,50 @@ public class ExtApiAopIdempotent {
 				token = request.getParameter("vote_toke");
 			}
 			if (StringUtils.isEmpty(token)) {
-				response("参数错误!");
+                response502("参数错误!");
 				log.warn("没有找到重复表单的token！");
 				log.warn("参数错误！");
 				return null;
 			}
 			String caCheToken = extTokenService.getCaCheToken(token);
-			if (StringUtils.isEmpty(caCheToken)) {
-				response("请勿重复提交!或幂等性token已经超时失效...");
-				log.warn("请勿重复提交!或幂等性token已经超时失效...");
-				if(extApiIdempotent.isViewTransfer()){
-					String view = extApiIdempotent.tranferView();
-					String regex = "\\{([^}]*)\\}";
-					Pattern pattern = Pattern.compile (regex);
-					Matcher matcher = pattern.matcher (view);
-					String group = "";
-					if(matcher.find()){
-						group = matcher.group();
-						group = group.substring(1,group.length()-1);
-					}
-					Object[] args = proceedingJoinPoint.getArgs();
-					String[] parameterNames = signature.getParameterNames();
-					Object id = null;
-					for(int i = 0;i<parameterNames.length;i++){
-						if(!StringUtils.isEmpty(group) && group.equals(parameterNames[i])){
-							id = args[i];
-						}
-					}
-					if(id != null){
-						view = view.substring(0,view.indexOf("{"))+id;
-					}
-					return view;
-				}
-				return null;
-			}
+            String failCacheToken = null;
+			if(StringUtils.isEmpty(caCheToken)){
+                failCacheToken = extTokenService.getFailCacheToken(token);
+            }
+            if(!StringUtils.isEmpty(failCacheToken)){
+                //失效的缓存不为空，证明页面停留时间过长，导致token失效。
+                response503("页面停留时间太长，正在刷新页面，请重新录入数据");
+                //清除该失效的缓存
+                extTokenService.removeFailCache(failCacheToken);
+                return null;
+            }else if(StringUtils.isEmpty(caCheToken)){
+                //真正的幂等性问题
+                response502("请勿重复提交!");
+                if(extApiIdempotent.isViewTransfer()){
+                    String view = extApiIdempotent.tranferView();
+                    String regex = "\\{([^}]*)\\}";
+                    Pattern pattern = Pattern.compile (regex);
+                    Matcher matcher = pattern.matcher (view);
+                    String group = "";
+                    if(matcher.find()){
+                        group = matcher.group();
+                        group = group.substring(1,group.length()-1);
+                    }
+                    Object[] args = proceedingJoinPoint.getArgs();
+                    String[] parameterNames = signature.getParameterNames();
+                    Object id = null;
+                    for(int i = 0;i<parameterNames.length;i++){
+                        if(!StringUtils.isEmpty(group) && group.equals(parameterNames[i])){
+                            id = args[i];
+                        }
+                    }
+                    if(id != null){
+                        view = view.substring(0,view.indexOf("{"))+id;
+                    }
+                    return view;
+                }
+                return null;
+            }
 			Object proceed = proceedingJoinPoint.proceed();
 			extTokenService.removeCache(caCheToken);
 			if(proceed instanceof ObjectRestResponse){
@@ -142,14 +153,28 @@ public class ExtApiAopIdempotent {
 	}
 
 
-	public void response(String msg) throws IOException {
-		ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-		HttpServletResponse response = attributes.getResponse();
-		response.setHeader("Content-type", "application/json");
-		response.setStatus(502);
-		response.setCharacterEncoding("utf-8");
-		response.setHeader("msg",msg);
+	public void response502(String msg) throws IOException {
+        response(msg,502);
 	}
+
+    public void response503(String msg) throws IOException {
+        response(msg,503);
+    }
+
+    public void response(String msg,int status){
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletResponse response = attributes.getResponse();
+        response.setHeader("Content-type", "application/json");
+        response.setStatus(status);
+        response.setCharacterEncoding("utf-8");
+        JSONObject result = new JSONObject();
+        result.put("message",msg);
+        try {
+            response.getOutputStream().write(result.toJSONString().getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 
 

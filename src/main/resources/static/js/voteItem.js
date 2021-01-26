@@ -559,7 +559,6 @@ function request(obj) {
         success: function (req) {
             // $('button[type=submit]').removeAttr('disabled');
             // $('button[type=submit]').find('.hide').addClass('hide')
-
             //请求成功时处理
             if (req.status == 200) {
                 $('body').message({
@@ -583,11 +582,18 @@ function request(obj) {
         error: function (error) {
             //请求出错处理
             if (error) {
-                $('body').message({
-                    message: '错误,响应状态码: ' + error.status,
-                    type: 'danger'
-                })
-                // reloadPage()
+                if(error.status == 503 || error.status == 502){
+                    $('body').message({
+                        message: error.responseJSON.message,
+                        type: 'danger'
+                    })
+                    reloadPage()
+                }else{
+                    $('body').message({
+                        message: '错误,响应状态码: ' + error.status,
+                        type: 'danger'
+                    })
+                }
             }
         }
     });
@@ -598,7 +604,7 @@ function reloadPage() {
     var timer = setTimeout(function () {
         timer = null
         window.location.reload()
-    }, 500)
+    }, 1000)
 }
 
 /**
