@@ -89,8 +89,12 @@ public class ExtApiAopIdempotent {
 			}
 			String token = null;
 			if (valueType.equals(VoteConstants.EXTAPIHEAD)) {
-//				token = (String) request.getSession().getAttribute("vote_token");
+				//先从请求头中获取
 				token = request.getHeader("vote_token");
+				//如果token为空，尝试从session中获得
+				if(token == null){
+					token = (String) request.getSession().getAttribute("vote_token");
+				}
 			} else {
 				token = request.getParameter("vote_toke");
 			}
