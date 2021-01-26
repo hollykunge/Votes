@@ -11,4 +11,8 @@ public interface ExtTokenService {
     String getCaCheToken(String token);
 
     boolean removeCache(String token);
+
+    boolean removeFailCache(String token);
+
+    String getFailCacheToken(String token);
 }
