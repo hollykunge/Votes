@@ -542,7 +542,8 @@ function request(obj) {
     $.ajax({
         url: obj.url, //     //请求的url地址
         headers: {
-            'Content-Type': 'application/json;charset=utf8'
+            'Content-Type': 'application/json;charset=utf8',
+            'vote_token': vote_token
         },
         // dataType:"json",   //返回格式为json
         async: true,//请求是否异步，默认为异步，这也是ajax重要特性

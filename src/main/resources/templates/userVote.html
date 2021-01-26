@@ -123,7 +123,8 @@
         </div>
     </div>
 </div>
-
+<input type="hidden" name="vote_token" id="vote_token"
+       th:value="${#httpServletRequest.getAttribute('vote_token')}"/>
 <div th:replace="/fragments/footer :: footer"/>
 <!-- loading -->
 <div class="modal" id="loading" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop='static'>
@@ -158,6 +159,7 @@
         [[${ item.id }]],
         [[${ item.code }]]
     ].join('/')
+    var vote_token = document.getElementById("vote_token").value;;
     $(function () {
         var resultName = '';
         if (rules == '1') {
