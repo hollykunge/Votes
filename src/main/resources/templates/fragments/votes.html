@@ -25,7 +25,14 @@
                 </thead>
                 <tbody>
                 <tr th:each="vote : ${pager.votes}">
-                    <th scope="row" th:text="${voteStat.index}+1"></th>
+                    <th scope="row">
+                        <p th:if="${voteStat.index} gt 9">
+                            <span th:text="'0'+ (${voteStat.index}+1)"></span>
+                        </p>
+                        <p th:if="${voteStat.index} lt 9">
+                            <span th:text="'00'+ (${voteStat.index}+1)"></span>
+                        </p>
+                    </th>
                     <td th:text="${vote.title}">--</td>
                     <td th:text="${#dates.format(vote.createDate, 'yyyy-MM-dd')}">--/--/--</td>
                     <td th:text="${vote.getItems().size()}">-</td>
