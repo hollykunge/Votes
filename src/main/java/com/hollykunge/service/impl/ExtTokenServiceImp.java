@@ -46,10 +46,34 @@ public class ExtTokenServiceImp implements ExtTokenService {
         return true;
     }
 
-    @Scheduled(cron = "0 0/30 * * * ?")
+    @Override
+    public boolean removeFailCache(String token) {
+        if(LocalCache.checkFailCacheName(token)){
+            LocalCache.removeFailCache(token);
+        }
+        return true;
+    }
+
+    @Override
+    public String getFailCacheToken(String token) {
+        if(StringUtils.isEmpty(token)){
+            return null;
+        }
+        return (String) LocalCache.getFailCache(token);
+    }
+
+    @Scheduled(cron = "0 0/5 * * * ?")
     public void testTasks() {
+        //清除缓存，防止死锁
         LocalCache.getCacheMap().forEach((key,value) ->{
             LocalCache.checkCacheName(key);
+        });
+    }
+    @Scheduled(cron = "0 0/5 * * * ?")
+    public void failCachetask(){
+        //清除失效缓存
+        LocalCache.getFailCacheMap().forEach((key,value) ->{
+            LocalCache.checkFailCacheName(key);
         });
     }
 

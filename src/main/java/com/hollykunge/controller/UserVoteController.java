@@ -51,7 +51,6 @@ public class UserVoteController {
     @Autowired
     private ExtTokenService extTokenService;
 
-    @ControllerWebLog(name = "查询", intoDb = true)
     @ExtApiToken(interfaceAdress = VoteConstants.INVITECODE_RPC+"add")
     @RequestMapping(value = VoteConstants.INVITECODE_RPC+"{id}/{code}", method = RequestMethod.GET)
     public String inviteCodeView(@PathVariable Long id,
@@ -131,7 +130,6 @@ public class UserVoteController {
      * @return
      * @throws Exception
      */
-    @ControllerWebLog(name = "查询", intoDb = true)
     @RequestMapping(value = VoteConstants.INVITECODE_RPC+"nextTurn/"+"{id}/{code}", method = RequestMethod.GET)
     public String nextTurnItem(@PathVariable Long id,
                                @PathVariable String code,
@@ -181,7 +179,6 @@ public class UserVoteController {
      * @return
      * @throws Exception
      */
-    @ControllerWebLog(name = "查询", intoDb = true)
     @ExtApiIdempotent(VoteConstants.EXTAPIHEAD)
     @RequestMapping(value = VoteConstants.INVITECODE_RPC+"add/{id}/{code}", method = RequestMethod.POST)
     @ResponseBody
@@ -200,6 +197,14 @@ public class UserVoteController {
                 return response;
             }
             String clientIp = getClientIp(request);
+            //判断该ip是否已经参与过投票了
+            List<UserVoteItem> byItemAndIp = userVoteItemService.findByItemAndIp(item, clientIp);
+            if(byItemAndIp != null && byItemAndIp.size() > 0){
+                response.setStatus(500);
+                response.setMessage("该ip已经参与过该轮次的投票");
+                response.setRel(false);
+                return response;
+            }
             List<UserVoteItem> userVoteItemlist = JSONArray.parseArray(userVoteItems, UserVoteItem.class);
             List<UserVoteItem> collect = userVoteItemlist.stream().filter(new Predicate<UserVoteItem>() {
                 @Override
@@ -244,7 +249,6 @@ public class UserVoteController {
      * @return
      * @throws Exception
      */
-    @ControllerWebLog(name = "查询", intoDb = true)
     @RequestMapping(value = VoteConstants.INVITECODE_RPC+"all", method = RequestMethod.GET)
     public String getAll(
             Model model,
@@ -263,7 +267,7 @@ public class UserVoteController {
             throw e;
         }
     }
-    
+
     public String getClientIp(HttpServletRequest request){
         String clientIp = request.getHeader("clientIp");
         //如果请求头中没有ip，则为本地测试，使用默认值了

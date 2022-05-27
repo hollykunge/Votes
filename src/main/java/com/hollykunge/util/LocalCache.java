@@ -14,11 +14,19 @@ public final class LocalCache {
 	 * 预缓存信息
 	 */
 	private static final Map<String, Object> CACHE_MAP = new ConcurrentHashMap<String, Object>();
+	/**
+	 * 失效的缓存集
+	 */
+	private static final Map<String, Object> FAIL_CACHE_MAP = new ConcurrentHashMap<String, Object>();
 
 	/**
 	 * 每个缓存生效时间30分钟
 	 */
 	public static final long CACHE_HOLD_TIME_2M = 30 * 60 * 1000L;
+	/**
+	 * 失效缓存失效时间40分钟，防止内存堆数据溢出
+	 */
+	public static final long FAIL_CACHE_HOLD_TIME = 40 * 60 * 1000L;
 
 	/**
 	 * 每个缓存生效时间1分钟
@@ -32,6 +40,16 @@ public final class LocalCache {
 	 */
 	public static void put(String cacheName, Object obj) {
 		put(cacheName, obj, CACHE_HOLD_TIME_2M);
+	}
+
+	/**
+	 * 将失效的缓存，存放在失效缓存集合内存中
+	 * @param cacheName
+	 * @param obj
+	 */
+	public static void putFailCache(String cacheName, Object obj,long holdTime){
+		FAIL_CACHE_MAP.put(cacheName,obj);
+		FAIL_CACHE_MAP.put(cacheName + "_HoldTime", System.currentTimeMillis() + holdTime);
 	}
 
 	/**
@@ -56,12 +74,19 @@ public final class LocalCache {
 		}
 		return null;
 	}
+	public static Object getFailCache(String cacheName) {
+		if (checkFailCacheName(cacheName)) {
+			return FAIL_CACHE_MAP.get(cacheName);
+		}
+		return null;
+	}
 
 	/**
 	 * 删除所有缓存
 	 */
 	public static void removeAll() {
 		CACHE_MAP.clear();
+		FAIL_CACHE_MAP.clear();
 	}
 
 	/**
@@ -71,6 +96,11 @@ public final class LocalCache {
 	public static void remove(String cacheName) {
 		CACHE_MAP.remove(cacheName);
 		CACHE_MAP.remove(cacheName + "_HoldTime");
+	}
+
+	public static void removeFailCache(String cacheName) {
+		FAIL_CACHE_MAP.remove(cacheName);
+		FAIL_CACHE_MAP.remove(cacheName + "_HoldTime");
 	}
 
 	/**
@@ -87,6 +117,20 @@ public final class LocalCache {
 		}
 		if (cacheHoldTime < System.currentTimeMillis()) {
 			remove(cacheName);
+			//被动失效的缓存，放到失败缓存集合中
+			putFailCache(cacheName,cacheName,FAIL_CACHE_HOLD_TIME);
+			return false;
+		}
+		return true;
+	}
+
+	public static boolean checkFailCacheName(String cacheName) {
+		Long cacheHoldTime = (Long) FAIL_CACHE_MAP.get(cacheName + "_HoldTime");
+		if (cacheHoldTime == null || cacheHoldTime == 0L) {
+			return false;
+		}
+		if (cacheHoldTime < System.currentTimeMillis()) {
+			removeFailCache(cacheName);
 			return false;
 		}
 		return true;
@@ -96,18 +140,7 @@ public final class LocalCache {
 		return CACHE_MAP;
 	}
 
-	public static void main(String[] args) {
-			Thread aa = new Thread(() -> {
-				LocalCache.put("vote_token_127.0.0.1_useParentItem_1576033013706","vote_token_127.0.0.1_useParentItem_1576033013706");
-				LocalCache.remove("vote_token_127.0.0.1_useParentItem_1576033013706");
-				System.out.println("CacheName = [" + LocalCache.checkCacheName("vote_token_127.0.0.1_useParentItem_1576033013706") + "]");
-				System.out.println("LocalCache = [" + LocalCache.get("vote_token_127.0.0.1_useParentItem_1576033013706") + "]");
-			});
-			Thread bb = new Thread(() -> {
-				System.out.println("CacheName = [" + LocalCache.checkCacheName("vote_token_127.0.0.1_useParentItem_1576033013706") + "]");
-				System.out.println("LocalCache = [" + LocalCache.get("vote_token_127.0.0.1_useParentItem_1576033013706") + "]");
-			});
-			aa.start();
-			bb.start();
+	public static Map<String, Object> getFailCacheMap() {
+		return FAIL_CACHE_MAP;
 	}
 }

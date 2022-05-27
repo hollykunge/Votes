@@ -16,7 +16,6 @@ import java.security.Principal;
 public class LoginController {
 
     @GetMapping("/login")
-    @ControllerWebLog(name = "登录", intoDb = true)
     public String login(Principal principal) {
 
         if (principal != null) {

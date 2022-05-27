@@ -30,7 +30,7 @@ public class ParsingDnnameHeaderUtil {
         if(pid == null){
             pid = dnname;
         }
-        return pid;
+        return pid.toLowerCase();
     }
     public static String getDnname(HttpServletRequest request,String headerName){
         String dnname = request.getHeader(headerName);
